@@ -104,6 +104,21 @@ const dailyReportInfo = () => {
   return { ...settings.getDailyReport(), telegramConfigurado: !!(tg.hasToken && tg.chatId), enabled: daily.ENABLED, nextRunAt: next ? next.toISOString() : null };
 };
 
+// ─── Copias de seguridad fuera de la PC (Google Drive / carpeta de red) ─────
+const copias = require('../services/copias');
+const copiaInfo = () => ({ ...copias.getPublic(), estado: copias.estado() });
+router.get('/copias', (req, res) => res.json(copiaInfo()));
+router.post('/copias', (req, res) => {
+  try { copias.set(req.body || {}); res.json({ ok: true, ...copiaInfo() }); } catch (e) { res.status(e.status || 400).json({ error: e.message }); }
+});
+// Pedidos a frio-backup (los atiende dentro del minuto): copia completa ahora, o probar un destino
+router.post('/copias/ahora', (req, res) => {
+  try { copias.pedir('ahora'); res.json({ ok: true }); } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+});
+router.post('/copias/probar', (req, res) => {
+  try { copias.pedir(`probar-${req.body && req.body.destino}`); res.json({ ok: true }); } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+});
+
 // ─── Repetición de avisos de alarma ({minutos, veces}) ────────────────
 router.get('/repeticion', (req, res) => res.json(settings.getRepeticion()));
 router.post('/repeticion', (req, res) => {

@@ -196,6 +196,8 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   else {
     alertasCamaras.start();
     require('./services/telegramBot').start({ onVisto: marcarVisto, avisar: (t) => alerts.sendTelegram(t) });
+    // Aviso si una copia de seguridad falla o hace más de 8 días que no sale una buena
+    require('./services/copias').start((t) => alerts.notify(t));
   }
 
   // Reporte diario automático (cron interno -> PDF por correo y/o Telegram); en la réplica no: sale de planta
