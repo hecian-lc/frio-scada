@@ -31,6 +31,18 @@ estado() {
     "$ESTADO" > "$tmp" && mv "$tmp" "$ESTADO" && chmod 644 "$ESTADO"
 }
 
+# Error de rclone en palabras (el original queda en el log)
+amigable() {
+  case "$1" in
+    *"i/o timeout"*|*"connection refused"*|*"no route to host"*|*"no such host"*) echo "No se pudo conectar con esa PC: revisá que esté prendida, en la red y con la carpeta compartida" ;;
+    *"LOGON_FAILURE"*|*"logon failure"*|*"ACCESS_DENIED"*|*"access denied"*) echo "Usuario o contraseña incorrectos, o sin permiso de escritura en la carpeta" ;;
+    *"BAD_NETWORK_NAME"*|*"bad network name"*) echo "No existe esa carpeta compartida en la PC" ;;
+    *"invalid_grant"*|*"token expired"*|*"oauth2"*) echo "Google rechazó la conexión: volvé a conectar la cuenta de Google Drive" ;;
+    *"storageQuotaExceeded"*|*"quota"*) echo "No hay espacio en Google Drive" ;;
+    *) echo "$1" | tail -1 | sed 's#^[0-9/]* [0-9:]* ##' | cut -c1-200 ;;
+  esac
+}
+
 dato() { jq -r "$1 // empty" "$DESTINOS" 2>/dev/null; }
 activo() { [ "$(dato ".$1.activo")" = "true" ]; }
 
@@ -62,7 +74,7 @@ subir() {
       | while read -r f; do log "podar $dest/$f"; rclone deletefile "$dest/$f" 2>/dev/null; done
     log "copiado a $nombre ($dest)"; estado "$nombre" true "Copia subida" "$(basename "$archivo")"
   else
-    log "ERROR al copiar a $nombre: $(echo "$err" | tail -1)"; estado "$nombre" false "$(echo "$err" | tail -1 | cut -c1-200)"
+    log "ERROR al copiar a $nombre: $(echo "$err" | tail -1)"; estado "$nombre" false "$(amigable "$err")"
   fi
 }
 
@@ -72,7 +84,7 @@ probar() {
   if err="$(rclone mkdir "$dest" --contimeout 20s 2>&1)" && err="$(rclone lsf "$dest" --max-depth 1 --contimeout 20s 2>&1)"; then
     log "prueba de $nombre OK"; estado "prueba_$nombre" true "Se pudo entrar y escribir en el destino"
   else
-    log "prueba de $nombre falló"; estado "prueba_$nombre" false "$(echo "$err" | tail -1 | cut -c1-200)"
+    log "prueba de $nombre falló: $(echo "$err" | tail -1)"; estado "prueba_$nombre" false "$(amigable "$err")"
   fi
 }
 

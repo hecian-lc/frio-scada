@@ -323,6 +323,25 @@ docker compose up -d
 
 ---
 
+## Copias de seguridad
+
+Todos los domingos a las 03:00 se hace una copia de la base de datos y de la configuración (`config/`: usuarios, horarios, marca, avisos). Queda en `backups/` de la PC y, si se prenden en **Configuración avanzada → Copias**, también en **Google Drive** y/o en una **carpeta compartida** de otra PC. Se conservan las últimas 12 en cada lugar. Si una copia falla o pasan más de 8 días sin una buena, avisa por Telegram y correo.
+
+**Restaurar** (por ejemplo, en una PC nueva después de instalar):
+
+1. Copiá el archivo `frio-backup-AAAA-MM-DD.tar.gz` (bajado de Drive o de la carpeta de red) a la carpeta `backups/` de la instalación (`/opt/frio-scada/backups` en Linux).
+2. La configuración: extraé `config/` del archivo y copiá esos archivos a la carpeta `config/` de la instalación; después `sudo frio-scada restart`.
+
+```bash
+tar xzf /opt/frio-scada/backups/frio-backup-2026-10-25.tar.gz -C /tmp ./config && sudo cp /tmp/config/* /opt/frio-scada/config/
+```
+
+3. Los datos: se cargan como archivo para consultarlos en Grafana:
+
+```bash
+docker exec frio-backup restore.sh 2026-10-25
+```
+
 ## Comandos útiles
 
 ### En la PC de la planta (Linux, instalada con `install.sh`)
