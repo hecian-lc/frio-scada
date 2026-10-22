@@ -34,13 +34,14 @@ estado() {
 dato() { jq -r "$1 // empty" "$DESTINOS" 2>/dev/null; }
 activo() { [ "$(dato ".$1.activo")" = "true" ]; }
 
-# Remote de rclone por variables de entorno (sin archivo de configuración); imprime el destino "remote:ruta"
+# Remote de rclone por variables de entorno (sin archivo de configuración); deja el destino "remote:ruta" en DEST.
+# No llamar con $(…): las variables exportadas se perderían en el subshell.
 destino() {
   case "$1" in
     drive)
       export RCLONE_CONFIG_DRIVE_TYPE=drive RCLONE_CONFIG_DRIVE_SCOPE=drive
       RCLONE_CONFIG_DRIVE_TOKEN="$(dato '.drive.token')"; export RCLONE_CONFIG_DRIVE_TOKEN
-      echo "drive:$(dato '.drive.carpeta' | sed 's#^/##')" ;;
+      DEST="drive:$(dato '.drive.carpeta' | sed 's#^/##')" ;;
     red)
       # ruta //servidor/carpeta/sub → host + carpeta/sub
       local ruta; ruta="$(dato '.red.ruta' | tr '\\' '/' | sed 's#^//##')"
@@ -48,14 +49,14 @@ destino() {
       RCLONE_CONFIG_RED_HOST="${ruta%%/*}"; export RCLONE_CONFIG_RED_HOST
       RCLONE_CONFIG_RED_USER="$(dato '.red.usuario')"; export RCLONE_CONFIG_RED_USER
       RCLONE_CONFIG_RED_PASS="$(rclone obscure "$(dato '.red.password')")"; export RCLONE_CONFIG_RED_PASS
-      echo "red:${ruta#*/}" ;;
+      DEST="red:${ruta#*/}" ;;
   esac
 }
 
 # Sube el archivo y deja solo los KEEP más nuevos en el destino
 subir() {
   local nombre="$1" archivo="$2" dest err
-  dest="$(destino "$nombre")"
+  destino "$nombre"; dest="$DEST"
   if err="$(rclone copy "$archivo" "$dest" --contimeout 30s --timeout 5m 2>&1)"; then
     rclone lsf "$dest" --files-only --include 'frio-backup-*.tar.gz' 2>/dev/null | sort | head -n -"$KEEP" \
       | while read -r f; do log "podar $dest/$f"; rclone deletefile "$dest/$f" 2>/dev/null; done
@@ -67,7 +68,7 @@ subir() {
 
 probar() {
   local nombre="$1" dest err
-  dest="$(destino "$nombre")"
+  destino "$nombre"; dest="$DEST"
   if err="$(rclone mkdir "$dest" --contimeout 20s 2>&1)" && err="$(rclone lsf "$dest" --max-depth 1 --contimeout 20s 2>&1)"; then
     log "prueba de $nombre OK"; estado "prueba_$nombre" true "Se pudo entrar y escribir en el destino"
   else
