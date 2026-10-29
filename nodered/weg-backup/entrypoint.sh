@@ -29,5 +29,5 @@ else
   log "AVISO: INFLUXDB_TOKEN no definido; no se fija retención ni se harán backups"
 fi
 
-log "cron de backup activo (día 1 de cada mes 03:00). Backups en /backups"
+log "cron de backup activo (domingos 03:00). Backups en /backups; destinos externos en /config/backup-destinos.json"
 exec crond -f -l 8

@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import BrandingTab from './BrandingTab'
 import ConexionTab from './ConexionTab'
 import ReplicasTab from './ReplicasTab'
+import CopiasTab from './CopiasTab'
 import { useServerStore } from '../store/server'
 import { ZONA } from '../lib/camaras'
 import { errorToken, errorChat, TG_TIPO, type TgChat } from '../lib/telegram'
@@ -45,11 +46,12 @@ export default function Config() {
   return (
     <div className="space-y-3">
     <a href="/grafana/" target="_blank" rel="noreferrer" className="text-sm underline text-primary">Gráficos de largo plazo</a>
-    <Tabs defaultValue={new URLSearchParams(window.location.search).get('tab') === 'telegram' ? 'telegram' : 'smtp'} className="space-y-3">
+    <Tabs defaultValue={(t => (t === 'telegram' || t === 'copias' ? t : 'smtp'))(new URLSearchParams(window.location.search).get('tab'))} className="space-y-3">
       <TabsList>
         <TabsTrigger value="smtp">Correo</TabsTrigger>
         <TabsTrigger value="telegram">Telegram</TabsTrigger>
         <TabsTrigger value="camaras">Cámaras</TabsTrigger>
+        {!replica && <TabsTrigger value="copias">Copias</TabsTrigger>}
         {superadmin && <TabsTrigger value="brand">Marca</TabsTrigger>}
         {superadmin && <TabsTrigger value="conexion">Conexión</TabsTrigger>}
         {superadmin && !replica && <TabsTrigger value="replicas">Réplicas</TabsTrigger>}
@@ -64,6 +66,7 @@ export default function Config() {
       {/* fieldset disabled deshabilita inputs/botones (incl. Switch/Select de Radix, que son <button>) */}
       <TabsContent value="smtp"><SmtpTab /></TabsContent>
       <TabsContent value="telegram"><TelegramTab /></TabsContent>
+      {!replica && <TabsContent value="copias"><CopiasTab /></TabsContent>}
       <TabsContent value="camaras"><CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} /></TabsContent>
       {superadmin && <TabsContent value="brand"><BrandingTab /></TabsContent>}
       {superadmin && <TabsContent value="conexion"><ConexionTab /></TabsContent>}

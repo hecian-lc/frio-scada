@@ -383,6 +383,8 @@ services:
       - BACKUP_EXTERNAL=${BACKUP_EXTERNAL:-}
     volumes:
       - ${BACKUP_LOCAL_DIR:-./backups}:/backups
+      # Configuración: va dentro de cada copia, y de acá salen los destinos (backup-destinos.json) y los pedidos del portal
+      - ./config:/config
       # Descomentar y ajustar para el segundo destino (disco externo / red):
       # - E:/frio-backups:/external
     depends_on:
