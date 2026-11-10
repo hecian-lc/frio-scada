@@ -7,6 +7,7 @@ import { Label } from '../components/ui/label'
 import { Loader2, Save, RotateCcw, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import { aplicarColorPortal } from '../lib/color'
+import { useTheme } from '../lib/theme'
 
 const MAX_LOGO_BYTES = 1024 * 1024
 const MAX_FAVICON_BYTES = 256 * 1024
@@ -31,8 +32,10 @@ export default function BrandingTab() {
   const [colorPortal, setColorPortal] = useState<string | null>(b.colorPortal)
   const [colorInforme, setColorInforme] = useState(b.colorInforme)
   // muestra en vivo; al salir sin guardar vuelve al guardado
-  useEffect(() => { aplicarColorPortal(colorPortal) }, [colorPortal])
-  useEffect(() => () => aplicarColorPortal(useBrandingStore.getState().colorPortal), [])
+  const { theme } = useTheme()
+  const [colorUsado, setColorUsado] = useState(true)
+  useEffect(() => { setColorUsado(aplicarColorPortal(colorPortal, theme).usado || !colorPortal) }, [colorPortal, theme])
+  useEffect(() => () => { aplicarColorPortal(useBrandingStore.getState().colorPortal, theme) }, [theme])
 
   useEffect(() => { setName(b.name); setSubtitle(b.subtitle); setFooter(b.footer); setColorPortal(b.colorPortal); setColorInforme(b.colorInforme) }, [b.name, b.subtitle, b.footer, b.colorPortal, b.colorInforme])
 
@@ -123,6 +126,7 @@ export default function BrandingTab() {
             <Button size="sm" className="ml-auto">Así se ve un botón</Button>
             {colorPortal && <Button size="sm" variant="outline" onClick={() => setColorPortal(null)}>Volver al original</Button>}
           </div>
+          {!colorUsado && <p role="alert" className="text-xs text-muted-foreground">Ese color no se lee bien sobre el fondo; se usa el del tema.</p>}
           <div className="flex items-center gap-3 flex-wrap">
             <input type="color" aria-label="Color del informe PDF" value={colorInforme} onChange={e => setColorInforme(e.target.value)} className="h-9 w-12 cursor-pointer rounded border bg-transparent p-0.5" />
             <div className="text-sm"><div className="font-medium">Informe PDF</div><div className="text-xs text-muted-foreground">Títulos, línea del encabezado y tablas · {colorInforme}</div></div>

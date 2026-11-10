@@ -29,7 +29,7 @@ const dia = (ms: number) => fechaHora(ms).split(', ')[0]
 const hm = (ms: number) => (fechaHora(ms).split(', ')[1] ?? '').slice(0, 5)
 
 const pctTxt = (p: number | null) => p == null ? '' : ` (${Math.round(p * 100)} %)`
-const colorPct = (p: number | null) => p == null ? 'hsl(var(--muted))' : `rgba(37, 99, 235, ${0.12 + 0.88 * p})`
+const colorPct = (p: number | null) => p == null ? 'var(--fila-total)' : `rgba(37, 99, 235, ${0.12 + 0.88 * p})`
 const diaCorto = (d: string) => `${d.slice(8, 10)}/${d.slice(5, 7)}`
 
 // Un bloque por cámara: cada equipo con un cuadradito por día (color = % del tiempo en marcha) y sus totales.

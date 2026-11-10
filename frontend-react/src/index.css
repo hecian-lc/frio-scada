@@ -5,79 +5,34 @@
 @layer base {
   html { font-size: 14px; }
 
+  /* Las variables de shadcn apuntan a los tokens HMI (src/hmi/tokens.css), que ya cambian con el tema */
   :root {
-    /* Tema claro */
-    --background: 216 33% 97%;
-    --foreground: 217 29% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 217 29% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 217 29% 15%;
-
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 214 33% 96%;
-    --secondary-foreground: 217 29% 15%;
-
-    --muted: 214 33% 96%;
-    --muted-foreground: 213 12% 40%;
-
-    --accent: 214 33% 96%;
-    --accent-foreground: 217 29% 15%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 216 25% 91%;
-    --input: 216 25% 91%;
-    --ring: 221 83% 53%;
-
-    /* Marca (naranja) */
-    --brand: 27 87% 56%;
-    --brand-foreground: 33 88% 6%;
-
-    --radius: 0.6rem;
-  }
-
-  .dark {
-    /* Tema oscuro "control room" */
-    --background: 216 22% 7%;
-    --foreground: 213 33% 93%;
-
-    --card: 216 20% 11%;
-    --card-foreground: 213 33% 93%;
-
-    --popover: 216 20% 11%;
-    --popover-foreground: 213 33% 93%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 218 25% 15%;
-    --secondary-foreground: 213 33% 93%;
-
-    --muted: 216 18% 14%;
-    --muted-foreground: 213 14% 60%;
-
-    --accent: 218 25% 15%;
-    --accent-foreground: 213 33% 93%;
-
-    --destructive: 3 84% 62%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 217 20% 17%;
-    --input: 217 20% 17%;
-    --ring: 217 91% 60%;
-
-    --brand: 27 87% 56%;
-    --brand-foreground: 33 88% 6%;
+    --background: var(--suelo);
+    --foreground: var(--texto);
+    --card: var(--panel);
+    --card-foreground: var(--texto);
+    --popover: var(--panel);
+    --popover-foreground: var(--texto);
+    --primary: var(--accion);
+    --primary-foreground: var(--accion-texto);
+    --secondary: var(--placa);
+    --secondary-foreground: var(--texto);
+    --muted: var(--fila-total);
+    --muted-foreground: var(--texto-2);
+    --accent: var(--seleccion);
+    --accent-foreground: var(--texto);
+    --destructive: var(--estado-alta);
+    --destructive-foreground: var(--estado-alta-sobre);
+    --border: var(--linea);
+    --input: var(--borde-campo);
+    --ring: var(--accion);
+    --brand: var(--accion);
+    --brand-foreground: var(--accion-texto);
+    --radius: 0px;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans text-base;
     font-feature-settings: "rlig" 1, "calt" 1;
     font-variant-numeric: tabular-nums; /* horas y contadores no bailan al cambiar */
   }
@@ -91,15 +46,15 @@
 
 /* Tutorial (driver.js) con la letra y los botones del portal */
 body .driver-popover, body .driver-popover * { font-family: "IBM Plex Sans", system-ui, sans-serif; }
-.driver-popover { border-radius: 12px; max-width: 340px; background: hsl(var(--card)); color: hsl(var(--card-foreground)); }
+.driver-popover { border-radius: 0; max-width: 340px; background: var(--card); color: var(--card-foreground); }
 .driver-popover-title { font-size: 16px; font-weight: 700; }
 .driver-popover-description { font-size: 14px; line-height: 20px; }
-.driver-popover-progress-text { font-size: 12px; color: hsl(var(--muted-foreground)); }
-.driver-popover-footer button { font-family: inherit; font-size: 13px; text-shadow: none; padding: 8px 14px; border-radius: 8px; min-height: 36px; background: hsl(var(--card)); color: hsl(var(--foreground)); border: 1px solid hsl(var(--border)); }
-.driver-popover-footer .driver-popover-next-btn { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: hsl(var(--primary)); }
-.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: hsl(var(--card)); }
-.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: hsl(var(--card)); }
-.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: hsl(var(--card)); }
-.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: hsl(var(--card)); }
-body .driver-popover-footer button:hover, body .driver-popover-footer button:focus { background: hsl(var(--accent)); color: hsl(var(--foreground)); }
-body .driver-popover-footer .driver-popover-next-btn:hover, body .driver-popover-footer .driver-popover-next-btn:focus { background: hsl(var(--primary) / 0.9); color: hsl(var(--primary-foreground)); }
+.driver-popover-progress-text { font-size: 12px; color: var(--muted-foreground); }
+.driver-popover-footer button { font-family: inherit; font-size: 13px; text-shadow: none; padding: 8px 14px; border-radius: 0; min-height: 36px; background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+.driver-popover-footer .driver-popover-next-btn { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--card); }
+.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--card); }
+.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--card); }
+.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--card); }
+body .driver-popover-footer button:hover, body .driver-popover-footer button:focus { background: var(--accent); color: var(--foreground); }
+body .driver-popover-footer .driver-popover-next-btn:hover, body .driver-popover-footer .driver-popover-next-btn:focus { background: var(--accion-hover); color: var(--primary-foreground); }
