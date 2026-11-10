@@ -2,29 +2,30 @@
 // Nunca inventa números: si algo no se puede calcular, la frase lo dice sin cifra.
 import type { Estado } from '../store/camaras'
 import { GRUPOS, HORARIOS, nombreCamara, txt, num, hhmm, aMin, minutoAhora, type FilaDescongelado } from './camaras'
-import { colorEstadoGrupo } from './estadoGrupo'
+import { colorEstadoGrupo, COLOR_SIN_DATOS } from './estadoGrupo'
 
 export type Nivel = 'ok' | 'atencion' | 'alarma' | 'sin-datos'
-export type NombreIcono = 'frio' | 'descongelando' | 'escurriendo' | 'alarma' | 'manual' | 'apagado'
+export type NombreIcono = 'frio' | 'descongelando' | 'escurriendo' | 'alarma' | 'manual' | 'apagado' | 'sin-datos'
 export type ClaveEstado = 'sin-datos' | 'DESHABILITADO' | 'DETENIDO' | 'FRIO' | 'DESCONGELANDO' | 'ESCURRIENDO' | 'ALARMA RES' | 'MANUAL'
 
 export const UMBRAL_ARRANQUES_HORA = 6
 
 const EQUIPO: Record<ClaveEstado, { texto: string; icono: NombreIcono }> = {
-  'sin-datos': { texto: 'Sin datos', icono: 'apagado' },
+  'sin-datos': { texto: 'Sin datos', icono: 'sin-datos' },
   'DESHABILITADO': { texto: 'Apagado', icono: 'apagado' },
-  'DETENIDO': { texto: 'Detenido', icono: 'apagado' },
+  'DETENIDO': { texto: 'Apagado', icono: 'apagado' },
   'FRIO': { texto: 'Enfriando', icono: 'frio' },
   'DESCONGELANDO': { texto: 'Descongelando', icono: 'descongelando' },
   'ESCURRIENDO': { texto: 'Escurriendo', icono: 'escurriendo' },
-  'ALARMA RES': { texto: 'Con alarma', icono: 'alarma' },
+  'ALARMA RES': { texto: 'Alarma', icono: 'alarma' },
   'MANUAL': { texto: 'Manual', icono: 'manual' },
 }
 
 export function estadoEquipo(estado: Estado, c: string, g: number) {
   const k = txt(estado, `${c}.G${g}.estado`)
   const clave = (k !== 'sin-datos' && k in EQUIPO ? k : 'sin-datos') as ClaveEstado
-  return { clave, ...EQUIPO[clave], color: colorEstadoGrupo(clave === 'sin-datos' ? 'DETENIDO' : clave).fondo }
+  const c2 = clave === 'sin-datos' ? COLOR_SIN_DATOS : colorEstadoGrupo(clave)
+  return { clave, ...EQUIPO[clave], color: c2.fondo, borde: c2.borde, sobre: c2.texto }
 }
 
 const gruposEn = (e: Estado, c: string, clave: ClaveEstado) => GRUPOS.filter(g => estadoEquipo(e, c, g).clave === clave)
@@ -337,8 +338,8 @@ export function claveAlarmaDeEvento(texto: string): string | null {
 // Etiqueta de estado de la cámara (mismos colores que el HMI); null si no hay datos o nada que decir
 export function badgeCamara(estado: Estado, c: string, nivel: Nivel): { t: string; c: string } | null {
   if (nivel === 'sin-datos') return null
-  if (nivel === 'alarma') return { t: 'Atención', c: colorEstadoGrupo('ALARMA RES').fondo }
-  if (nivel === 'atencion') return { t: 'Atención', c: '#F59E0B' }
+  if (nivel === 'alarma') return { t: 'Alarma', c: colorEstadoGrupo('ALARMA RES').fondo }
+  if (nivel === 'atencion') return null
   const n = (k: ClaveEstado) => gruposEn(estado, c, k).length
   return n('DESCONGELANDO') ? { t: 'Descongelando', c: colorEstadoGrupo('DESCONGELANDO').fondo }
     : n('ESCURRIENDO') ? { t: 'Escurriendo', c: colorEstadoGrupo('ESCURRIENDO').fondo }

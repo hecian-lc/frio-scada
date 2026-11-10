@@ -6,7 +6,7 @@ import { anclasEtiquetas, detalleEnInstante, posicionTarjeta, type DetalleInstan
 
 const W = 1000, L = 64, R = 10, Y0 = 26, RH = 14, H = Y0 + GRUPOS.length * RH + 20
 const DIA = 24 * 3600000
-const COLOR_INST: Record<EstadoInstante, string> = { enfriando: COLOR_TRAMO.frio, descongelando: COLOR_TRAMO.descongelando, apagado: COLOR_TRAMO.apagado, 'sin datos': '#9CA3AF' }
+const COLOR_INST: Record<EstadoInstante, string> = { enfriando: COLOR_TRAMO.frio, descongelando: COLOR_TRAMO.descongelando, apagado: COLOR_TRAMO.apagado, 'sin datos': 'var(--linea)' }
 const aHora = (m: number) => `${String(m).padStart(2, '0')}:00`
 
 interface Props { tramos: Tramo[] | null; filas: FilaDescongelado[] | null; horarios: HorarioVista[]; camara: string; dia0: number; ahora: number; minutosPlan: (horario: number) => number | undefined; error: boolean }
@@ -78,7 +78,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           onPointerDown={mover} onPointerMove={mover} onPointerLeave={e => { if (e.pointerType !== 'touch') ocultar() }} onPointerCancel={ocultar}>
           <defs>
             <pattern id={idHachura} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <rect width={6} height={6} fill="#E5E7EB" /><rect width={3} height={6} fill="#D1D5DB" />
+              <rect width={6} height={6} fill="var(--linea-fila)" /><rect width={3} height={6} fill="var(--linea)" />
             </pattern>
           </defs>
           {Array.from({ length: 25 }, (_, h) => (
@@ -107,8 +107,8 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
               <line x1={x(dia0 + h.min * 60000)} x2={x(dia0 + h.min * 60000)} y1={18} y2={Y0 + GRUPOS.length * RH} strokeWidth={1} strokeDasharray="2 3" opacity={0.6} />
             </g>
           ))}
-          <line x1={x(ahora)} x2={x(ahora)} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="#dc2626" strokeWidth={1.5} />
-          <text x={x(ahora)} y={Y0 - 9} textAnchor="middle" fontSize={10} fill="#dc2626">ahora</text>
+          <line x1={x(ahora)} x2={x(ahora)} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="var(--accion)" strokeWidth={1.5} />
+          <text x={x(ahora)} y={Y0 - 9} textAnchor="middle" fontSize={10} fill="var(--accion)">ahora</text>
           {cur && <line x1={cur.px} x2={cur.px} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="currentColor" strokeDasharray="3 2" />}
         </svg>
         {cur && det && (

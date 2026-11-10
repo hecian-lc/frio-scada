@@ -37,9 +37,9 @@ const todasLasFixtures = [fx8frio, fx4desc, fxSinEtapa, fxAlarmaYDesc, fxUltimoH
 const fila: FilaDescongelado = { camara: 'C4', horario: 'H1', etapa: 1, grupos: 'G1,G3', inicio: 1, fin: 2, duracionS: 600, cortados: '', saltado: false, noEjecutada: false }
 
 describe('frases', () => {
-  test('estadoEquipo FRIO', () => expect(estadoEquipo(E({ 'C4.G1.estado': 'FRIO' }), 'C4', 1)).toMatchObject({ texto: 'Enfriando', color: '#1E6FD9', icono: 'frio' }))
+  test('estadoEquipo FRIO', () => expect(estadoEquipo(E({ 'C4.G1.estado': 'FRIO' }), 'C4', 1)).toMatchObject({ texto: 'Enfriando', color: 'var(--eq-frio)', icono: 'frio' }))
   test('estadoEquipo sin dato o desconocido', () => {
-    const sd = { clave: 'sin-datos', texto: 'Sin datos', color: '#9A9A9A', icono: 'apagado' }
+    const sd = { clave: 'sin-datos', texto: 'Sin datos', color: 'var(--estado-invalido)', icono: 'sin-datos', sobre: 'var(--estado-alta-sobre)' }
     expect(estadoEquipo(fxVacio, 'C4', 1)).toEqual(sd)
     expect(estadoEquipo(E({ 'C4.G1.estado': 7 }), 'C4', 1)).toEqual(sd)
     expect(estadoEquipo(E({ 'C4.G1.estado': 'DESHABILITADO' }), 'C4', 1).texto).toBe('Apagado')
@@ -192,7 +192,7 @@ describe('fraseEvento / tipoAviso / sigueActivo con textos reales', () => {
   })
   test('badge', () => {
     expect(badgeCamara(fx4desc, 'C4', 'ok')?.t).toBe('Descongelando')
-    expect(badgeCamara(fxAlarmaYDesc, 'C5', 'alarma')?.t).toBe('Atención')
+    expect(badgeCamara(fxAlarmaYDesc, 'C5', 'alarma')?.t).toBe('Alarma')
     expect(badgeCamara(fxVacio, 'C4', 'sin-datos')).toBeNull()
   })
 })

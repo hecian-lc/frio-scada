@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card } from './ui/card'
 import { Badge } from './ui/badge'
-import BotonEquipo from './BotonEquipo'
+import SimboloEquipo from './SimboloEquipo'
 import { useCamarasStore } from '../store/camaras'
 import { estaVencido } from '../lib/estadoGrupo'
 import { alarmasActivas, fraseCamara, proximoTexto, badgeCamara } from '../lib/frases'
@@ -36,7 +36,7 @@ export default function TarjetaCamara({ cam }: { cam: string }) {
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <div className="grid grid-cols-4 sm:flex gap-2 justify-items-center">
-            {GRUPOS.map(g => <BotonEquipo key={g} c={cam} g={g} />)}
+            {GRUPOS.map(g => <SimboloEquipo key={g} c={cam} g={g} size={32} />)}
           </div>
           <div className="min-w-[14rem] flex-1 text-sm">
             <div className={`truncate font-bold text-base ${hayDatos ? '' : 'text-muted-foreground'}`} title={titulo}>{titulo}</div>

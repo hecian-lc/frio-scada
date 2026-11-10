@@ -9,9 +9,12 @@ describe('estaVencido', () => {
 })
 
 describe('colorEstadoGrupo', () => {
-  it('MANUAL', () => expect(colorEstadoGrupo('MANUAL').fondo).toBe('#7E57C2'))
-  it('FRIO', () => expect(colorEstadoGrupo('FRIO').fondo).toBe('#1E6FD9'))
-  it('desconocido cae a gris', () => expect(colorEstadoGrupo('???').fondo).toBe('#9A9A9A'))
+  it('MANUAL', () => expect(colorEstadoGrupo('MANUAL').fondo).toBe('var(--eq-manual)'))
+  it('DESCONG.', () => expect(colorEstadoGrupo('DESCONG.').fondo).toBe('var(--eq-desc)'))
+  it('ESCURRE con borde', () => expect(colorEstadoGrupo('ESCURRE').borde).toBe('var(--eq-escurre-borde)'))
+  it('DETENIDO con borde de campo', () => expect(colorEstadoGrupo('DETENIDO').borde).toBe('var(--borde-campo)'))
+  it('ALARMA', () => expect(colorEstadoGrupo('ALARMA').fondo).toBe('var(--estado-alta)'))
+  it('desconocido cae a placa', () => expect(colorEstadoGrupo('xx').fondo).toBe('var(--placa)'))
 })
 
 import { csvDe } from './xlsx'

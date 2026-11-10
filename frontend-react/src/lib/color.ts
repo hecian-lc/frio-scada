@@ -39,10 +39,11 @@ export function aplicarColorPortal(hex: string | null, tema: 'light' | 'dark'): 
   // en oscuro se aclara de a poco; en claro el color se usa tal cual
   while (dark && contraste(accion, panel) < 4.5 && l < 0.95) { l += 0.01; accion = hslAHex([h, s, l]) }
   if (contraste(accion, panel) < 4.5) return { usado: false }
+  const blanco = TOKENS.claro['--accion-texto']
   const oscuroTxt = TOKENS.oscuro['--accion-texto']
   st.setProperty('--accion', accion)
   st.setProperty('--accion-hover', hslAHex([h, s, Math.max(0, Math.min(1, l + (dark ? 0.08 : -0.08)))]))
-  st.setProperty('--accion-texto', contraste('#FFFFFF', accion) >= contraste(oscuroTxt, accion) ? '#FFFFFF' : oscuroTxt)
+  st.setProperty('--accion-texto', contraste(blanco, accion) >= contraste(oscuroTxt, accion) ? blanco : oscuroTxt)
   st.setProperty('--marco', hslAHex([h, s, Math.min(l0, 0.25)]))
   return { usado: true }
 }

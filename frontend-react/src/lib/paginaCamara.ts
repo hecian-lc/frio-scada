@@ -9,9 +9,9 @@ export type EstadoTramo = 'frio' | 'descongelando' | 'apagado' | 'sin-datos'
 export interface TramoApi { camara: string; grupo: string; inicio: string; fin: string; estado: EstadoTramo }
 export interface Tramo { camara: string; grupo: string; inicio: number; fin: number; estado: EstadoTramo }
 export const aTramos = (rows: TramoApi[]): Tramo[] => rows.map(r => ({ ...r, inicio: Date.parse(r.inicio), fin: Date.parse(r.fin) })).filter(t => Number.isFinite(t.inicio) && Number.isFinite(t.fin))
-export const COLOR_TRAMO: Record<EstadoTramo, string> = { frio: colorEstadoGrupo('FRIO').fondo, descongelando: colorEstadoGrupo('DESCONGELANDO').fondo, apagado: colorEstadoGrupo('DETENIDO').fondo, 'sin-datos': '#E5E7EB' }
+export const COLOR_TRAMO: Record<EstadoTramo, string> = { frio: colorEstadoGrupo('FRIO').fondo, descongelando: colorEstadoGrupo('DESCONGELANDO').fondo, apagado: colorEstadoGrupo('DETENIDO').fondo, 'sin-datos': 'var(--linea-fila)' }
 export const TEXTO_TRAMO: Record<EstadoTramo, string> = { frio: 'Enfriando', descongelando: 'Descongelando', apagado: 'Apagado', 'sin-datos': 'Sin datos' }
-export const HACHURA = 'repeating-linear-gradient(45deg,#E5E7EB,#E5E7EB 3px,#D1D5DB 3px,#D1D5DB 6px)'
+export const HACHURA = 'repeating-linear-gradient(45deg,var(--linea-fila),var(--linea-fila) 3px,var(--linea) 3px,var(--linea) 6px)'
 
 // Un horario cuenta como de hoy si la corrida empezó hasta esto antes de su hora (deriva del reloj del PLC)
 const TOLERANCIA_MIN = DESVIO_MAX_S / 60

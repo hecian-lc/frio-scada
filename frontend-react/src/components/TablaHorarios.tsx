@@ -8,14 +8,14 @@ import type { Estado } from '../store/camaras'
 
 const C = (k: string) => colorEstadoGrupo(k).fondo
 const MARCA: Record<EstadoHorario, { icono: string; color: string; texto: string }> = {
-  'hecho': { icono: '✅', color: '#16A34A', texto: 'hecho ✓' },
+  'hecho': { icono: '✅', color: 'var(--accion)', texto: 'hecho ✓' },
   'en curso': { icono: '', color: C('DESCONGELANDO'), texto: 'en curso' },
   'próximo': { icono: '⏰', color: C('DESCONGELANDO'), texto: 'próximo' },
   'pendiente': { icono: '', color: C('DETENIDO'), texto: 'pendiente' },
   'sin registro': { icono: '', color: C('DETENIDO'), texto: 'sin registro' },
   'ya pasó': { icono: '', color: C('DETENIDO'), texto: 'ya pasó' },
-  'solapado': { icono: '⚠️', color: '#F59E0B', texto: 'revisar' },
-  'mal configurado': { icono: '⚠️', color: '#F59E0B', texto: 'revisar' },
+  'solapado': { icono: '⚠️', color: 'var(--estado-media)', texto: 'revisar' },
+  'mal configurado': { icono: '⚠️', color: 'var(--estado-media)', texto: 'revisar' },
 }
 
 export default function TablaHorarios({ estado, cam, horarios, sinDatos }: { estado: Estado | null; cam: string; horarios: HorarioVista[]; sinDatos: boolean }) {

@@ -23,7 +23,7 @@ export default function TablaEquipos({ estado, cam, hayDatos }: { estado: Estado
     const eq = hayDatos && estado ? estadoEquipo(estado, cam, g) : null
     const desc = eq?.clave === 'DESCONGELANDO'
     const estadoTxt = (eq ? eq.texto : 'Sin datos') + (desc && falta != null ? ` · faltan ${falta} min` : '')
-    const punto = <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: eq?.color ?? '#9A9A9A' }} />
+    const punto = <span className="inline-block h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: eq?.color ?? 'var(--estado-invalido)', border: eq?.borde ? `1px solid ${eq.borde}` : undefined }} />
     const chips = (
       <span className="inline-flex gap-1">
         {SALIDAS.map(([k, l, n]) => {
