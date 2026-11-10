@@ -57,7 +57,7 @@ export default function TablaCamaras() {
       <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-texto-2">
         {LEYENDA.map(l => (
           <li key={l.texto + l.icono} className="flex items-center gap-1">
-            <span className="inline-flex h-[16px] w-[16px] items-center justify-center rounded-sm" style={{ background: l.color, color: l.sobre, border: l.borde ? `1px solid ${l.borde}` : undefined }}><Icono nombre={l.icono} size={11} /></span>{l.texto}
+            <span className="inline-flex h-[16px] w-[16px] items-center justify-center" style={{ background: l.color, color: l.sobre, border: l.borde ? `1px solid ${l.borde}` : undefined }}><Icono nombre={l.icono} size={11} /></span>{l.texto}
           </li>
         ))}
       </ul>

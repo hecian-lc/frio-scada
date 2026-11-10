@@ -338,10 +338,5 @@ export function claveAlarmaDeEvento(texto: string): string | null {
 // Etiqueta de estado de la cámara (mismos colores que el HMI); null si no hay datos o nada que decir
 export function badgeCamara(estado: Estado, c: string, nivel: Nivel): { t: string; c: string } | null {
   if (nivel === 'sin-datos') return null
-  if (nivel === 'alarma') return { t: 'Alarma', c: colorEstadoGrupo('ALARMA RES').fondo }
-  if (nivel === 'atencion') return null
-  const n = (k: ClaveEstado) => gruposEn(estado, c, k).length
-  return n('DESCONGELANDO') ? { t: 'Descongelando', c: colorEstadoGrupo('DESCONGELANDO').fondo }
-    : n('ESCURRIENDO') ? { t: 'Escurriendo', c: colorEstadoGrupo('ESCURRIENDO').fondo }
-    : n('FRIO') ? { t: 'Enfriando', c: colorEstadoGrupo('FRIO').fondo } : null
+  return nivel === 'alarma' ? { t: 'Alarma', c: colorEstadoGrupo('ALARMA RES').fondo } : null   // solo la alarma lleva marca
 }

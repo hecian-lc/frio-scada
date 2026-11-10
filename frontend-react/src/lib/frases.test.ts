@@ -191,7 +191,7 @@ describe('fraseEvento / tipoAviso / sigueActivo con textos reales', () => {
     expect(sigueActivo('C4 G3 RESISTENCIA T.MAX', null, true)).toBe(false)
   })
   test('badge', () => {
-    expect(badgeCamara(fx4desc, 'C4', 'ok')?.t).toBe('Descongelando')
+    expect(badgeCamara(fx4desc, 'C4', 'ok')).toBeNull()
     expect(badgeCamara(fxAlarmaYDesc, 'C5', 'alarma')?.t).toBe('Alarma')
     expect(badgeCamara(fxVacio, 'C4', 'sin-datos')).toBeNull()
   })

@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Card } from './ui/card'
+import { Panel } from './Panel'
 import { GRUPOS, hhmm, type FilaDescongelado } from '../lib/camaras'
 import { COLOR_TRAMO, TEXTO_TRAMO, HACHURA, type Tramo, type HorarioVista } from '../lib/paginaCamara'
 import { anclasEtiquetas, detalleEnInstante, posicionTarjeta, type DetalleInstante, type EstadoInstante } from '../lib/trend'
@@ -59,8 +59,8 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minuto, tramos, filas, camara, minutosPlan])
 
-  if (error) return <Card className="p-3 rounded-xl text-sm text-muted-foreground">No se pudo cargar el gráfico</Card>
-  if (!tramos) return <Card className="p-3 rounded-xl text-sm text-muted-foreground">Cargando…</Card>
+  if (error) return <Panel titulo="Qué hizo cada equipo hoy"><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
+  if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy"><div className="text-sm text-texto-2">Cargando…</div></Panel>
 
   const paso = ancho < 480 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
@@ -70,8 +70,8 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
   const nCam = camara.replace(/\D/g, '')
 
   return (
-    <Card className="p-3 space-y-3 rounded-xl">
-      <div className="font-semibold">Qué hizo cada equipo hoy</div>
+    <Panel titulo="Qué hizo cada equipo hoy">
+      <div className="space-y-3">
       <div ref={caja} className="relative">
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'pan-y' }}
           role="img" aria-label={`Qué hizo cada equipo de la cámara ${nCam} hoy, de 00:00 a 24:00: enfriando, descongelando, apagado o sin datos`}
@@ -101,7 +101,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           })}
           {marcas.map((h, i) => (
             // La punta del triángulo y la línea punteada marcan la hora exacta (el texto va arriba; corrido si hay otra cerca)
-            <g key={h.h} className="fill-emerald-700 stroke-emerald-700 dark:fill-emerald-400 dark:stroke-emerald-400">
+            <g key={h.h} className="fill-texto-2 stroke-texto-2">
               <text x={x(dia0 + h.min * 60000) + (anclas[i] === 'start' ? -3 : anclas[i] === 'end' ? 3 : 0)} y={9} textAnchor={anclas[i]} fontSize={10} stroke="none">{h.hora}</text>
               <polygon points={`${x(dia0 + h.min * 60000) - 4},12 ${x(dia0 + h.min * 60000) + 4},12 ${x(dia0 + h.min * 60000)},18`} stroke="none" />
               <line x1={x(dia0 + h.min * 60000)} x2={x(dia0 + h.min * 60000)} y1={18} y2={Y0 + GRUPOS.length * RH} strokeWidth={1} strokeDasharray="2 3" opacity={0.6} />
@@ -112,24 +112,24 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           {cur && <line x1={cur.px} x2={cur.px} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="currentColor" strokeDasharray="3 2" />}
         </svg>
         {cur && det && (
-          <div ref={tarjeta} className="pointer-events-none absolute z-10 rounded-[10px] border bg-popover text-popover-foreground shadow-lg px-3 py-2.5 text-xs"
+          <div ref={tarjeta} className="pointer-events-none absolute z-10 border border-linea bg-popover text-popover-foreground px-3 py-2.5 text-xs"
             style={{ width: 'max-content', maxWidth: 'min(320px, 100%)', left: 0, top: 0 }}>
             <div className="text-xl font-bold tracking-wide">{det.hora}</div>
             <div className="text-xs text-muted-foreground mb-1.5">Cámara {nCam} · hoy</div>
             {d ? (
-              <div className="my-1.5 rounded-md border border-orange-200 bg-orange-50 px-2 py-1 text-orange-800 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300">
+              <div className="my-1.5 border border-linea bg-fila-total px-2 py-1">
                 <b>Descongelado {d.horario}</b> ({hhmm(d.inicio)}) · etapa {d.etapa} de 2<br />
                 {enCurso ? (d.faltaMin == null ? `lleva ${d.llevaMin} min` : `lleva ${d.llevaMin} min · faltan ${d.faltaMin} min`)
                   : `de ${hhmm(d.inicio)} a ${hhmm(d.finEtapa!)}`}
               </div>
             ) : det.resumen === 'Los 8 equipos enfriando' ? (
-              <div className="text-xs mb-1.5 text-emerald-700 dark:text-emerald-400">● {det.resumen}</div>
+              <div className="text-xs mb-1.5">{det.resumen}</div>
             ) : null}
             <div className={`grid ${ancho < 480 ? 'grid-cols-1' : 'grid-cols-2'} gap-x-3.5 gap-y-0.5`}>
               {det.equipos.map(q => (
                 <div key={q.grupo} className={`flex min-w-0 items-center gap-1.5 ${ancho < 480 ? '' : 'whitespace-nowrap'}`}>
-                  <i className="inline-block h-2 w-2 rounded-full" style={{ background: COLOR_INST[q.estado], border: q.estado === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />
-                  Equipo {q.grupo}: {q.estado === 'descongelando' ? <b className="text-orange-700 dark:text-orange-400">descongelando</b> : q.estado}
+                  <i className="inline-block h-2 w-2" style={{ background: COLOR_INST[q.estado], border: q.estado === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />
+                  Equipo {q.grupo}: {q.estado === 'descongelando' ? <b>descongelando</b> : q.estado}
                 </div>
               ))}
             </div>
@@ -138,9 +138,10 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
         {(['frio', 'descongelando', 'apagado', 'sin-datos'] as const).map(k => (
-          <span key={k} className="flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: k === 'sin-datos' ? HACHURA : COLOR_TRAMO[k], border: k === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />{TEXTO_TRAMO[k]}</span>
+          <span key={k} className="flex items-center gap-1"><span className="inline-block h-2.5 w-2.5" style={{ background: k === 'sin-datos' ? HACHURA : COLOR_TRAMO[k], border: k === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />{TEXTO_TRAMO[k]}</span>
         ))}
       </div>
-    </Card>
+      </div>
+    </Panel>
   )
 }

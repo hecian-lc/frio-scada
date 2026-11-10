@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import AjustesCamara from '../components/AjustesCamara'
-import { Card } from '../components/ui/card'
-import { Badge } from '../components/ui/badge'
+import { Panel } from '../components/Panel'
+import MarcaAlarma from '../components/MarcaAlarma'
 import TablaEquipos from '../components/TablaEquipos'
 import PanelAlarmas from '../components/PanelAlarmas'
 import TablaHorarios from '../components/TablaHorarios'
@@ -41,7 +41,7 @@ export default function Camara() {
   const minutosPlan = useCallback((h: number) => estado ? [0, 1].reduce((t, i) => t + (num(estado, `${cam}.H${h}.etapa${i}_habilitada`) === 1 ? Number(estado[`${cam}.H${h}.etapa${i}_min`]) || 0 : 0), 0) : undefined, [estado, cam])
   const ev = useDatos<Evento>('eventos', dia, dia, valida ? cam : '', 60000)
   const ultimos = useMemo(() => ultimoPorClave(ev.data ?? []), [ev.data])
-  if (!valida) return <div className="text-center text-muted-foreground py-16">Cámara inexistente. <Link className="underline" to="/">Volver</Link></div>
+  if (!valida) return <div className="text-center text-texto-2 py-16">Cámara inexistente. <Link className="underline" to="/">Volver</Link></div>
 
   const sinDatos = !estado || incompatible || estaVencido(recibidoEn, ahora)
   const f = estado && !sinDatos ? fraseCamara(estado, cam, ahora) : null
@@ -56,20 +56,20 @@ export default function Camara() {
 
   return (
     <div className="space-y-3">
-      <div data-tour="cam-selector" className="grid grid-cols-2 gap-1 rounded-lg border bg-card p-1 text-center text-sm font-semibold shadow-sm">
-        {CAMARAS.map(k => <Link key={k} to={`/camara/${k}`} aria-current={k === cam ? 'page' : undefined} className={`toque flex items-center justify-center rounded-md transition-colors ${k === cam ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}>{nombreCamara(k)}</Link>)}
+      <div data-tour="cam-selector" className="flex border-b border-linea text-center text-sm font-semibold">
+        {CAMARAS.map(k => <Link key={k} to={`/camara/${k}`} aria-current={k === cam ? 'page' : undefined} className={`flex min-h-[44px] flex-1 items-center justify-center border-b-[3px] sm:min-h-[32px] sm:flex-none sm:px-6 ${k === cam ? 'border-accion text-foreground' : 'border-transparent text-texto-2 hover:bg-seleccion'}`}>{nombreCamara(k)}</Link>)}
       </div>
 
       <div data-tour="cam-estado" className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <h1 className="text-lg font-semibold">{nombreCamara(cam)}</h1>
-        {modo && <span className="text-sm text-muted-foreground">{modo}</span>}
-        {hayDatos && <span className="text-sm text-muted-foreground">{falta != null ? `faltan ${falta} min` : (p => p.startsWith('Sin') ? p : `Próximo descongelado: ${p}`)(proximoTexto(estado!, cam, ahora))}</span>}
-        {badge && <Badge className="ml-auto border-transparent text-white" style={{ backgroundColor: badge.c }}>{badge.t}</Badge>}
-        {admin && <button type="button" data-tour="cam-ajustes" onClick={() => setAjustes(true)} className={`toque inline-flex items-center gap-1 rounded-md border px-3 text-sm font-medium hover:bg-muted ${badge ? '' : 'ml-auto'}`}>⚙ Ajustes</button>}
+        {modo && <span className="text-sm text-texto-2">{modo}</span>}
+        {hayDatos && <span className="text-sm text-texto-2">{falta != null ? `faltan ${falta} min` : (p => p.startsWith('Sin') ? p : `Próximo descongelado: ${p}`)(proximoTexto(estado!, cam, ahora))}</span>}
+        {badge && <span className="ml-auto inline-flex items-center gap-1.5 font-semibold text-estado-alta"><MarcaAlarma />{badge.t}</span>}
+        {admin && <button type="button" data-tour="cam-ajustes" onClick={() => setAjustes(true)} className={`toque inline-flex items-center gap-1 border border-borde-campo bg-placa px-3 text-sm font-medium hover:bg-seleccion ${badge ? '' : 'ml-auto'}`}>⚙ Ajustes</button>}
         {admin && ajustes && <AjustesCamara cam={cam} onCerrar={() => setAjustes(false)} />}
-        {!hayDatos && <span className="ml-auto text-sm text-amber-600 dark:text-amber-400">{incompatible ? 'El PLC tiene un programa viejo' : ts ? `Sin datos desde ${hhmm(ts)}` : 'Sin datos todavía'}</span>}
+        {!hayDatos && <span className="ml-auto text-sm text-estado-invalido">{incompatible ? 'El PLC tiene un programa viejo' : ts ? `Sin datos desde ${hhmm(ts)}` : 'Sin datos todavía'}</span>}
       </div>
-      {hayDatos && <div><div className="text-sm font-semibold">{f!.titulo}</div>{f!.detalle && <div className="text-xs text-muted-foreground">{f!.detalle}</div>}</div>}
+      {hayDatos && <div><div className="text-sm font-semibold">{f!.titulo}</div>{f!.detalle && <div className="text-xs text-texto-2">{f!.detalle}</div>}</div>}
 
       <div className="grid gap-3 lg:grid-cols-[1.6fr_1fr]">
         <div data-tour="cam-equipos"><TablaEquipos key={cam} estado={estado} cam={cam} hayDatos={hayDatos} /></div>

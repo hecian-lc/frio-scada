@@ -31,9 +31,9 @@ export default function HojaEquipo({ cam, g, onCerrar }: { cam: string; g: numbe
       <DialogContent className="w-[calc(100vw-1.5rem)] max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{nombreCamara(cam)} · Equipo {g}</DialogTitle>
-          <div className="text-sm text-muted-foreground">Ahora: {eq?.texto ?? 'Sin datos'}</div>
+          <div className="text-sm text-texto-2">Ahora: {eq?.texto ?? 'Sin datos'}</div>
         </DialogHeader>
-        {!permiso.ok && <div role="alert" className="rounded-md bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400">{permiso.motivo}</div>}
+        {!permiso.ok && <div role="alert" className="border border-linea bg-fila-total p-3 text-sm">{permiso.motivo}</div>}
 
         <section className="space-y-2">
           <div className="font-semibold">Modo</div>
@@ -63,7 +63,7 @@ export default function HojaEquipo({ cam, g, onCerrar }: { cam: string; g: numbe
                 <Button className="h-auto py-2 flex-1 whitespace-normal" disabled={off || !minOk} onClick={() => pedir({ comando: 4, ...base, valor: min })}>Prender</Button>
                 <Button variant="outline" className="h-auto py-2 flex-1 whitespace-normal" disabled={off} onClick={() => pedir({ comando: 4, ...base, valor: 0 })}>Apagar</Button>
               </div>
-              {!minOk && <div className="text-xs text-red-600">{tope ? `Poné minutos enteros, de 1 a ${tope}` : 'Poné minutos enteros (1 o más)'}</div>}
+              {!minOk && <div className="text-xs text-estado-alta">{tope ? `Poné minutos enteros, de 1 a ${tope}` : 'Poné minutos enteros (1 o más)'}</div>}
             </div>
           </section>
         )}

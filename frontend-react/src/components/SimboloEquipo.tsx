@@ -15,7 +15,7 @@ export function SimboloEquipo({ c, g, size = 24, conTexto }: { c: string; g: num
   return (
     <div className="flex items-center gap-2">
       <div className="flex flex-col items-center gap-0.5">
-        <div className="flex items-center justify-center rounded-sm" role="img" aria-label={`Equipo ${g}: ${eq.texto}`}
+        <div className="flex items-center justify-center" role="img" aria-label={`Equipo ${g}: ${eq.texto}`}
           style={{ width: size, height: size, background: eq.color, color: eq.sobre, border: eq.borde ? `1px solid ${eq.borde}` : undefined }}>
           <Icono nombre={eq.icono} size={Math.round(size * 0.65)} />
         </div>
