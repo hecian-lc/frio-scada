@@ -2,26 +2,25 @@ import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
 import { apiJson } from '../lib/api'
 import { useServerStore } from '../store/server'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import { Badge } from '../components/ui/badge'
-import { Loader2, Link2, Unlink, PlugZap, RefreshCw } from 'lucide-react'
+import { Loader2, Link2, Unlink, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 
 const MODE = (import.meta.env.VITE_DATA_MODE as string) || 'mock'
 
 type TsStatus = { state: string; tailnet: string | null; user: string | null; ip: string | null; hostname: string | null; authUrl: string | null }
 
-const TS_LABEL: Record<string, { text: string; cls: string }> = {
-  Running: { text: 'Conectado', cls: 'bg-green-500/15 text-green-700 dark:text-green-300' },
-  NeedsLogin: { text: 'Esperando login', cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' },
+const TS_LABEL: Record<string, string> = {
+  Running: 'Conectado',
+  NeedsLogin: 'Esperando login',
   // El tailnet exige que un administrador apruebe el equipo en la consola de Tailscale
-  NeedsMachineAuth: { text: 'Esperando aprobación del administrador de Tailscale', cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' },
-  Stopped: { text: 'Detenido', cls: 'bg-muted text-muted-foreground' },
-  NoState: { text: 'Iniciando', cls: 'bg-muted text-muted-foreground' },
-  Unavailable: { text: 'No disponible', cls: 'bg-muted text-muted-foreground' },
+  NeedsMachineAuth: 'Esperando aprobación del administrador de Tailscale',
+  Stopped: 'Detenido',
+  NoState: 'Iniciando',
+  Unavailable: 'No disponible',
 }
 
 function TailscaleCard({ replica }: { replica: boolean }) {
@@ -72,15 +71,11 @@ function TailscaleCard({ replica }: { replica: boolean }) {
     finally { setBusy(false) }
   }
 
-  const label = TS_LABEL[st?.state || ''] || { text: st?.state || '…', cls: 'bg-muted text-muted-foreground' }
+  const label = TS_LABEL[st?.state || ''] ?? (st?.state || '…')
 
   return (
-    <Card className="p-3 space-y-3">
-      <div className="flex items-center gap-2">
-        <PlugZap className="h-4 w-4 text-primary" />
-        <div className="font-semibold">Tailscale</div>
-        <span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium ${label.cls}`}>{label.text}</span>
-      </div>
+    <Panel titulo="Tailscale" accion={<span className="normal-case">{label}</span>}>
+    <div className="space-y-3">
       {err && <div className="text-sm text-destructive">{err}</div>}
       {st?.state === 'Running' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
@@ -100,11 +95,11 @@ function TailscaleCard({ replica }: { replica: boolean }) {
           )}
           {st.authUrl && (
             <div className="flex flex-wrap items-center gap-3">
-              {qr && <img src={qr} alt="QR de login de Tailscale" className="rounded-md border bg-white p-1" />}
+              {qr && <img src={qr} alt="QR de login de Tailscale" className="border border-linea bg-white p-1" />}
               <div className="space-y-2 text-sm min-w-0">
                 <p>Tocá el botón (o escaneá el QR con el celular) e iniciá sesión con la cuenta de Tailscale de la planta. Al aprobarlo, esta pantalla pasa sola a <b>Conectado</b>.</p>
                 <a href={st.authUrl} target="_blank" rel="noreferrer"
-                  className="toque inline-flex items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">
+                  className="toque inline-flex items-center gap-2 bg-accion px-4 text-sm font-semibold text-accion-texto hover:bg-accion-hover">
                   <Link2 className="h-4 w-4" />Abrir el login de Tailscale</a>
                 <a href={st.authUrl} target="_blank" rel="noreferrer" className="block break-all text-xs text-muted-foreground underline">{st.authUrl}</a>
                 <p className="text-xs text-muted-foreground flex items-center gap-1"><RefreshCw className="h-3 w-3 animate-spin" />Esperando la aprobación…</p>
@@ -117,7 +112,8 @@ function TailscaleCard({ replica }: { replica: boolean }) {
       {st?.state === 'Running' && (
         <div className="flex justify-end"><Button size="sm" variant="outline" disabled={busy} onClick={disconnect}><Unlink className="h-3.5 w-3.5 mr-1" />Desconectar</Button></div>
       )}
-    </Card>
+    </div>
+    </Panel>
   )
 }
 
@@ -178,14 +174,8 @@ function PlantLinkCard() {
   const ago = sync?.lastSync ? Math.max(0, Math.round((Date.now() - sync.lastSync) / 1000)) : null
 
   return (
-    <Card className="p-3 space-y-3">
-      <div className="flex items-center gap-2">
-        <Link2 className="h-4 w-4 text-primary" />
-        <div className="font-semibold">Planta</div>
-        {link?.configured
-          ? <Badge variant="secondary" className="ml-auto">{link.fromEnv ? 'Enlazada por .env' : `Enlazada: ${link.name}`}</Badge>
-          : <Badge variant="outline" className="ml-auto">Sin enlazar</Badge>}
-      </div>
+    <Panel titulo="Planta" accion={<span className="normal-case">{link?.configured ? (link.fromEnv ? 'Enlazada por .env' : `Enlazada: ${link.name}`) : 'Sin enlazar'}</span>}>
+    <div className="space-y-3">
       {link?.configured && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <div><span className="text-muted-foreground">Dirección: </span><span className="font-mono">{link.source}</span></div>
@@ -199,9 +189,9 @@ function PlantLinkCard() {
       <div className="space-y-2">
         <Label>{link?.configured ? 'Cambiar código de enlace' : 'Código de enlace (se genera en la planta, Configuración → Réplicas)'}</Label>
         <textarea value={code} onChange={e => { setCode(e.target.value); setTest(null) }} rows={3}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs font-mono" placeholder="FRIOR1-…" />
+          className="w-full border border-borde-campo bg-placa px-3 py-2 text-xs font-mono" placeholder="FRIOR1-…" />
         {test && (test.ok
-          ? <div className="text-sm text-green-700 dark:text-green-300">OK: {test.name} · {test.source} · histórico desde {test.oldest ? new Date(test.oldest).toLocaleDateString() : '—'}</div>
+          ? <div className="text-sm">OK: {test.name} · {test.source} · histórico desde {test.oldest ? new Date(test.oldest).toLocaleDateString() : '—'}</div>
           : <div className="text-sm text-destructive">{test.error}</div>)}
         <div className="flex justify-between">
           {link?.configured && !link.fromEnv
@@ -213,7 +203,8 @@ function PlantLinkCard() {
           </div>
         </div>
       </div>
-    </Card>
+    </div>
+    </Panel>
   )
 }
 

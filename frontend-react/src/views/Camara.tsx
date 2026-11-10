@@ -65,7 +65,7 @@ export default function Camara() {
         {modo && <span className="text-sm text-texto-2">{modo}</span>}
         {hayDatos && <span className="text-sm text-texto-2">{falta != null ? `faltan ${falta} min` : (p => p.startsWith('Sin') ? p : `Próximo descongelado: ${p}`)(proximoTexto(estado!, cam, ahora))}</span>}
         {badge && <span className="ml-auto inline-flex items-center gap-1.5 font-semibold text-estado-alta"><MarcaAlarma />{badge.t}</span>}
-        {admin && <button type="button" data-tour="cam-ajustes" onClick={() => setAjustes(true)} className={`toque inline-flex items-center gap-1 border border-borde-campo bg-placa px-3 text-sm font-medium hover:bg-seleccion ${badge ? '' : 'ml-auto'}`}>⚙ Ajustes</button>}
+        {admin && <button type="button" data-tour="cam-ajustes" onClick={() => setAjustes(true)} className={`toque inline-flex items-center gap-1 border border-borde-campo bg-placa px-3 text-sm font-medium hover:bg-seleccion ${badge ? '' : 'ml-auto'}`}>Ajustes</button>}
         {admin && ajustes && <AjustesCamara cam={cam} onCerrar={() => setAjustes(false)} />}
         {!hayDatos && <span className="ml-auto text-sm text-estado-invalido">{incompatible ? 'El PLC tiene un programa viejo' : ts ? `Sin datos desde ${hhmm(ts)}` : 'Sin datos todavía'}</span>}
       </div>

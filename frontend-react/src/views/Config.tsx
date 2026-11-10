@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useConfigStore } from '../store/config'
 import { authFetch, useAuthStore, ROLE_LABEL, type Role } from '../store/auth'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
@@ -58,7 +58,7 @@ export default function Config() {
       </TabsList>
 
       {replica && (
-        <div className="rounded-md border border-sky-500/30 bg-sky-500/10 px-3 py-2 text-sm text-sky-800 dark:text-sky-200">
+        <div className="border border-linea bg-panel px-3 py-2 text-sm">
           Servidor réplica: la configuración se sincroniza desde planta y es solo lectura.
           Correo y marca son de este servidor.
         </div>
@@ -136,7 +136,7 @@ function SmtpTab() {
 
   return (
     <div className="max-w-2xl">
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Correo saliente"><div className="space-y-3">
         <p className="text-sm text-muted-foreground">Servidor de correo saliente usado para alertas y el reporte diario.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="sm:col-span-2"><Label>Servidor (host)</Label><Input value={cfg.host} onChange={e => patch({ host: e.target.value })} placeholder="smtp.gmail.com" /></div>
@@ -164,7 +164,7 @@ function SmtpTab() {
             Guardar
           </Button>
         </div>
-      </Card>
+      </div></Panel>
       <DailyReportCard />
     </div>
   )
@@ -191,9 +191,8 @@ function RepeticionCard() {
     } catch (e: any) { toast.error(e.message) } finally { setGuardando(false) }
   }
   return (
-    <Card className="p-3 space-y-3 mt-3">
+    <div className="mt-3"><Panel titulo="Repetir el aviso de alarma"><div className="space-y-3">
       <div>
-        <div className="font-semibold">Repetir el aviso de alarma</div>
         <p className="text-sm text-muted-foreground">Mientras la alarma siga activa y nadie toque "Visto" (en el portal o en Telegram), el aviso se manda de nuevo. 0 veces = no repetir.</p>
       </div>
       <div className="flex flex-wrap items-end gap-3">
@@ -201,7 +200,7 @@ function RepeticionCard() {
         <div><Label htmlFor="rep-veces">Hasta (veces)</Label><Input id="rep-veces" type="number" min={0} max={20} className="w-28" value={veces} onChange={e => setVeces(e.target.value)} /></div>
         <Button size="sm" disabled={guardando} onClick={guardar}>{guardando ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}Guardar</Button>
       </div>
-    </Card>
+    </div></Panel></div>
   )
 }
 
@@ -282,13 +281,13 @@ function TelegramTab() {
 
   return (
     <div className="max-w-2xl">
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Telegram"><div className="space-y-3">
         <p className="text-sm text-muted-foreground">Bot de Telegram que manda las alarmas y los avisos.</p>
         <div>
           <Label>Token del bot</Label>
           <Input type="password" value={token} onChange={e => setToken(e.target.value)} autoComplete="new-password"
             placeholder={hasToken ? '•••••• (sin cambios)' : '123456:ABC…'} />
-          {hasToken && <p className="text-xs text-muted-foreground mt-1">token guardado ✓</p>}
+          {hasToken && <p className="text-xs text-muted-foreground mt-1">token guardado</p>}
         </div>
         <div>
           <Label>Chat ID</Label>
@@ -302,7 +301,7 @@ function TelegramTab() {
         {chatsErr && <p className="text-xs text-destructive">{chatsErr}</p>}
         {chats && chats.length === 0 && <p className="text-sm text-muted-foreground">El bot todavía no vio ningún chat. Escribí /start@NombreDelBot en el grupo y volvé a buscar.</p>}
         {chats && chats.length > 0 && (
-          <ul className="divide-y rounded border">
+          <ul className="divide-y divide-linea-fila border border-linea">
             {chats.map(c => (
               <li key={c.id} className="flex items-center gap-2 p-2">
                 <div className="min-w-0 flex-1">
@@ -333,7 +332,7 @@ function TelegramTab() {
             Guardar
           </Button>
         </div>
-      </Card>
+      </div></Panel>
       <RepeticionCard />
     </div>
   )
@@ -374,16 +373,15 @@ function DailyReportCard() {
   const next = info.nextRunAt ? new Date(info.nextRunAt) : null
 
   return (
-    <Card className="p-3 space-y-3 mt-4">
+    <div className="mt-4"><Panel titulo="Reporte diario automático"><div className="space-y-3">
       <div>
-        <div className="font-semibold text-sm">Reporte diario automático</div>
         <p className="text-sm text-muted-foreground">
           A esta hora se genera el PDF del día anterior y se manda por correo (a los destinatarios de arriba) y/o Telegram, según lo elegido en Más → Reporte diario.
           También es el cierre del día para cargar lluvia y altura del río.
         </p>
       </div>
       {!info.enabled ? (
-        <p className="text-sm text-yellow-600 dark:text-yellow-400">El envío automático está deshabilitado en el servidor (DAILY_REPORT_ENABLED=false).</p>
+        <p className="text-sm font-medium">El envío automático está deshabilitado en el servidor (DAILY_REPORT_ENABLED=false).</p>
       ) : (
         <div className="flex items-end gap-3 flex-wrap">
           <div>
@@ -401,7 +399,7 @@ function DailyReportCard() {
           )}
         </div>
       )}
-    </Card>
+    </div></Panel></div>
   )
 }
 

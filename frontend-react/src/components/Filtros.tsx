@@ -11,7 +11,7 @@ const PRESETS = [
   { id: 'ayer', label: 'Ayer', rango: () => ({ desde: hoy(-1), hasta: hoy(-1) }) },
   { id: '7', label: '7 días', rango: () => ({ desde: hoy(-6), hasta: hoy() }) },
 ]
-const chip = (on: boolean) => cn('toque inline-flex items-center px-3 rounded-full text-sm border whitespace-nowrap', on ? 'bg-primary text-primary-foreground border-primary' : 'text-muted-foreground')
+const chip = (on: boolean) => cn('toque inline-flex items-center border px-3 text-sm whitespace-nowrap', on ? 'border-accion bg-accion text-accion-texto' : 'border-borde-campo bg-placa')
 
 export function Filtros({ r, set, sinCamara }: { r: Rango; set: (r: Rango) => void; sinCamara?: boolean }) {
   const [elegir, setElegir] = useState(false)
@@ -22,7 +22,7 @@ export function Filtros({ r, set, sinCamara }: { r: Rango; set: (r: Rango) => vo
         {PRESETS.map(p => <button key={p.id} className={chip(activo === p.id)} onClick={() => { setElegir(false); set({ ...r, ...p.rango() }) }}>{p.label}</button>)}
         <button className={chip(activo === 'fecha')} onClick={() => setElegir(true)}>Elegir fecha</button>
         {!sinCamara && (
-          <select aria-label="Cámara" className="h-9 rounded-md border border-input bg-background px-2 text-sm" value={r.camara} onChange={e => set({ ...r, camara: e.target.value })}>
+          <select aria-label="Cámara" className="toque border border-borde-campo bg-placa px-2 text-sm" value={r.camara} onChange={e => set({ ...r, camara: e.target.value })}>
             <option value="">Todas las cámaras</option>
             {CAMARAS.map(c => <option key={c} value={c}>{nombreCamara(c)}</option>)}
           </select>
@@ -40,4 +40,4 @@ export function Filtros({ r, set, sinCamara }: { r: Rango; set: (r: Rango) => vo
 }
 
 export const SinDatos = ({ error, vacio }: { error: boolean; vacio: boolean }) =>
-  error || vacio ? <div className="text-center text-sm text-muted-foreground py-8">{error ? 'No se pudo cargar' : 'No hay registros en este período'}</div> : null
+  error || vacio ? <div className="text-center text-sm text-texto-2 py-8">{error ? 'No se pudo cargar' : 'No hay registros en este período'}</div> : null

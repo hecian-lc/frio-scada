@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Card } from './ui/card'
+import { Panel } from './Panel'
 import { Button } from './ui/button'
 import { useMando, usePermiso } from './Confirmar'
 import { useCamarasStore } from '../store/camaras'
@@ -16,10 +16,10 @@ export default function AvisoArranque() {
   if (!pendiente) return <>{dialogo}</>
   const mira = rol === 'operador' || rol === ''
   return (
-    <Card className="space-y-3 border-accion p-3" role="alert">
-      <div className="font-semibold">El PLC arrancó con equipos en manual</div>
+    <div role="alert"><Panel titulo="El PLC arrancó con equipos en manual" className="border-accion">
+      <div className="space-y-2">
       <div className="text-sm">Está esperando que elijas qué hacer con ellos.</div>
-      {mira ? <div className="text-sm text-muted-foreground">Tu usuario solo puede mirar: la respuesta se da en el panel o con un usuario que pueda operar.</div> : <>
+      {mira ? <div className="text-sm text-texto-2">Tu usuario solo puede mirar: la respuesta se da en el panel o con un usuario que pueda operar.</div> : <>
         <div className="grid grid-cols-1 gap-2 min-[400px]:grid-cols-2">
           <Button className="h-auto py-2 whitespace-normal" disabled={!permiso.ok || enviando} onClick={() => pedir({ comando: 7, valor: 1 })}>Mantener en manual</Button>
           <Button variant="outline" className="h-auto py-2 whitespace-normal" disabled={!permiso.ok || enviando} onClick={() => pedir({ comando: 7, valor: 2 })}>Pasar a automático</Button>
@@ -27,6 +27,7 @@ export default function AvisoArranque() {
         {!permiso.ok && <div className="text-sm text-texto-2">{permiso.motivo}</div>}
       </>}
       {dialogo}
-    </Card>
+      </div>
+    </Panel></div>
   )
 }
