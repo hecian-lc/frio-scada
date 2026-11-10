@@ -9,3 +9,11 @@ describe('pasos del tutorial', () => {
   test.each(['inicio', 'camara'] as const)('%s: cada paso tiene elemento, título y texto', t =>
     expect(pasosPara(t, true).every(p => p.titulo && p.texto && p.el)).toBe(true))
 })
+
+describe('tutorial de inicio', () => {
+  test('apunta a los paneles de Inicio', () => {
+    const els = pasosPara('inicio', true).map(p => p.el)
+    expect(els.slice(0, 4)).toEqual(['camaras', 'trend', 'hoy', 'eventos'])
+    expect(els).not.toContain('semaforo')
+  })
+})

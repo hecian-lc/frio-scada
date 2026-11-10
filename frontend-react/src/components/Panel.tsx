@@ -12,7 +12,7 @@ interface PanelProps {
 export function Panel({ titulo, accion, className, children, ...rest }: PanelProps) {
   return (
     <section className={cn('border border-linea bg-panel', className)} data-tour={rest['data-tour']}>
-      <header className="flex h-7 items-center justify-between gap-2 bg-panel-titulo px-2 font-cond text-xs font-semibold uppercase tracking-wide text-panel-titulo-texto">
+      <header className="flex h-[28px] items-center justify-between gap-2 bg-panel-titulo px-2 font-cond text-xs font-semibold uppercase tracking-wide text-panel-titulo-texto">
         <h2 className="truncate">{titulo}</h2>
         {accion && <div className="flex items-center gap-1">{accion}</div>}
       </header>

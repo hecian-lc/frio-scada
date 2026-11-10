@@ -8,9 +8,10 @@ export interface Paso { el: string; titulo: string; texto: string; soloAdmin?: b
 export type Tutorial = 'inicio' | 'camara'
 
 const INICIO: Paso[] = [
-  { el: 'resumen', titulo: 'Resumen de hoy', texto: 'Cuántos descongelados se hicieron hoy, cuántas alarmas hubo y cuántos compresores están andando ahora.' },
-  { el: 'semaforo', titulo: 'Estado general', texto: 'Verde: todo anda bien. Amarillo: hay algo para mirar. Rojo: hay una alarma. Abajo dice cuándo llegó el último dato del PLC.' },
-  { el: 'camara', titulo: 'Cada cámara', texto: 'Un cuadrado por equipo: azul enfriando, celeste escurriendo, naranja descongelando, violeta en manual, rojo en alarma, gris parado o sin datos. Tocá la tarjeta para ver el detalle de la cámara.' },
+  { el: 'camaras', titulo: 'Cámaras', texto: 'Una fila por cámara con un cuadrado por equipo: azul enfriando, verde azulado descongelando, celeste escurriendo, gris azulado manual, blanco o gris con borde apagado, cuadrado rojo con "!" en alarma y violeta con "?" sin datos. Tocá la fila para ver el detalle de la cámara.' },
+  { el: 'trend', titulo: 'Qué hizo cada equipo', texto: 'Lo que hizo cada equipo hoy, hora por hora, una cámara debajo de la otra. La línea azul es la hora actual.' },
+  { el: 'hoy', titulo: 'Hoy', texto: 'Por cámara: descongelados hechos, alarmas activas y compresores en marcha. La última fila es el total de la planta. "—" quiere decir que no hay dato.' },
+  { el: 'eventos', titulo: 'Últimos eventos', texto: 'Lo último que pasó en las cámaras, con la hora. "Ver todos" lleva a la página de Eventos.' },
   { el: 'nav-camaras', titulo: 'Cámaras', texto: 'El detalle de cada cámara: el gráfico de las últimas horas, los equipos y los horarios de descongelado.' },
   { el: 'nav-alarmas', titulo: 'Alarmas', texto: 'Las alarmas activas ahora y las que hubo en los días anteriores, con cuánto duraron.' },
   { el: 'nav-eventos', titulo: 'Eventos', texto: 'Todo lo que pasó: cambios de modo, descongelados, maniobras desde el portal.' },
