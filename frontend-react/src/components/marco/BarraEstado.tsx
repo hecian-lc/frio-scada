@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { apiJson } from '../../lib/api'
-import { fechaHora } from '../../lib/camaras'
+import { fechaDia, hhmm } from '../../lib/camaras'
 import { useAuthStore, isAdminRole } from '../../store/auth'
 import { useBrandingStore } from '../../store/branding'
 import { useCamarasStore } from '../../store/camaras'
@@ -11,7 +11,7 @@ import ReplicaBadge from '../ReplicaBadge'
 interface Resultado { ts: number; ok: boolean }
 interface Copias { drive: { activo: boolean }; estado: { local?: Resultado; drive?: Resultado } }
 
-const copia = (r?: Resultado) => (!r ? 'sin copias' : `${r.ok ? '' : 'falló '}${fechaHora(r.ts).slice(0, 17)}`)
+const copia = (r?: Resultado) => (!r ? 'sin copias' : `${r.ok ? '' : 'falló '}${fechaDia(r.ts)} ${hhmm(r.ts)}`)
 
 // Barra de estado (solo computadora), 22 px: PLC, servidor, última copia (solo admin) y versión.
 export default function BarraEstado() {

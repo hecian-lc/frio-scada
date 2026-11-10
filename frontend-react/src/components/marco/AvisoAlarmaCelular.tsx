@@ -13,8 +13,8 @@ export default function AvisoAlarmaCelular({ alarmas: { sinVer, vistas, marcar }
       <span className="min-w-0 flex-1 text-sm">
         <b className="block font-semibold text-estado-alta">{g.titulo}</b>
         <span className="text-texto-2">{[g.accion, desdeTexto(g.desde)].filter(Boolean).join(' · ')}</span>
-        {sinVer.length > 1 && <Link to="/alarmas" className="ml-1 font-semibold text-accion">+{sinVer.length - 1} más</Link>}
       </span>
+      {sinVer.length > 1 && <Link to="/alarmas" className="inline-flex min-h-[44px] shrink-0 items-center px-1 text-sm font-semibold text-accion">+{sinVer.length - 1} más</Link>}
       <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} className="min-h-[44px]" />
     </div>
   )

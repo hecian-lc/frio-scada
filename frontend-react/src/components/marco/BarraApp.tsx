@@ -5,7 +5,7 @@ import { hhmmss } from '../../lib/camaras'
 import { useAuthStore, ROLE_LABEL } from '../../store/auth'
 import { useBrandingStore } from '../../store/branding'
 
-const boton = 'toque inline-flex w-10 items-center justify-center text-marco-texto-2 hover:bg-marco-2 hover:text-marco-texto md:h-8 md:min-h-0 md:w-8'
+const boton = 'inline-flex h-[44px] w-[44px] shrink-0 items-center justify-center text-marco-texto-2 hover:bg-marco-2 hover:text-marco-texto md:h-[32px] md:w-[32px]'
 
 // Barra de la app: 40 px en la computadora, 48 px en el celular. ☰ (solo computadora) achica el navegador.
 export default function BarraApp({ compacto, alternarMenu }: { compacto: boolean; alternarMenu: () => void }) {
@@ -22,9 +22,9 @@ export default function BarraApp({ compacto, alternarMenu }: { compacto: boolean
         title={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-label={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-expanded={!compacto}>
         <Menu className="h-5 w-5" />
       </button>
-      <img src={logoUrl} alt={brandName} className="h-[28px] w-auto max-w-[140px] object-contain" />
-      <span className="truncate text-lg font-semibold">Cámaras de frío</span>
-      <div className="ml-auto flex items-center gap-3 text-sm text-marco-texto-2">
+      <img src={logoUrl} alt={brandName} className="h-[28px] w-auto max-w-[64px] shrink-0 object-contain md:max-w-[140px]" />
+      <span className="min-w-0 truncate text-lg font-semibold">Cámaras de frío</span>
+      <div className="ml-auto flex shrink-0 items-center gap-3 text-sm text-marco-texto-2">
         <span className="font-mono text-marco-texto" title="Hora de planta">{hhmmss(ahora)}</span>
         <span className="hidden md:inline" title={`Sesión: ${user} (${role})`}>{user} · {ROLE_LABEL[role] || 'Operador'}</span>
         <div className="flex items-center">

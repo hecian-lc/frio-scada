@@ -21,7 +21,7 @@ export default function BandaAlarmas({ alarmas: { grupos, sinVer, sinDatos, vist
           {g.desde !== undefined && <span className="text-texto-2"> · {desdeTexto(g.desde)}</span>}
         </span>
         <span className="ml-auto flex shrink-0 items-center gap-2">
-          <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} className="md:min-h-0 md:h-6" />
+          <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} className="md:min-h-0 md:h-[24px]" />
           {grupos.length > 1 && <Link to="/alarmas" className="text-sm font-semibold text-accion underline-offset-2 hover:underline">+{grupos.length - 1} más</Link>}
         </span>
       </>}

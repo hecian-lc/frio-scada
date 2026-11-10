@@ -25,7 +25,7 @@ export function NavegadorPc({ compacto }: { compacto: boolean }) {
         const on = i.codigo === codigo
         return (
           <Link key={i.to} to={i.to} data-tour={`nav-${i.icono}`} title={compacto ? `${i.codigo} ${i.label}` : undefined} aria-current={on ? 'page' : undefined}
-            className={cn('flex min-h-8 items-center gap-2.5 border-l-[3px] px-3 text-base text-texto hover:bg-seleccion',
+            className={cn('flex min-h-[32px] items-center gap-2.5 border-l-[3px] px-3 text-base text-texto hover:bg-seleccion',
               compacto && 'justify-center px-0', on ? 'border-accion bg-seleccion font-semibold' : 'border-transparent')}>
             {!compacto && <span className="w-[22px] font-mono text-xs text-texto-2">{i.codigo}</span>}
             <IconoNav nombre={i.icono} size={18} />
@@ -42,7 +42,7 @@ export function NavegadorCelular({ sinVer }: { sinVer: number }) {
   const { codigo } = pantallaDe(useLocation().pathname)
   const activo = CELULAR[codigo] ?? codigo
   return (
-    <nav aria-label="Principal" className="flex h-[calc(4rem+env(safe-area-inset-bottom))] shrink-0 border-t border-linea bg-panel pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav aria-label="Principal" className="flex h-[calc(56px+env(safe-area-inset-bottom))] shrink-0 border-t border-linea bg-panel pb-[env(safe-area-inset-bottom)] md:hidden">
       {ITEMS.filter(i => !CELULAR[i.codigo]).map(i => {
         const on = i.codigo === activo
         return (
@@ -52,7 +52,7 @@ export function NavegadorCelular({ sinVer }: { sinVer: number }) {
             <IconoNav nombre={i.icono} />
             {i.label}
             {i.codigo === 'A1' && sinVer > 0 && (
-              <span className="absolute left-[calc(50%+6px)] top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-estado-alta px-1 text-xs font-bold text-estado-alta-sobre"
+              <span className="absolute left-[calc(50%+6px)] top-[6px] grid h-[18px] min-w-[18px] place-items-center rounded-full bg-estado-alta px-1 text-xs font-bold text-estado-alta-sobre"
                 aria-label={`${sinVer} ${sinVer === 1 ? 'alarma activa sin ver' : 'alarmas activas sin ver'}`}>{sinVer}</span>
             )}
           </Link>
