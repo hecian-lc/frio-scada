@@ -94,7 +94,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
                 <text x={4} y={y + 11} fontSize={11} className="fill-foreground">Equipo {g}</text>
                 {tramos.filter(t => t.grupo === `G${g}` && t.fin > dia0 && t.inicio < ahora).map((t, k) => {
                   const a = x(Math.max(t.inicio, dia0)), b = x(Math.min(t.fin, ahora))
-                  return b > a ? <rect key={k} x={a} y={y + 2} width={b - a} height={RH - 5} fill={t.estado === 'sin-datos' ? `url(#${idHachura})` : COLOR_TRAMO[t.estado]} /> : null
+                  return b > a ? <rect key={k} x={a} y={y + 2} width={b - a} height={RH - 5} fill={t.estado === 'sin-datos' ? `url(#${idHachura})` : COLOR_TRAMO[t.estado]} stroke={t.estado === 'apagado' ? 'var(--borde-campo)' : undefined} strokeWidth={1} /> : null
                 })}
               </g>
             )
@@ -128,7 +128,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
             <div className={`grid ${ancho < 480 ? 'grid-cols-1' : 'grid-cols-2'} gap-x-3.5 gap-y-0.5`}>
               {det.equipos.map(q => (
                 <div key={q.grupo} className={`flex min-w-0 items-center gap-1.5 ${ancho < 480 ? '' : 'whitespace-nowrap'}`}>
-                  <i className="inline-block h-2 w-2 rounded-full" style={{ background: COLOR_INST[q.estado] }} />
+                  <i className="inline-block h-2 w-2 rounded-full" style={{ background: COLOR_INST[q.estado], border: q.estado === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />
                   Equipo {q.grupo}: {q.estado === 'descongelando' ? <b className="text-orange-700 dark:text-orange-400">descongelando</b> : q.estado}
                 </div>
               ))}
@@ -138,7 +138,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
         {(['frio', 'descongelando', 'apagado', 'sin-datos'] as const).map(k => (
-          <span key={k} className="flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: k === 'sin-datos' ? HACHURA : COLOR_TRAMO[k] }} />{TEXTO_TRAMO[k]}</span>
+          <span key={k} className="flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: k === 'sin-datos' ? HACHURA : COLOR_TRAMO[k], border: k === 'apagado' ? '1px solid var(--borde-campo)' : undefined }} />{TEXTO_TRAMO[k]}</span>
         ))}
       </div>
     </Card>
