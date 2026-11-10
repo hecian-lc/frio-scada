@@ -53,6 +53,7 @@ export default {
         'estado-media': 'var(--estado-media)',
         'estado-baja': 'var(--estado-baja)',
         'estado-invalido': 'var(--estado-invalido)',
+        'estado-contorno': 'var(--estado-contorno)',
         'eq-frio': 'var(--eq-frio)',
         'eq-desc': 'var(--eq-desc)',
         'eq-escurre': 'var(--eq-escurre)',
