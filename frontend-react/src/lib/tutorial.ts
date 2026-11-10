@@ -24,7 +24,7 @@ const CAMARA: Paso[] = [
   { el: 'cam-estado', titulo: 'Cómo está la cámara', texto: 'El modo en que está, cuándo es el próximo descongelado (o cuánto le falta al que está en curso) y el estado general.' },
   { el: 'cam-equipos', titulo: 'Los equipos', texto: 'Cada equipo con su estado y sus salidas: C compresor, E evaporador, R resistencia (verde prendida, naranja la resistencia descongelando). También los arranques, las horas de marcha y el tiempo desde su último descongelado.' },
   { el: 'cam-equipos', titulo: 'Manejar un equipo', texto: 'Con "Cambiar…" se puede pasar un equipo a automático, fuera de servicio o manual, o cortar un descongelado. Solo para usuarios que pueden operar y con la llave de mando remoto habilitada en el tablero.' },
-  { el: 'cam-alarmas', titulo: 'Alarmas de la cámara', texto: 'Las alarmas activas de esta cámara y qué hacer con cada una. Con "👀 Visto" avisás que ya la viste: el aviso deja de repetirse por Telegram y correo.' },
+  { el: 'cam-alarmas', titulo: 'Alarmas de la cámara', texto: 'Las alarmas activas de esta cámara y qué hacer con cada una. Con "Visto" avisás que ya la viste: el aviso deja de repetirse por Telegram y correo.' },
   { el: 'cam-horarios', titulo: 'Horarios de hoy', texto: 'Los horarios de descongelado del día: cuáles ya se hicieron, cuál está en curso y cuál es el próximo.' },
   { el: 'cam-trend', titulo: 'Gráfico del día', texto: 'Lo que hizo cada equipo hoy, hora por hora: azul enfriando, naranja descongelando, gris apagado y rayado sin datos. La línea roja es la hora actual y las marcas de arriba son los horarios programados. Pasá el mouse (o tocá) para ver el detalle de ese momento.' },
   { el: 'cam-eventos', titulo: 'Eventos de hoy', texto: 'Lo último que pasó en esta cámara. "Ver todos" lleva a la página de Eventos.' },
@@ -42,6 +42,9 @@ export function marcarTutorial(t: Tutorial, user: string, visto: boolean) {
   try { if (visto) localStorage.setItem(clave(t, user), '1'); else localStorage.removeItem(clave(t, user)) } catch { /* sin storage */ }
 }
 
+// El menú está dos veces (navegador de la computadora y barra del celular, una oculta): se usa el que se ve
+const visible = (el: string) => [...document.querySelectorAll(`[data-tour="${el}"]`)].find(e => e.getClientRects().length > 0)
+
 export function iniciarTutorial(t: Tutorial, user: string, admin: boolean) {
   const d = driver({
     showProgress: true,
@@ -51,10 +54,8 @@ export function iniciarTutorial(t: Tutorial, user: string, admin: boolean) {
     doneBtnText: 'Listo',
     allowClose: true,
     // los pasos cuyo elemento no está (p. ej. sin cámaras) se saltean
-    steps: pasosPara(t, admin).filter(p => document.querySelector(`[data-tour="${p.el}"]`)).map(p => ({
-      element: `[data-tour="${p.el}"]`,
-      popover: { title: p.titulo, description: p.texto },
-    })),
+    steps: pasosPara(t, admin).map(p => ({ element: visible(p.el), popover: { title: p.titulo, description: p.texto } }))
+      .filter(s => s.element),
     onDestroyed: () => marcarTutorial(t, user, true), // terminado o cerrado: no vuelve a salir
   })
   d.drive()

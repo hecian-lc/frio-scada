@@ -35,6 +35,7 @@ const NAV = {
   mas: 'M4 6h16M4 12h16M4 18h16',
   alarmas: 'M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4',
   eventos: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+  reportes: 'M6 3h9l3 3v15H6zM9 11h6M9 15h6',
 }
 export function IconoNav({ nombre, size = 22 }: { nombre: keyof typeof NAV; size?: number }) {
   return (

@@ -17,14 +17,11 @@ export default function ReplicaBadge() {
     : behind
       ? `Réplica · poniéndose al día · atraso ${fmt(st!.lagSec!)}`
       : `Réplica · sincronizado hace ${ago < 60 ? `${ago} s` : `${Math.round(ago / 60)} min`}`
+  // Texto de la barra de estado; atrasada o con error, resaltada
   return (
-    <div
-      className={cn('hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border',
-        ok ? 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20'
-           : 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20')}
-      title={st?.error ? `Último error: ${st.error}` : 'Servidor réplica: datos de planta, solo lectura'}
-    >
+    <span className={cn('inline-flex items-center gap-1', !ok && 'font-semibold text-marco-texto')}
+      title={st?.error ? `Último error: ${st.error}` : 'Servidor réplica: datos de planta, solo lectura'}>
       <RefreshCw className="h-3 w-3" />{text}
-    </div>
+    </span>
   )
 }
