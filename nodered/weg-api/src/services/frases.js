@@ -19,6 +19,7 @@ const ALARMAS = {
   solapado: { texto: 'un horario de descongelado se pisa con otro', accion: 'corregirlo en la configuración del PLC' },
   tiempo_invalido: { texto: 'un horario de descongelado tiene un tiempo inválido', accion: 'corregirlo en la configuración del PLC' },
 };
+const TIPOS_ALARMA = Object.keys(ALARMAS);
 const textoAlarma = (clave) => ALARMAS[String(clave).split('.').pop()] || { texto: 'hay una alarma en el PLC', accion: 'avisar al técnico' };
 
 // ---- descongelados (frases.ts badgeDescongelado) ----
@@ -292,5 +293,5 @@ function equiposDistintos(equipos, dias = 1) {
 module.exports = {
   nombreCamara, textoAlarma, badgeDescongelado, esRem, fraseEvento, tipoAviso, claveAlarmaDeEvento, camaraDeEvento,
   periodosAlarma, agruparPeriodos, TOLERANCIA_MIN, agruparCompresores, equiposDistintos, equipoDe, horasTxt, duracionTxt, contarDescongelados,
-  TIPO, textoManiobra, quitarRemDuplicados,
+  TIPO, textoManiobra, quitarRemDuplicados, TIPOS_ALARMA,
 };

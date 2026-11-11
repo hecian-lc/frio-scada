@@ -9,6 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { validarGuardia } = require('./guardia');
 
 const CONFIG_PATH = process.env.CONFIG_PATH || '/app/config/config.json';
 const SETTINGS_PATH = path.join(path.dirname(CONFIG_PATH), 'settings.json');
@@ -353,6 +354,18 @@ function setRepeticion(p) {
   return getRepeticion();
 }
 
+// ─── Guardia: turnos e instrucciones por tipo de alarma ───
+function getGuardia() {
+  const g = read().guardia || {};
+  return { turnos: Array.isArray(g.turnos) ? g.turnos : [], instrucciones: (g.instrucciones && typeof g.instrucciones === 'object') ? g.instrucciones : {} };
+}
+function setGuardia(p) {
+  const s = read();
+  s.guardia = validarGuardia(p);
+  write(s);
+  return getGuardia();
+}
+
 // ─── Id numérico estable por usuario (el PLC lo copia al evento como u{id}) ───
 // Se asigna la primera vez que el usuario manda un comando y no cambia más (ni al renombrar el
 // registro: la clave es el nombre en minúsculas). Cabe en un registro: 1..65535.
@@ -370,6 +383,6 @@ function mandoUserId(user) {
 
 module.exports = {
   ROLES, mandoUserId, listUsers, getUsersFull, findUser, createUser, updateUser, deleteUser, setSuperadmin,
-  getSmtpPublic, getSmtpFull, smtpTransportOptions, setSmtp, getTelegramPublic, getTelegramFull, setTelegram, TG_TOKEN_RE, getDailyReport, setDailyReport, getRepeticion, setRepeticion,
+  getSmtpPublic, getSmtpFull, smtpTransportOptions, setSmtp, getTelegramPublic, getTelegramFull, setTelegram, TG_TOKEN_RE, getDailyReport, setDailyReport, getRepeticion, setRepeticion, getGuardia, setGuardia,
   hashPassword, SETTINGS_PATH,
 };
