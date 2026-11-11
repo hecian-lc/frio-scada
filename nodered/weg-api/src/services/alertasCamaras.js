@@ -138,7 +138,11 @@ async function tick(state) {
     let ok = false;
     // Telegram: un botón "Visto" por alarma nueva o repetida
     const botones = r.items.filter((i) => i.alarma).map((i) => ({ texto: `👀 Visto: ${r.memoria.activos[i.clave].texto}`.slice(0, 60), data: `v:${i.clave}` }));
-    try { ok = await alerts.notify(textoAvisoAlarmas(r.items, { instruccion: (c) => guardia.instruccion(c, g.instrucciones), guardia: guardia.guardiaActual(g.turnos, ahora) }), { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
+    // Una guardia mal formada en settings.json no debe frenar el aviso: cae al texto simple
+    let txt;
+    try { txt = textoAvisoAlarmas(r.items, { instruccion: (c) => guardia.instruccion(c, g.instrucciones), guardia: guardia.guardiaActual(g.turnos, ahora) }); }
+    catch (e) { console.error('[ALERT] guardia:', e.message); txt = r.items.map((i) => i.texto).join('\n'); }
+    try { ok = await alerts.notify(txt, { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
     if (!ok) {
       for (const it of r.items) {
         const prev = state.memoria.activos[it.clave];

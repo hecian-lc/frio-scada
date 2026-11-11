@@ -28,9 +28,12 @@ function getTransport() {
 const telegramConfigurado = () => { const c = settings.getTelegramFull(); return !!(c.token && c.chatId); };
 
 // Rechaza si Telegram no responde 200. botones: [{texto, data}] → un botón por renglón (callback_data ≤ 64 bytes).
+// Telegram rechaza mensajes de más de 4096 caracteres: se recorta en vez de perder el aviso.
+const recortarTelegram = (t) => (String(t).length > 4096 ? String(t).slice(0, 4095) + '…' : String(t));
+
 function sendTelegram(text, botones = []) {
   const { token, chatId } = settings.getTelegramFull();
-  const body = JSON.stringify({ chat_id: chatId, text,
+  const body = JSON.stringify({ chat_id: chatId, text: recortarTelegram(text),
     ...(botones.length ? { reply_markup: { inline_keyboard: botones.map((b) => [{ text: b.texto, callback_data: b.data }]) } } : {}) });
   return new Promise((resolve, reject) => {
     const req = https.request(`https://api.telegram.org/bot${token}/sendMessage`,
@@ -157,4 +160,4 @@ async function notifyCanal(canal, texto) {
   } else throw new Error('Canal desconocido');
 }
 
-module.exports = { notify, notifyCanal, sendTelegram, sendTelegramDocument, buscarChats, telegramConfigurado, mailConfigurado, getHistory, addHistory };
+module.exports = { recortarTelegram, notify, notifyCanal, sendTelegram, sendTelegramDocument, buscarChats, telegramConfigurado, mailConfigurado, getHistory, addHistory };

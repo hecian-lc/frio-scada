@@ -30,7 +30,9 @@ export function useGuardia(activo = true): Guardia {
 
 // Instrucción del admin para ese tipo de alarma; si no hay, la frase de fábrica
 export function instruccion(clave: string, instrucciones: Record<string, string> | undefined): string | undefined {
-  return instrucciones?.[clave.split('.').pop()!] || textoAlarma(clave).accion
+  // clave de PLC "C4.G2.alarma_res" o de grupo "C4|alarma_res|<desde>"
+  const tipo = clave.includes('|') ? clave.split('|')[1] : clave.split('.').pop()!
+  return instrucciones?.[tipo] || textoAlarma(tipo).accion
 }
 
 export const telHref = (t: string) => 'tel:' + t.replace(/[^\d+]/g, '')

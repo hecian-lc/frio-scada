@@ -136,7 +136,7 @@ async function marcarVisto(claves, usuario, nota) {
 async function avisarVisto(usuario, cambiadas, nota) {
   if (!alerts.telegramConfigurado()) return;
   const { textoVisto } = require('./services/guardia');
-  for (const c of cambiadas) await alerts.notifyCanal('telegram', textoVisto(usuario, c.texto, nota));
+  await alerts.notifyCanal('telegram', textoVisto(usuario, cambiadas.map((c) => c.texto).join(', '), nota));
 }
 app.use('/api/avisos', createAvisosRouter({ notifyCanal: alerts.notifyCanal, isReplica: REPLICA_MODE, getActivas: alertasCamaras.getActivas, marcarVisto,
   getGuardia: settingsService.getGuardia, setGuardia: settingsService.setGuardia, avisarVisto,

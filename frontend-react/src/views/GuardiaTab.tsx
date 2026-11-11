@@ -8,7 +8,8 @@ import { Label } from '../components/ui/label'
 import { Switch } from '../components/ui/switch'
 import { apiJson } from '../lib/api'
 import { TIPOS_ALARMA, textoAlarma } from '../lib/frases'
-import { guardiaStore, recargarGuardia, useGuardia, type Turno } from '../lib/guardia'
+import { useServerStore } from '../store/server'
+import { guardiaStore, recargarGuardia, useGuardia, type Guardia, type Turno } from '../lib/guardia'
 
 const MAX_TURNOS = 6
 const VACIO: Turno = { nombre: '', desde: '08:00', hasta: '16:00', telefono: '', whatsapp: false }
@@ -16,6 +17,7 @@ const mayus = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function GuardiaTab() {
   const { actual } = useGuardia()
+  const replica = useServerStore(s => s.replica)
   const [turnos, setTurnos] = useState<Turno[] | null>(null)
   const [inst, setInst] = useState<Record<string, string>>({})
   const [guardando, setGuardando] = useState(false)
@@ -51,15 +53,15 @@ export default function GuardiaTab() {
     setGuardando(true)
     try {
       const instrucciones = Object.fromEntries(Object.entries(inst).filter(([, v]) => v.trim()))
-      await apiJson('/avisos/guardia', { method: 'PUT', body: JSON.stringify({ turnos: lista, instrucciones }) })
+      const resp = await apiJson<Partial<Guardia>>('/avisos/guardia', { method: 'PUT', body: JSON.stringify({ turnos: lista, instrucciones }) })
+      guardiaStore.setState({ guardia: { turnos: [], instrucciones: {}, actual: null, ...resp } })
       toast.success('Guardia guardada')
-      await recargarGuardia()
     } catch (e: any) { toast.error(e.message) }
     finally { setGuardando(false) }
   }
 
   return (
-    <div className="max-w-3xl space-y-3">
+    <fieldset disabled={replica} className="max-w-3xl space-y-3">
       <Panel titulo="Turnos de guardia"><div className="space-y-3">
         <p className="text-sm text-muted-foreground">Quién atiende las alarmas en cada horario. Hasta {MAX_TURNOS} turnos.</p>
         <div className="space-y-3">
@@ -68,7 +70,7 @@ export default function GuardiaTab() {
               <div className="col-span-2 sm:col-span-1"><Label>Nombre</Label><Input value={t.nombre} maxLength={40} onChange={e => cambiar(i, { nombre: e.target.value })} /></div>
               <div><Label>Desde</Label><Input type="time" value={t.desde} onChange={e => cambiar(i, { desde: e.target.value })} /></div>
               <div><Label>Hasta</Label><Input type="time" value={t.hasta} onChange={e => cambiar(i, { hasta: e.target.value })} /></div>
-              <div className="col-span-2 sm:col-span-1"><Label>Teléfono</Label><Input type="tel" value={t.telefono} maxLength={20} onChange={e => cambiar(i, { telefono: e.target.value })} /></div>
+              <div className="col-span-2 sm:col-span-1"><Label>Teléfono</Label><Input type="tel" value={t.telefono} maxLength={30} onChange={e => cambiar(i, { telefono: e.target.value })} /></div>
               <label className="toque flex items-center gap-2 text-sm cursor-pointer min-h-[44px] md:min-h-0">
                 <Switch checked={t.whatsapp} onCheckedChange={v => cambiar(i, { whatsapp: v })} />WhatsApp
               </label>
@@ -99,11 +101,11 @@ export default function GuardiaTab() {
         })}
       </div></Panel>
 
-      <div className="flex justify-end">
+      {!replica && <div className="flex justify-end">
         <Button size="sm" disabled={guardando} onClick={guardar}>
           {guardando ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}Guardar
         </Button>
-      </div>
-    </div>
+      </div>}
+    </fieldset>
   )
 }

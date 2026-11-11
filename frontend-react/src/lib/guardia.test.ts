@@ -7,6 +7,8 @@ import { marcar } from './vistas'
 test('instruccion: admin, fábrica, sin datos de la API', () => {
   expect(instruccion('C4.G2.alarma_res', { alarma_res: 'Llamar a Juan' })).toBe('Llamar a Juan')
   expect(instruccion('C4.G2.alarma_res', {})).toBe('avisar al técnico para revisar la resistencia')
+  expect(instruccion('C4|alarma_res|123', { alarma_res: 'Llamar a Juan' })).toBe('Llamar a Juan')
+  expect(instruccion('C4|alarma_res|123', {})).toBe('avisar al técnico para revisar la resistencia')
   expect(instruccion('C4.G2.alarma_res', undefined)).toBe('avisar al técnico para revisar la resistencia')
 })
 test('enlaces de contacto', () => {

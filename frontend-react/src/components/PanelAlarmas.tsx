@@ -21,7 +21,7 @@ export default function PanelAlarmas({ alarmas }: { alarmas: Vista[] | null }) {
           <div key={a.clave} className="flex flex-wrap items-center gap-x-2 gap-y-1"><MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>
             {a.desde !== undefined && <span className="font-mono text-xs text-texto-2">{a.desde === null ? 'desde antes de hoy' : `desde ${hhmm(a.desde)}`}</span>}
             <BotonVisto claves={a.claves ?? [a.clave]} vistas={vistas} marcar={marcar} texto={a.titulo} />
-            <div className="basis-full"><QueHacer clave={a.clave} /></div></div>
+            <div className="basis-full"><QueHacer clave={a.claves?.[0] ?? a.clave} /></div></div>
         ))}
       </div>
     </Panel>

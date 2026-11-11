@@ -66,3 +66,11 @@ test('textoAvisoAlarmas: qué hacer debajo de cada alarma, guardia al final solo
   assert.equal(textoAvisoAlarmas(items.slice(1), { instruccion: ins, guardia: null }), '🚨 PLC sin comunicacion');
   assert.equal(textoAvisoAlarmas([items[0]], { instruccion: () => 'a\nb', guardia: null }), '🚨 C4 G2: resistencia\n   Qué hacer: a\n   b');
 });
+
+test('recortarTelegram: más de 4096 se corta a 4096 terminando en …; lo corto queda igual', () => {
+  const { recortarTelegram } = require('../src/services/alerts');
+  const r = recortarTelegram('x'.repeat(5000));
+  assert.equal(r.length, 4096);
+  assert.ok(r.endsWith('…'));
+  assert.equal(recortarTelegram('hola'), 'hola');
+});

@@ -7,6 +7,7 @@ import { useNow } from '../lib/useNow'
 import { estaVencido, colorEstadoGrupo } from '../lib/estadoGrupo'
 import { nombreCamara, fechaHora, type FilaDescongelado } from '../lib/camaras'
 import { badgeDescongelado, esRem, UMBRAL_ARRANQUES_HORA, type TipoAviso } from '../lib/frases'
+import QueHacer from '../components/QueHacer'
 import { agruparActivas, agruparPeriodos, alarmasActivasVista, periodosAlarma, ultimoPorClave } from '../lib/alarmas'
 import { equiposPorCamara, equiposDistintos, duracionTxt, equipoDe, horasTxt, prepararAvisos, filasEventos, type EquipoHist, filasAlarmas, filasCompresores, filasDescongelados } from '../lib/historial'
 import { downloadXlsx } from '../lib/xlsx'
@@ -133,9 +134,9 @@ export default function Historial({ fija }: { fija?: 'alarmas' | 'eventos' }) {
           : <ul role="alert" className="space-y-1 border-2 border-estado-alta bg-panel px-2 py-2">
               {grupos.map(a => <li key={a.clave} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                 <MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>
-                {a.accion && <span>{a.accion}</span>}
-                {cargado && finHoy && (!r.camara || a.camara === r.camara) && <span className="font-mono text-xs text-texto-2">{a.desde ? `desde ${dia(a.desde).slice(0, 5)} ${hm(a.desde)}` : 'desde antes de este período'}</span>}
+                                {cargado && finHoy && (!r.camara || a.camara === r.camara) && <span className="font-mono text-xs text-texto-2">{a.desde ? `desde ${dia(a.desde).slice(0, 5)} ${hm(a.desde)}` : 'desde antes de este período'}</span>}
                 <BotonVisto claves={a.claves} vistas={vistas} marcar={marcar} texto={a.titulo} />
+                <div className="basis-full"><QueHacer clave={a.claves[0]} /></div>
               </li>)}
             </ul>)}
       <Panel titulo={TITULO[pestana] ?? 'Historial'}>
