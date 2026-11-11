@@ -8,24 +8,31 @@ import { Label } from '../components/ui/label'
 import { Switch } from '../components/ui/switch'
 import { apiJson } from '../lib/api'
 import { TIPOS_ALARMA, textoAlarma } from '../lib/frases'
-import { recargarGuardia, useGuardia, type Turno } from '../lib/guardia'
+import { guardiaStore, recargarGuardia, useGuardia, type Turno } from '../lib/guardia'
 
 const MAX_TURNOS = 6
 const VACIO: Turno = { nombre: '', desde: '08:00', hasta: '16:00', telefono: '', whatsapp: false }
 const mayus = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function GuardiaTab() {
-  const { turnos: guardados, instrucciones: instGuardadas, actual } = useGuardia()
+  const { actual } = useGuardia()
   const [turnos, setTurnos] = useState<Turno[] | null>(null)
   const [inst, setInst] = useState<Record<string, string>>({})
   const [guardando, setGuardando] = useState(false)
 
-  // El borrador se inicia una sola vez con lo que llega; el sondeo de 5 min no pisa lo que se está editando.
+  // El borrador se siembra una sola vez, después de que termine la primera carga (el store arranca vacío).
   useEffect(() => {
-    if (turnos === null) { setTurnos(guardados); setInst(instGuardadas) }
-  }, [guardados, instGuardadas, turnos])
+    let vivo = true
+    recargarGuardia().then(() => {
+      if (!vivo) return
+      const g = guardiaStore.getState().guardia
+      setTurnos(g.turnos); setInst(g.instrucciones)
+    })
+    return () => { vivo = false }
+  }, [])
 
-  const lista = turnos ?? guardados
+  if (turnos === null) return <div className="text-muted-foreground text-sm py-8 text-center">Cargando…</div>
+  const lista = turnos
   const cambiar = (i: number, p: Partial<Turno>) => setTurnos(lista.map((t, j) => (j === i ? { ...t, ...p } : t)))
 
   async function guardar() {
@@ -73,7 +80,7 @@ export default function GuardiaTab() {
               <Label htmlFor={`inst-${tipo}`}>{mayus(a.texto)}</Label>
               <textarea id={`inst-${tipo}`} rows={3} maxLength={300} value={inst[tipo] ?? ''} placeholder={a.accion}
                 onChange={e => setInst({ ...inst, [tipo]: e.target.value })}
-                className="w-full border border-borde-campo bg-placa px-3 py-2 text-sm placeholder:text-muted-foreground" />
+                className="w-full border border-borde-campo bg-placa px-3 py-2 text-sm placeholder:text-muted-foreground disabled:opacity-50" />
               <Button variant="outline" size="sm" className="min-h-[44px] md:min-h-0" onClick={() => setInst({ ...inst, [tipo]: '' })}>Usar la de fábrica</Button>
             </div>
           )
