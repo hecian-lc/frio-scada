@@ -6,7 +6,7 @@ import { apiJson } from './api'
 // "Visto" corta la repetición de los avisos; la alarma sigue activa hasta que el PLC la limpie.
 // Estado compartido: banda, aviso, contador, panel de la cámara e Historial ven la misma marca al instante,
 // con un solo sondeo mientras haya al menos un usuario activo.
-export interface Visto { usuario: string; ts: number }
+export interface Visto { usuario: string; ts: number; nota?: string }
 interface Activa { clave: string; visto: Visto | null }
 
 export const vistasStore = createStore<{ vistas: Map<string, Visto> }>(() => ({ vistas: new Map() }))
@@ -23,8 +23,8 @@ export function activarVistas(): () => void {
   return () => { if (--activos === 0) { clearInterval(sondeo); sondeo = undefined } }
 }
 
-export async function marcar(claves: string[]) {
-  await apiJson('/avisos/visto', { method: 'POST', body: JSON.stringify({ claves }) })
+export async function marcar(claves: string[], nota?: string) {
+  await apiJson('/avisos/visto', { method: 'POST', body: JSON.stringify(nota ? { claves, nota } : { claves }) })
   await cargar()
 }
 
