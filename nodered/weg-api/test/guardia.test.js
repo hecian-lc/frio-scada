@@ -33,6 +33,9 @@ test('validarGuardia: rechaza solapes, WhatsApp sin +, instrucción larga o de 4
   assert.throws(() => validarGuardia({ instrucciones: { nada: 'x' } }), /desconocid/);
   assert.throws(() => validarGuardia({ turnos: Array.from({ length: 7 }, (_, i) => t(`0${i}:00`, `0${i}:30`)) }), /6/);
   assert.deepEqual(validarGuardia({ instrucciones: { alarma_res: '  ' } }), { turnos: [], instrucciones: {} });
+  assert.throws(() => validarGuardia({ turnos: [t('06:00', '14:00', { nombre: 'x'.repeat(41) })] }), /hasta 40/);
+  assert.throws(() => validarGuardia({ turnos: [t('06:00', '14:00', { telefono: '+abc', whatsapp: true })] }), /entre 6 y 20 dígitos/);
+  assert.throws(() => validarGuardia({ turnos: [t('06:00', '14:00', { telefono: '12345' })] }), /entre 6 y 20 dígitos/);
   assert.throws(() => validarGuardia({ turnos: 'x' }), (e) => e.status === 400);
   assert.throws(() => validarGuardia({ instrucciones: [] }), (e) => e.status === 400);
 });

@@ -32,8 +32,11 @@ function validarGuardia(p) {
       whatsapp: x.whatsapp === true,
     };
     if (!turno.nombre) throw httpError(400, 'Cada turno necesita un nombre');
+    if (turno.nombre.length > 40) throw httpError(400, 'Nombre: hasta 40 caracteres');
     if (!HHMM.test(turno.desde) || !HHMM.test(turno.hasta)) throw httpError(400, 'Hora inválida (HH:MM, de 00:00 a 23:59)');
     if (turno.desde === turno.hasta) throw httpError(400, 'Desde y hasta tienen que ser distintos');
+    const digitos = turno.telefono.replace(/\D/g, '').length;
+    if (digitos < 6 || digitos > 20) throw httpError(400, 'Teléfono: entre 6 y 20 dígitos');
     if (turno.whatsapp && !turno.telefono.startsWith('+')) throw httpError(400, 'El teléfono de WhatsApp tiene que empezar con + y el código de país');
     return turno;
   });
