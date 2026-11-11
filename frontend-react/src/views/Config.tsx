@@ -12,6 +12,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '.
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger } from '../components/ui/dialog'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select'
 import CamarasTab from './CamarasTab'
+import GuardiaTab from './GuardiaTab'
 import { Plus, Trash2, Pencil, Save, X, ChevronRight, RotateCcw, ScanSearch, Loader2, Mail, Lock, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import BrandingTab from './BrandingTab'
@@ -46,10 +47,11 @@ export default function Config() {
   return (
     <div className="space-y-3">
     <a href="/grafana/" target="_blank" rel="noreferrer" className="text-sm underline text-primary">Gráficos de largo plazo</a>
-    <Tabs defaultValue={(t => (t === 'telegram' || t === 'copias' ? t : 'smtp'))(new URLSearchParams(window.location.search).get('tab'))} className="space-y-3">
+    <Tabs defaultValue={(t => (t === 'telegram' || t === 'copias' || t === 'guardia' ? t : 'smtp'))(new URLSearchParams(window.location.search).get('tab'))} className="space-y-3">
       <TabsList>
         <TabsTrigger value="smtp">Correo</TabsTrigger>
         <TabsTrigger value="telegram">Telegram</TabsTrigger>
+        <TabsTrigger value="guardia">Guardia</TabsTrigger>
         <TabsTrigger value="camaras">Cámaras</TabsTrigger>
         {!replica && <TabsTrigger value="copias">Copias</TabsTrigger>}
         {superadmin && <TabsTrigger value="brand">Marca</TabsTrigger>}
@@ -66,6 +68,7 @@ export default function Config() {
       {/* fieldset disabled deshabilita inputs/botones (incl. Switch/Select de Radix, que son <button>) */}
       <TabsContent value="smtp"><SmtpTab /></TabsContent>
       <TabsContent value="telegram"><TelegramTab /></TabsContent>
+      <TabsContent value="guardia"><GuardiaTab /></TabsContent>
       {!replica && <TabsContent value="copias"><CopiasTab /></TabsContent>}
       <TabsContent value="camaras"><CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} /></TabsContent>
       {superadmin && <TabsContent value="brand"><BrandingTab /></TabsContent>}

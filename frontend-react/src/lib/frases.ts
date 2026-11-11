@@ -90,6 +90,8 @@ const ALARMAS: Record<string, { texto: string; textoPlural?: string; accion?: st
   solapado: { texto: 'un horario de descongelado se pisa con otro', accion: 'corregirlo en la configuración del PLC' },
   tiempo_invalido: { texto: 'un horario de descongelado tiene un tiempo inválido', accion: 'corregirlo en la configuración del PLC' },
 }
+export const TIPOS_ALARMA = Object.keys(ALARMAS)
+
 export function textoAlarma(clave: string): { texto: string; textoPlural?: string; accion?: string } {
   return ALARMAS[clave.split('.').pop() ?? ''] ?? { texto: 'hay una alarma en el PLC', accion: 'avisar al técnico' }
 }
