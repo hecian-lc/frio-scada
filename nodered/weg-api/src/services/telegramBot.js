@@ -5,6 +5,7 @@
 
 const https = require('https');
 const settings = require('./settings');
+const { textoVisto } = require('./guardia');
 
 function api(token, metodo, body, timeoutMs = 15000) {
   return new Promise((resolve, reject) => {
@@ -51,7 +52,7 @@ async function atender(chatId, q, { onVisto, avisar, contestar }) {
   const nombre = nombreDe(q.from);
   const cambiadas = await onVisto([m[1]], `${nombre} (Telegram)`);
   await responder(cambiadas.length ? 'Marcada como vista' : 'Ya estaba vista o ya se resolvió');
-  for (const c of cambiadas) await avisar(`👀 ${nombre} vio: ${c.texto}`).catch(() => {});
+  for (const c of cambiadas) await avisar(textoVisto(nombre, c.texto)).catch(() => {});
 }
 
 async function ciclo(opts) {

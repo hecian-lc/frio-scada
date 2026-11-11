@@ -9,7 +9,7 @@ process.env.CONFIG_PATH = path.join(DIR, 'config.json');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const settings = require('../src/services/settings');
-const { guardiaActual, validarGuardia, instruccion } = require('../src/services/guardia');
+const { guardiaActual, validarGuardia, instruccion, textoVisto, textoAvisoAlarmas } = require('../src/services/guardia');
 
 test('guardiaActual: normal, cruza medianoche, bordes, sin turno', () => {
   const T = [{ nombre: 'Ana', desde: '06:00', hasta: '14:00', telefono: '099 1', whatsapp: false },
@@ -49,4 +49,20 @@ test('settings: guardia vacía por defecto y se guarda validada', () => {
   settings.setGuardia({ turnos: [{ nombre: ' Ana ', desde: '06:00', hasta: '14:00', telefono: '+598 99 1', whatsapp: true }] });
   assert.equal(settings.getGuardia().turnos[0].nombre, 'Ana');
   assert.throws(() => settings.setGuardia({ turnos: 'x' }), (e) => e.status === 400);
+});
+
+test('textoVisto', () => {
+  assert.equal(textoVisto('Pedro', 'C4 G2: resistencia'), '👀 Pedro vio: C4 G2: resistencia');
+  assert.equal(textoVisto('Pedro', 'x', 'llamé a Juan'), '👀 Pedro vio: x — Nota: llamé a Juan');
+});
+
+test('textoAvisoAlarmas: qué hacer debajo de cada alarma, guardia al final solo si hay alarma', () => {
+  const items = [{ clave: 'C4.G2.alarma_res', texto: '🚨 C4 G2: resistencia', alarma: true }, { clave: 'com', texto: '🚨 PLC sin comunicacion', alarma: true }];
+  const ins = (c) => (c === 'com' ? null : 'Llamar a Juan');
+  const g = { nombre: 'Juan', desde: '06:00', hasta: '14:00', telefono: '+598 99 1', whatsapp: true };
+  assert.equal(textoAvisoAlarmas(items, { instruccion: ins, guardia: g }),
+    '🚨 C4 G2: resistencia\n   Qué hacer: Llamar a Juan\n🚨 PLC sin comunicacion\nGuardia: Juan (06:00–14:00) +598 99 1');
+  assert.equal(textoAvisoAlarmas([{ clave: 'x', texto: '✅ resuelto: y' }], { instruccion: ins, guardia: g }), '✅ resuelto: y');
+  assert.equal(textoAvisoAlarmas(items.slice(1), { instruccion: ins, guardia: null }), '🚨 PLC sin comunicacion');
+  assert.equal(textoAvisoAlarmas([items[0]], { instruccion: () => 'a\nb', guardia: null }), '🚨 C4 G2: resistencia\n   Qué hacer: a\n   b');
 });

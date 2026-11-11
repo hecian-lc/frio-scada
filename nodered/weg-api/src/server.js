@@ -133,7 +133,13 @@ async function marcarVisto(claves, usuario, nota) {
   }
   return cambiadas;
 }
+async function avisarVisto(usuario, cambiadas, nota) {
+  if (!alerts.telegramConfigurado()) return;
+  const { textoVisto } = require('./services/guardia');
+  for (const c of cambiadas) await alerts.notifyCanal('telegram', textoVisto(usuario, c.texto, nota));
+}
 app.use('/api/avisos', createAvisosRouter({ notifyCanal: alerts.notifyCanal, isReplica: REPLICA_MODE, getActivas: alertasCamaras.getActivas, marcarVisto,
+  getGuardia: settingsService.getGuardia, setGuardia: settingsService.setGuardia, avisarVisto,
   getNovedades: async () => {
     const t = Date.now(), { fluxMando, parseMando } = require('./services/camaras');
     const csv = await influxRaw.queryAnnotatedCsv(fluxMando({ desde: new Date(t - 12 * 3600000).toISOString(), hasta: new Date(t).toISOString() }));

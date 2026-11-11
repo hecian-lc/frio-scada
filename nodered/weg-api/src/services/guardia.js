@@ -70,4 +70,18 @@ function instruccion(clave, instrucciones) {
   return (instrucciones && instrucciones[tipo]) || frases.textoAlarma(tipo).accion;
 }
 
-module.exports = { validarGuardia, guardiaActual, instruccion };
+const textoVisto = (usuario, texto, nota) => `👀 ${usuario} vio: ${texto}${nota ? ` — Nota: ${nota}` : ''}`;
+
+// Mensaje de Telegram/mail: cada alarma con su "qué hacer" debajo; la guardia al final solo si hay alguna alarma.
+function textoAvisoAlarmas(items, { instruccion: ins, guardia }) {
+  const lineas = [];
+  for (const it of items) {
+    lineas.push(it.texto);
+    const q = it.alarma && ins(it.clave);
+    if (q) lineas.push('   Qué hacer: ' + q.split('\n').join('\n   '));
+  }
+  if (guardia && items.some((i) => i.alarma)) lineas.push(`Guardia: ${guardia.nombre} (${guardia.desde}–${guardia.hasta}) ${guardia.telefono}`);
+  return lineas.join('\n');
+}
+
+module.exports = { validarGuardia, guardiaActual, instruccion, textoVisto, textoAvisoAlarmas };

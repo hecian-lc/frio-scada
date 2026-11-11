@@ -5,6 +5,8 @@
 
 const configService = require('./config');
 const alerts = require('./alerts');
+const guardia = require('./guardia');
+const { textoAvisoAlarmas } = guardia;
 
 const COM_MAX_MS = 2 * 60 * 1000;     // sin dato fresco > 2 min = PLC sin comunicación
 const DESVIO_MAX_S = 120;
@@ -127,7 +129,7 @@ const fallidos = new Set(); // avisos ya registrados como fallidos (no llenar el
 
 async function tick(state) {
   const ahora = Date.now();
-  const rep = require('./settings').getRepeticion();
+  const settings = require('./settings'), rep = settings.getRepeticion(), g = settings.getGuardia();
   const r = evaluar(configService.getEstadoCamaras(), ahora, state.memoria, { repetirMs: rep.minutos * 60000, veces: rep.veces });
   const textos = new Set(r.items.map((i) => i.texto));
   for (const t of fallidos) if (!textos.has(t)) fallidos.delete(t);
@@ -136,7 +138,7 @@ async function tick(state) {
     let ok = false;
     // Telegram: un botón "Visto" por alarma nueva o repetida
     const botones = r.items.filter((i) => i.alarma).map((i) => ({ texto: `👀 Visto: ${r.memoria.activos[i.clave].texto}`.slice(0, 60), data: `v:${i.clave}` }));
-    try { ok = await alerts.notify(r.items.map((i) => i.texto).join('\n'), { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
+    try { ok = await alerts.notify(textoAvisoAlarmas(r.items, { instruccion: (c) => guardia.instruccion(c, g.instrucciones), guardia: guardia.guardiaActual(g.turnos, ahora) }), { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
     if (!ok) {
       for (const it of r.items) {
         const prev = state.memoria.activos[it.clave];
