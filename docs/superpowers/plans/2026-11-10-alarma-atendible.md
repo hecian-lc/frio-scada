@@ -59,20 +59,20 @@
 
 ## Review Focus
 
-1. **Turno que cruza la medianoche y bordes exactos:** 22:00 a 06:00 vale a las 23:59 y a las 05:59, y no a las 06:00. `desde` está incluido y `hasta` excluido. Lo prueba la Tarea 1.
+1. **Turno que cruza la medianoche y bordes exactos:** 22:00 a 06:00 vale a las 23:59 y a las 05:59, y no a las 06:00. `desde` está incluido y `hasta` excluido. Lo prueba la Task 1.
 2. **Nota con salto de renglón, comillas, coma o barra:**
    - la línea de Influx no se rompe;
    - el salto de renglón pasa a espacio y la nota se recorta en los extremos;
    - una nota hecha solo de espacios equivale a no tener nota.
 
-   Lo prueba la Tarea 2.
-3. **Visto de varias claves con una sola nota:** cada línea `mando` lleva la nota, y Novedades muestra una fila por línea. Lo prueba la Tarea 2.
-4. **Telegram no configurado o caído al marcar un Visto desde el portal:** el Visto responde 200 igual y el error solo va al log. Lo prueba la Tarea 3.
-5. **API de guardia caída o vacía:** `instruccion()` devuelve la frase de fábrica y no hay contacto. Lo prueba la Tarea 4.
+   Lo prueba la Task 2.
+3. **Visto de varias claves con una sola nota:** cada línea `mando` lleva la nota, y Novedades muestra una fila por línea. Lo prueba la Task 2.
+4. **Telegram no configurado o caído al marcar un Visto desde el portal:** el Visto responde 200 igual y el error solo va al log. Lo prueba la Task 3.
+5. **API de guardia caída o vacía:** `instruccion()` devuelve la frase de fábrica y no hay contacto. Lo prueba la Task 4.
 
 ---
 
-### Tarea 1: Servicio de guardia (puro) y persistencia
+### Task 1: Servicio de guardia (puro) y persistencia
 
 **Files:**
 - Create: `nodered/weg-api/src/services/guardia.js`
@@ -153,7 +153,7 @@ test('settings: guardia vacía por defecto y se guarda validada', () => {
 - [ ] **Paso 4:** `node --test`. Esperado: toda la suite pasa.
 - [ ] **Paso 5:** commit "Guardia: turnos, instrucciones y turno de ahora (servidor)".
 
-### Tarea 2: Nota del Visto y Novedades (servidor)
+### Task 2: Nota del Visto y Novedades (servidor)
 
 **Files:**
 - Modify: `nodered/weg-api/src/services/mando.js`
@@ -188,7 +188,7 @@ test('settings: guardia vacía por defecto y se guarda validada', () => {
   - `GET /api/avisos/activas` devuelve `visto.nota` cuando existe.
   - El router recibe una opción nueva, `getNovedades = async () => []`.
   - `marcarVisto(claves, usuario, nota)` devuelve `[{ clave, texto }]`, como hoy.
-- Consumes: nada de la Tarea 1.
+- Consumes: nada de la Task 1.
 
 - [ ] **Paso 1: escribir las pruebas que fallan**
 
@@ -225,7 +225,7 @@ test('avisos/visto: nota de 201 → 400; nota de espacios → marcarVisto recibe
 - [ ] **Paso 4:** `node --test`. Esperado: toda la suite pasa.
 - [ ] **Paso 5:** commit "Visto con nota y Novedades del turno (servidor)".
 
-### Tarea 3: API de guardia y textos de Telegram
+### Task 3: API de guardia y textos de Telegram
 
 **Files:**
 - Modify: `nodered/weg-api/src/routes/avisos.js`
@@ -246,7 +246,7 @@ test('avisos/visto: nota de 201 → 400; nota de espacios → marcarVisto recibe
 - Test: `nodered/weg-api/test/guardia.test.js` y `test/avisosPrueba.test.js`. Para PUT, extender el helper `servir` con un tercer argumento `method`.
 
 **Interfaces:**
-- Consumes: de la Tarea 1, `guardiaActual`, `instruccion`, `getGuardia` y `setGuardia`; de la Tarea 2, la ruta `/visto` con `nota`.
+- Consumes: de la Task 1, `guardiaActual`, `instruccion`, `getGuardia` y `setGuardia`; de la Task 2, la ruta `/visto` con `nota`.
 - Produces:
   - `GET /api/avisos/guardia` → `{ turnos: Turno[], instrucciones: Record<string,string>, actual: Turno | null }`;
   - `PUT /api/avisos/guardia` con cuerpo `{ turnos, instrucciones }` y la misma respuesta.
@@ -283,7 +283,7 @@ Para instrucciones de varios renglones, cada renglón extra va indentado con tre
 - [ ] **Paso 4:** `node --test`. Esperado: toda la suite pasa.
 - [ ] **Paso 5:** commit "Guardia por API y Telegram con qué hacer, guardia y nota".
 
-### Tarea 4: Stores del portal (guardia y Visto con nota)
+### Task 4: Stores del portal (guardia y Visto con nota)
 
 **Files:**
 - Create: `frontend-react/src/lib/guardia.ts` y `frontend-react/src/lib/guardia.test.ts`.
@@ -330,7 +330,7 @@ test('marcar manda la nota y la omite si está vacía', async () => {
 - [ ] **Paso 4:** `npx vitest run` y `npm run build`. Esperado: todo en verde.
 - [ ] **Paso 5:** commit "Portal: store de guardia y Visto con nota".
 
-### Tarea 5: Qué hacer, contacto, Visto con nota y Novedades (portal)
+### Task 5: Qué hacer, contacto, Visto con nota y Novedades (portal)
 
 **Files:**
 - Create: `frontend-react/src/components/QueHacer.tsx`
@@ -366,15 +366,15 @@ test('marcar manda la nota y la omite si está vacía', async () => {
   - `<NovedadesTurno />` va debajo del bloque `data-tour="eventos"`.
 
 **Interfaces:**
-- Consumes: de la Tarea 4, `useGuardia`, `instruccion`, `telHref`, `waHref` y `marcar(claves, nota?)`; de la Tarea 2, `GET /api/avisos/novedades` → `[{ ts, usuario, texto, nota, camara }]`.
-- Produces: `QueHacer` y `ContactoGuardia` (la Tarea 6 no los usa).
+- Consumes: de la Task 4, `useGuardia`, `instruccion`, `telHref`, `waHref` y `marcar(claves, nota?)`; de la Task 2, `GET /api/avisos/novedades` → `[{ ts, usuario, texto, nota, camara }]`.
+- Produces: `QueHacer` y `ContactoGuardia` (la Task 6 no los usa).
 
-- [ ] **Paso 1:** implementar los componentes. No hay pruebas de componentes, porque no hay jsdom. La lógica ya está probada en la Tarea 4.
+- [ ] **Paso 1:** implementar los componentes. No hay pruebas de componentes, porque no hay jsdom. La lógica ya está probada en la Task 4.
 - [ ] **Paso 2:** `rg -n "dangerouslySetInnerHTML|rounded-(?!full)|#[0-9a-fA-F]{3,6}\b" src/components/QueHacer.tsx src/components/ContactoGuardia.tsx src/components/NovedadesTurno.tsx src/components/BotonVisto.tsx`. Esperado: sin resultados.
 - [ ] **Paso 3:** `npx vitest run` y `npm run build`. Esperado: todo en verde.
 - [ ] **Paso 4:** commit "Portal: qué hacer, contacto de guardia, Visto con nota y Novedades del turno".
 
-### Tarea 6: Configuración › Guardia
+### Task 6: Configuración › Guardia
 
 **Files:**
 - Create: `frontend-react/src/views/GuardiaTab.tsx`
@@ -385,7 +385,7 @@ test('marcar manda la nota y la omite si está vacía', async () => {
   - exportar `TIPOS_ALARMA = Object.keys(ALARMAS)`, para listar las filas.
 
 **Interfaces:**
-- Consumes: de la Tarea 4, `useGuardia`, `recargarGuardia`, `Turno` y `textoAlarma`; de la Tarea 3, `PUT /api/avisos/guardia`.
+- Consumes: de la Task 4, `useGuardia`, `recargarGuardia`, `Turno` y `textoAlarma`; de la Task 3, `PUT /api/avisos/guardia`.
 - Produces: nada.
 
 **Comportamiento:**
@@ -407,7 +407,7 @@ test('marcar manda la nota y la omite si está vacía', async () => {
 - [ ] **Paso 2:** `npx vitest run` y `npm run build`. Esperado: todo en verde.
 - [ ] **Paso 3:** commit "Portal: pestaña Guardia en Configuración".
 
-### Tarea 7: Despliegue en WSL y revisión visual (controlador)
+### Task 7: Despliegue en WSL y revisión visual (controlador)
 
 - [ ] Hacer `git pull` de `portal-hmi` en `/home/walc72/frio-scada`.
 - [ ] Reconstruir `weg-api` con `docker compose up -d --build weg-api`, o el nombre del servicio que figure en `docker-compose.yml`.
