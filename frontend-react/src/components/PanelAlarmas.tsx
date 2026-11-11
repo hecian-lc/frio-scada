@@ -2,6 +2,7 @@ import { hhmm } from '../lib/camaras'
 import type { AlarmaActivaVista } from '../lib/alarmas'
 import { useVistas } from '../lib/vistas'
 import BotonVisto from './BotonVisto'
+import QueHacer from './QueHacer'
 import { Panel } from './Panel'
 import MarcaAlarma from './MarcaAlarma'
 import MarcaSinDatos from './MarcaSinDatos'
@@ -17,9 +18,10 @@ export default function PanelAlarmas({ alarmas }: { alarmas: Vista[] | null }) {
     <Panel titulo="Alarmas">
       <div role="alert" className="space-y-1.5 text-sm">
         {alarmas.map(a => (
-          <div key={a.clave} className="flex flex-wrap items-center gap-x-2 gap-y-1"><MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>{a.accion && <span>{a.accion}</span>}
+          <div key={a.clave} className="flex flex-wrap items-center gap-x-2 gap-y-1"><MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>
             {a.desde !== undefined && <span className="font-mono text-xs text-texto-2">{a.desde === null ? 'desde antes de hoy' : `desde ${hhmm(a.desde)}`}</span>}
-            <BotonVisto claves={a.claves ?? [a.clave]} vistas={vistas} marcar={marcar} /></div>
+            <BotonVisto claves={a.claves ?? [a.clave]} vistas={vistas} marcar={marcar} texto={a.titulo} />
+            <div className="basis-full"><QueHacer clave={a.clave} /></div></div>
         ))}
       </div>
     </Panel>

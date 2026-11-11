@@ -4,6 +4,7 @@ import ResumenHoy from '../components/ResumenHoy'
 import TablaCamaras from '../components/TablaCamaras'
 import TrendEquipos from '../components/TrendEquipos'
 import EventosHoy from '../components/EventosHoy'
+import NovedadesTurno from '../components/NovedadesTurno'
 import { Panel } from '../components/Panel'
 import { useCamarasStore } from '../store/camaras'
 import { estaVencido } from '../lib/estadoGrupo'
@@ -57,6 +58,7 @@ export default function General() {
         <div className="min-w-0 space-y-3">
           <ResumenHoy />
           <div data-tour="eventos"><EventosHoy eventos={ev.data} error={ev.error} max={8} titulo="Últimos eventos" /></div>
+          <NovedadesTurno />
         </div>
       </div>
     </div>

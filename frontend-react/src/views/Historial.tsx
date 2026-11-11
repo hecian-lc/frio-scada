@@ -135,7 +135,7 @@ export default function Historial({ fija }: { fija?: 'alarmas' | 'eventos' }) {
                 <MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>
                 {a.accion && <span>{a.accion}</span>}
                 {cargado && finHoy && (!r.camara || a.camara === r.camara) && <span className="font-mono text-xs text-texto-2">{a.desde ? `desde ${dia(a.desde).slice(0, 5)} ${hm(a.desde)}` : 'desde antes de este período'}</span>}
-                <BotonVisto claves={a.claves} vistas={vistas} marcar={marcar} />
+                <BotonVisto claves={a.claves} vistas={vistas} marcar={marcar} texto={a.titulo} />
               </li>)}
             </ul>)}
       <Panel titulo={TITULO[pestana] ?? 'Historial'}>

@@ -10,8 +10,8 @@ export interface Guardia { turnos: Turno[]; instrucciones: Record<string, string
 
 export const guardiaStore = createStore<{ guardia: Guardia }>(() => ({ guardia: { turnos: [], instrucciones: {}, actual: null } }))
 
-export const recargarGuardia = () => apiJson<Guardia>('/avisos/guardia')
-  .then(guardia => guardiaStore.setState({ guardia }))
+export const recargarGuardia = () => apiJson<Partial<Guardia> | null>('/avisos/guardia')
+  .then(r => guardiaStore.setState({ guardia: { turnos: [], instrucciones: {}, actual: null, ...r } }))
   .catch(() => { /* sin API: el estado queda como estaba */ })
 
 let activos = 0
