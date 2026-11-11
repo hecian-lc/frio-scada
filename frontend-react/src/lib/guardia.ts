@@ -10,9 +10,10 @@ export interface Guardia { turnos: Turno[]; instrucciones: Record<string, string
 
 export const guardiaStore = createStore<{ guardia: Guardia }>(() => ({ guardia: { turnos: [], instrucciones: {}, actual: null } }))
 
-export const recargarGuardia = () => apiJson<Partial<Guardia> | null>('/avisos/guardia')
-  .then(r => guardiaStore.setState({ guardia: { turnos: [], instrucciones: {}, actual: null, ...r } }))
-  .catch(() => { /* sin API: el estado queda como estaba */ })
+// true si el GET salió bien; si falla, el estado queda como estaba
+export const recargarGuardia = (): Promise<boolean> => apiJson<Partial<Guardia> | null>('/avisos/guardia')
+  .then(r => { guardiaStore.setState({ guardia: { turnos: [], instrucciones: {}, actual: null, ...r } }); return true })
+  .catch(() => false)
 
 let activos = 0
 let sondeo: ReturnType<typeof setInterval> | undefined

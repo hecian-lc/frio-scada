@@ -20,17 +20,29 @@ export default function GuardiaTab() {
   const [inst, setInst] = useState<Record<string, string>>({})
   const [guardando, setGuardando] = useState(false)
 
+  const [falla, setFalla] = useState(false)
+  const [intento, setIntento] = useState(0)
+
   // El borrador se siembra una sola vez, después de que termine la primera carga (el store arranca vacío).
+  // Si la carga falla no se siembra: sin borrador no hay Guardar y no se pisa lo guardado.
   useEffect(() => {
     let vivo = true
-    recargarGuardia().then(() => {
+    setFalla(false)
+    recargarGuardia().then(ok => {
       if (!vivo) return
+      if (!ok) { setFalla(true); return }
       const g = guardiaStore.getState().guardia
       setTurnos(g.turnos); setInst(g.instrucciones)
     })
     return () => { vivo = false }
-  }, [])
+  }, [intento])
 
+  if (falla) return (
+    <div className="text-sm py-8 text-center space-y-3">
+      <p>No se pudo cargar la guardia</p>
+      <Button variant="outline" size="sm" className="min-h-[44px] md:min-h-0" onClick={() => setIntento(n => n + 1)}>Reintentar</Button>
+    </div>
+  )
   if (turnos === null) return <div className="text-muted-foreground text-sm py-8 text-center">Cargando…</div>
   const lista = turnos
   const cambiar = (i: number, p: Partial<Turno>) => setTurnos(lista.map((t, j) => (j === i ? { ...t, ...p } : t)))

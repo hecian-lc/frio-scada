@@ -1,7 +1,7 @@
 import { expect, test, vi } from 'vitest'
 vi.mock('./api', () => ({ apiJson: vi.fn(() => Promise.resolve({ activas: [] })) }))
 import { apiJson } from './api'
-import { instruccion, telHref, waHref } from './guardia'
+import { instruccion, recargarGuardia, telHref, waHref } from './guardia'
 import { marcar } from './vistas'
 
 test('instruccion: admin, fábrica, sin datos de la API', () => {
@@ -20,4 +20,10 @@ test('marcar manda la nota y la omite si está vacía', async () => {
   vi.mocked(apiJson).mockClear()
   await marcar(['a'], '')
   expect(cuerpo()).toEqual({ claves: ['a'] })
+})
+test('recargarGuardia: true si la API responde, false si falla', async () => {
+  vi.mocked(apiJson).mockResolvedValueOnce({ turnos: [], instrucciones: {}, actual: null })
+  expect(await recargarGuardia()).toBe(true)
+  vi.mocked(apiJson).mockRejectedValueOnce(new Error('caída'))
+  expect(await recargarGuardia()).toBe(false)
 })
