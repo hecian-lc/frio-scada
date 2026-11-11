@@ -130,3 +130,22 @@ test('avisos/activas y visto: cualquier usuario marca con su nombre; claves inv�
   const rep = createAvisosRouter({ notifyCanal: async () => {}, isReplica: true });
   assert.equal((await servir('admin', rep, '/api/avisos', (f) => f('/visto', { claves: ['C4.alarma_manual'] }))).status, 409);
 });
+
+test('avisos/visto: nota de 201 → 400; nota de espacios → marcarVisto recibe null; GET /novedades', async () => {
+  const llamadas = [];
+  const router = createAvisosRouter({
+    marcarVisto: async (c, u, n) => { llamadas.push(n); return []; },
+    getNovedades: async () => [{ ts: 1, usuario: 'ana', texto: 't', nota: 'n', camara: 'C4' }],
+  });
+  await servir('operador', router, '/api/avisos', async (f) => {
+    const r = await f('/visto', { claves: ['com'], nota: 'x'.repeat(201) });
+    assert.equal(r.status, 400); assert.equal(r.body.error, 'Nota: hasta 200 caracteres');
+    assert.equal((await f('/visto', { claves: ['com'], nota: 5 })).body.error, 'Nota inválida');
+    assert.equal(llamadas.length, 0);
+    assert.equal((await f('/visto', { claves: ['com'], nota: '   ' })).status, 200);
+    assert.equal((await f('/visto', { claves: ['com'], nota: ' llamé\na Juan ' })).status, 200);
+    assert.equal((await f('/visto', { claves: ['com'] })).status, 200);
+    assert.deepEqual(llamadas, [null, 'llamé a Juan', null]);
+    assert.deepEqual((await f('/novedades')).body, [{ ts: 1, usuario: 'ana', texto: 't', nota: 'n', camara: 'C4' }]);
+  });
+});

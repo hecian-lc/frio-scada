@@ -110,12 +110,12 @@ function activas(memoria) {
 }
 
 // Marca como vistas las claves activas que no lo estaban (corta la repetición). Devuelve las que cambió.
-function marcarVistas(memoria, claves, usuario, ahoraMs) {
+function marcarVistas(memoria, claves, usuario, ahoraMs, nota) {
   const cambiadas = [];
   for (const c of claves) {
     const a = memoria.activos[c];
     if (!a || a.visto) continue;
-    memoria.activos[c] = { ...a, visto: { usuario, ts: ahoraMs } };
+    memoria.activos[c] = { ...a, visto: { usuario, ts: ahoraMs, ...(nota && { nota }) } };
     cambiadas.push({ clave: c, texto: a.texto });
   }
   return cambiadas;
@@ -169,6 +169,6 @@ function start() {
 
 // Para el portal y el bot de Telegram: sobre la memoria viva del monitoreo
 const getActivas = () => activas(estado.memoria);
-const reconocer = (claves, usuario, ahoraMs = Date.now()) => marcarVistas(estado.memoria, claves, usuario, ahoraMs);
+const reconocer = (claves, usuario, ahoraMs = Date.now(), nota) => marcarVistas(estado.memoria, claves, usuario, ahoraMs, nota);
 
 module.exports = { evaluar, start, desvioRelojS, hhmm, activas, marcarVistas, getActivas, reconocer };
