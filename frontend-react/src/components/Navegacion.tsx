@@ -24,10 +24,9 @@ export function NavegadorPc({ compacto }: { compacto: boolean }) {
       {ITEMS.map(i => {
         const on = i.codigo === codigo
         return (
-          <Link key={i.to} to={i.to} data-tour={`nav-${i.icono}`} title={compacto ? `${i.codigo} ${i.label}` : undefined} aria-current={on ? 'page' : undefined}
+          <Link key={i.to} to={i.to} data-tour={`nav-${i.icono}`} title={compacto ? i.label : undefined} aria-current={on ? 'page' : undefined}
             className={cn('flex min-h-[32px] items-center gap-2.5 border-l-[3px] px-3 text-base text-texto hover:bg-seleccion',
               compacto && 'justify-center px-0', on ? 'border-accion bg-seleccion font-semibold' : 'border-transparent')}>
-            {!compacto && <span className="w-[22px] font-mono text-xs text-texto-2">{i.codigo}</span>}
             <IconoNav nombre={i.icono} size={18} />
             <span className={compacto ? 'sr-only' : ''}>{i.label}</span>
           </Link>
