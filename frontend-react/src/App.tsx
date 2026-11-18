@@ -4,10 +4,9 @@ import { Lock } from 'lucide-react'
 import { RUTAS_VIEJAS } from './lib/rutas'
 import { NavegadorPc, NavegadorCelular } from './components/Navegacion'
 import BarraApp from './components/marco/BarraApp'
-import BarraPantalla from './components/marco/BarraPantalla'
-import BandaAlarmas from './components/marco/BandaAlarmas'
 import BarraEstado from './components/marco/BarraEstado'
 import AvisoAlarmaCelular from './components/marco/AvisoAlarmaCelular'
+import AvisoConexion from './components/marco/AvisoConexion'
 import { useAlarmasActivas } from './lib/useAlarmasActivas'
 import { useLiveStore } from './store/live'
 import { useConfigStore } from './store/config'
@@ -82,8 +81,9 @@ export default function App() {
   return authed ? <Marco /> : <Login />
 }
 
-// Marco de la aplicación (spec §2). Computadora: barra de la app 40, barra de pantalla 36, navegador + contenido,
-// banda de alarmas 32 y barra de estado 22. Celular: barra de 48, aviso de alarma sin ver, contenido y botones abajo.
+// Marco de la aplicación (spec §3). Computadora: menú azul a todo el alto y, a la derecha, encabezado 72 (título y
+// estado general), aviso de conexión, contenido y barra de estado 36. Celular: encabezado 60, aviso de conexión,
+// tarjeta de alarma sin ver, contenido y botones abajo.
 function Marco() {
   const { pathname } = useLocation()  // el error de una vista no queda pegado al navegar a otra
   const isAdmin = isAdminRole(useAuthStore(s => s.role))
@@ -117,17 +117,16 @@ function Marco() {
   ), [pathname, isAdmin])
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-suelo supports-[height:100dvh]:h-dvh md:grid md:grid-rows-[40px_36px_1fr_32px_22px]">
-      <BarraApp compacto={compacto} alternarMenu={alternarMenu} />
-      <BarraPantalla />
-      <AvisoAlarmaCelular alarmas={alarmas} />
-      <div className="flex min-h-0 flex-1">
-        <NavegadorPc compacto={compacto} />
-        <main className="min-w-0 flex-1 overflow-auto p-3">{contenido}</main>
+    <div className="flex h-screen overflow-hidden bg-suelo supports-[height:100dvh]:h-dvh md:grid md:grid-cols-[auto_1fr]">
+      <NavegadorPc compacto={compacto} sinVer={alarmas.sinVer.length} />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <BarraApp compacto={compacto} alternarMenu={alternarMenu} alarmas={alarmas.grupos.length} />
+        <AvisoConexion />
+        <AvisoAlarmaCelular alarmas={alarmas} />
+        <main className="min-w-0 flex-1 overflow-auto p-3 md:p-6 md:px-8">{contenido}</main>
+        <BarraEstado />
+        <NavegadorCelular sinVer={alarmas.sinVer.length} />
       </div>
-      <BandaAlarmas alarmas={alarmas} />
-      <BarraEstado />
-      <NavegadorCelular sinVer={alarmas.sinVer.length} />
     </div>
   )
 }

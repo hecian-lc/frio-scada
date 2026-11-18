@@ -1,4 +1,4 @@
-// Código de pantalla y ruta para la barra de pantalla (spec §2): N1 Inicio … C1 Más.
+// Código de pantalla y ruta (spec §2): N1 Inicio … C1 Más. El último elemento de la ruta es el título del encabezado.
 import { nombreCamara } from './camaras'
 
 export type Codigo = 'N1' | 'N2' | 'A1' | 'E1' | 'T1' | 'I1' | 'C1'

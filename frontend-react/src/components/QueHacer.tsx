@@ -1,18 +1,14 @@
+import { cn } from '../lib/utils'
 import { instruccion, useGuardia } from '../lib/guardia'
 import ContactoGuardia from './ContactoGuardia'
 
 // "Qué hacer:" con la instrucción del admin (o la frase de fábrica) y el contacto de guardia.
-// compacto: una sola línea para la banda de 32 px; el texto se recorta y "Llamar a" queda entero.
-export default function QueHacer({ clave, compacto }: { clave: string; compacto?: boolean }) {
+// soloTexto: sin el contacto (la tarjeta del celular lo pone al lado de Visto); sin instrucción no muestra nada.
+export default function QueHacer({ clave, soloTexto, className }: { clave: string; soloTexto?: boolean; className?: string }) {
   const texto = instruccion(clave, useGuardia().instrucciones)
-  if (compacto) return (
-    <span className="flex min-w-0 flex-1 items-center gap-2">
-      {texto && <span className="min-w-0 truncate text-texto" title={texto}><b className="font-semibold">Qué hacer:</b> {texto}</span>}
-      <ContactoGuardia compacto />
-    </span>
-  )
+  if (soloTexto) return texto ? <p className={cn('whitespace-pre-line text-texto', className)}><b className="font-semibold">Qué hacer:</b> {texto}</p> : null
   return (
-    <div className="flex flex-wrap items-center gap-2 text-texto">
+    <div className={cn('flex flex-wrap items-center gap-2 text-texto', className)}>
       {texto && <p className="whitespace-pre-line"><b className="font-semibold">Qué hacer:</b> {texto}</p>}
       <ContactoGuardia />
     </div>

@@ -19,7 +19,7 @@ export default function ReplicaBadge() {
       : `Réplica · sincronizado hace ${ago < 60 ? `${ago} s` : `${Math.round(ago / 60)} min`}`
   // Texto de la barra de estado; atrasada o con error, resaltada
   return (
-    <span className={cn('inline-flex items-center gap-1', !ok && 'font-semibold text-marco-texto')}
+    <span className={cn('inline-flex items-center gap-1', !ok && 'font-semibold text-texto')}
       title={st?.error ? `Último error: ${st.error}` : 'Servidor réplica: datos de planta, solo lectura'}>
       <RefreshCw className="h-3 w-3" />{text}
     </span>

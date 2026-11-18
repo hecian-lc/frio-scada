@@ -1,32 +1,54 @@
+import { Link, useLocation } from 'react-router-dom'
 import { Sun, Moon, LogOut, Menu } from 'lucide-react'
 import { useTheme } from '../../lib/theme'
 import { useNow } from '../../lib/useNow'
-import { hhmmss } from '../../lib/camaras'
-import { useAuthStore, ROLE_LABEL } from '../../store/auth'
+import { fechaDia, hhmm, hhmmss } from '../../lib/camaras'
+import { estadoConexion, textoAlarmas } from '../../lib/conexion'
+import { pantallaDe } from '../../lib/pantallas'
+import { useAuthStore } from '../../store/auth'
 import { useBrandingStore } from '../../store/branding'
+import { useCamarasStore } from '../../store/camaras'
+import { Pastilla } from '../ui/pastilla'
 
-const boton = 'inline-flex h-[44px] w-[44px] shrink-0 items-center justify-center text-marco-texto-2 hover:bg-marco-2 hover:text-marco-texto md:h-[32px] md:w-[32px]'
+const boton = 'inline-flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-md text-texto-2 hover:bg-seleccion hover:text-texto'
 
-// Barra de la app: 40 px en la computadora, 48 px en el celular. ☰ (solo computadora) achica el navegador.
-export default function BarraApp({ compacto, alternarMenu }: { compacto: boolean; alternarMenu: () => void }) {
+// Encabezado: 72 px en la computadora, con el único título de la pantalla y el estado general; 60 px azul en el celular.
+export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto: boolean; alternarMenu: () => void; alarmas: number }) {
   const { theme, toggle } = useTheme()
   const ahora = useNow(1000)
   const logout = useAuthStore(s => s.logout)
-  const role = useAuthStore(s => s.role)
-  const user = useAuthStore(s => s.user)
   const logoUrl = useBrandingStore(s => s.logoUrl)
   const brandName = useBrandingStore(s => s.name)
-  return (
-    <header className="flex h-[48px] shrink-0 items-center gap-3 bg-marco px-3 text-marco-texto md:h-[40px]">
-      <button type="button" className={`${boton} -ml-1 hidden md:inline-flex`} onClick={alternarMenu}
+  const recibidoEn = useCamarasStore(s => s.recibidoEn)
+  const ts = useCamarasStore(s => s.ts)
+  const { ruta } = pantallaDe(useLocation().pathname)
+  const { tipo } = estadoConexion(recibidoEn, ahora)
+  const enLinea = (tipo === 'ok' || tipo === 'demora') && ts !== null
+  return <>
+    <header className="flex h-[60px] shrink-0 items-center gap-2.5 bg-navegador px-3 text-navegador-texto md:hidden">
+      <span className="grid h-[36px] w-[36px] shrink-0 place-items-center rounded-md bg-white p-1">
+        <img src={logoUrl} alt={brandName} className="max-h-full max-w-full object-contain" />
+      </span>
+      <span className="min-w-0 flex-1 leading-tight">
+        <b className="block truncate text-base font-semibold text-white">{brandName}</b>
+        <span className="block truncate text-xs">{enLinea ? `PLC en línea · ${hhmm(ts)}` : 'PLC sin conexión'}</span>
+      </span>
+      <span className="shrink-0 font-mono text-base text-white" title="Hora de planta">{hhmmss(ahora)}</span>
+    </header>
+
+    <header className="hidden h-[72px] shrink-0 items-center gap-4 border-b border-linea bg-panel px-8 md:flex">
+      <button type="button" className={`${boton} -ml-3`} onClick={alternarMenu}
         title={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-label={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-expanded={!compacto}>
         <Menu className="h-5 w-5" />
       </button>
-      <img src={logoUrl} alt={brandName} className="h-[28px] w-auto max-w-[64px] shrink-0 object-contain md:max-w-[140px]" />
-      <span className="min-w-0 truncate text-lg font-semibold">Cámaras de frío</span>
-      <div className="ml-auto flex shrink-0 items-center gap-3 text-sm text-marco-texto-2">
-        <span className="font-mono text-marco-texto" title="Hora de planta">{hhmmss(ahora)}</span>
-        <span className="hidden md:inline" title={`Sesión: ${user} (${role})`}>{user} · {ROLE_LABEL[role] || 'Operador'}</span>
+      <div className="min-w-0">
+        <h1 className="truncate text-xl font-bold leading-tight">{ruta[ruta.length - 1]}</h1>
+        <div className="text-sm text-texto-2">{fechaDia(ahora)}</div>
+      </div>
+      <div className="ml-auto flex shrink-0 items-center gap-3">
+        {alarmas > 0 && <Link to="/alarmas" className="rounded-full"><Pastilla tono="alta">{textoAlarmas(alarmas)}</Pastilla></Link>}
+        {enLinea ? <Pastilla tono="ok">PLC en línea ·&nbsp;<span className="font-mono">{hhmmss(ts)}</span></Pastilla> : <Pastilla tono="neutro">PLC sin conexión</Pastilla>}
+        <span className="font-mono text-lg" title="Hora de planta">{hhmmss(ahora)}</span>
         <div className="flex items-center">
           <button type="button" className={boton} onClick={toggle} title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'} aria-label={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -37,5 +59,5 @@ export default function BarraApp({ compacto, alternarMenu }: { compacto: boolean
         </div>
       </div>
     </header>
-  )
+  </>
 }
