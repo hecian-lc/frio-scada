@@ -59,8 +59,8 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minuto, tramos, filas, camara, minutosPlan])
 
-  if (error) return <Panel titulo="Qué hizo cada equipo hoy"><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
-  if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy"><div className="text-sm text-texto-2">Cargando…</div></Panel>
+  if (error) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
+  if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">Cargando…</div></Panel>
 
   const paso = ancho < 480 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
@@ -70,7 +70,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
   const nCam = camara.replace(/\D/g, '')
 
   return (
-    <Panel titulo="Qué hizo cada equipo hoy">
+    <Panel titulo="Qué hizo cada equipo hoy" grande>
       <div className="space-y-3">
       <div ref={caja} className="relative">
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'pan-y' }}
