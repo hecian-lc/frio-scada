@@ -36,7 +36,7 @@ export default function TarjetaEquipo({ estado, cam, g, hayDatos, atenuado, perm
       </div>
       <dl className="mt-3 space-y-1 text-sm">
         {([['Horas de marcha', 'horas_marcha'], ['Arranques', 'arranques'], ['Sin descongelar', 'horas_sin_desc']] as const).map(([t, k]) => (
-          <div key={k} className="flex items-baseline justify-between gap-2"><dt className="text-xs text-texto-2">{t}</dt>{hayDatos ? <dd className="font-mono font-semibold">{dato(k)}</dd> : <dd className="h-[18px] w-14 animate-pulse rounded-[10px] bg-fila-total" />}</div>
+          <div key={k} className="flex items-baseline justify-between gap-2 whitespace-nowrap"><dt className="text-xs text-texto-2">{t}</dt>{hayDatos ? <dd className="text-right font-mono font-semibold">{dato(k)}</dd> : <dd className="h-[18px] w-14 animate-pulse rounded-[10px] bg-fila-total" />}</div>
         ))}
       </dl>
       <Button variant="outline" className="mt-3 w-full max-md:min-h-[44px]" disabled={!permitido || !hayDatos || atenuado} title={!hayDatos || atenuado ? 'Sin conexión con el PLC' : undefined} onClick={onCambiar}>Cambiar modo</Button>

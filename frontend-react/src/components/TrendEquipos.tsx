@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Panel } from './Panel'
 import { GRUPOS, hhmm, type FilaDescongelado } from '../lib/camaras'
@@ -10,9 +11,9 @@ const DIA = 24 * 3600000
 const COLOR_INST: Record<EstadoInstante, string> = { enfriando: COLOR_TRAMO.frio, descongelando: COLOR_TRAMO.descongelando, apagado: COLOR_TRAMO.apagado, 'sin datos': 'var(--linea)' }
 const aHora = (m: number) => `${String(m).padStart(2, '0')}:00`
 
-interface Props { tramos: Tramo[] | null; filas: FilaDescongelado[] | null; horarios: HorarioVista[]; camara: string; dia0: number; ahora: number; minutosPlan: (horario: number) => number | undefined; error: boolean }
+interface Props { tramos: Tramo[] | null; filas: FilaDescongelado[] | null; horarios: HorarioVista[]; camara: string; dia0: number; ahora: number; minutosPlan: (horario: number) => number | undefined; error: boolean; accion?: ReactNode }
 
-export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ahora, minutosPlan, error }: Props) {
+export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ahora, minutosPlan, error, accion }: Props) {
   const caja = useRef<HTMLDivElement>(null), svg = useRef<SVGSVGElement>(null), tarjeta = useRef<HTMLDivElement>(null)
   const idHachura = `hachura${useId().replace(/:/g, '')}`
   const [ancho, setAncho] = useState(0)
@@ -62,8 +63,8 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minuto, tramos, filas, camara, minutosPlan])
 
-  if (error) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
-  if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">Cargando…</div></Panel>
+  if (error) return <Panel titulo="Qué hizo cada equipo hoy" grande accion={accion}><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
+  if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy" grande accion={accion}><div className="text-sm text-texto-2">Cargando…</div></Panel>
 
   const paso = ancho < 600 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
@@ -73,7 +74,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
   const nCam = camara.replace(/\D/g, '')
 
   return (
-    <Panel titulo="Qué hizo cada equipo hoy" grande>
+    <Panel titulo="Qué hizo cada equipo hoy" grande accion={accion}>
       <div className="space-y-3">
       <div ref={caja} className="relative">
         {W > 0 && <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'pan-y' }}

@@ -39,7 +39,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
           <img src={logoUrl} alt={brandName} className="max-h-full max-w-full object-contain" />
         </span>
         {!compacto && <span className="min-w-0 leading-tight">
-          <b className="block truncate text-base font-semibold text-white">{brandName}</b>
+          <b className="line-clamp-2 text-base font-semibold leading-tight text-white">{brandName}</b>
           <span className="block truncate text-xs">Cámaras de frío</span>
         </span>}
       </div>

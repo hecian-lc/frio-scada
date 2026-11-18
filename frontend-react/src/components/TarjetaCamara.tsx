@@ -33,14 +33,14 @@ export default function TarjetaCamara({ cam, filas }: { cam: string; filas: Fila
         <Link to={`/camara/${cam}`} className="toque ml-1 inline-flex items-center text-sm font-semibold text-accion">Ver cámara</Link>
       </>}>
       {incompatible && <p className="mb-2 text-sm text-texto-2">El PLC tiene un programa viejo</p>}
-      <div className={cn('grid grid-cols-2 gap-2 sm:grid-cols-4', atenuado && 'opacity-[.55] grayscale-[.6]')}>
+      <div className={cn('grid grid-cols-4 gap-1.5 sm:gap-2', atenuado && 'opacity-[.55] grayscale-[.6]')}>
         {GRUPOS.map(g => {
           if (cargando) return <div key={g} className="h-[52px] animate-pulse rounded-[10px] bg-fila-total" />
           const eq = estadoEquipo(estado!, cam, g)
           return (
-            <div key={g} className="flex items-center gap-2 rounded-[10px] bg-fila-total p-2">
+            <div key={g} className="flex flex-col items-center gap-1 rounded-[10px] bg-fila-total px-1 py-2 text-center sm:flex-row sm:gap-2 sm:p-2 sm:text-left">
               <span className="inline-grid h-8 w-8 shrink-0 place-items-center rounded-full" style={{ background: eq.color, color: eq.sobre, border: eq.borde ? `1px solid ${eq.borde}` : undefined }}><Icono nombre={eq.icono} size={18} /></span>
-              <div className="min-w-0 text-sm leading-tight"><div className="truncate font-semibold">Equipo {g}</div><div className="truncate text-texto-2">{eq.texto}</div></div>
+              <div className="min-w-0 max-w-full text-xs leading-tight sm:text-sm"><div className="truncate font-semibold">Equipo {g}</div><div className="truncate text-texto-2">{eq.texto}</div></div>
             </div>
           )
         })}

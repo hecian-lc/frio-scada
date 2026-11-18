@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import AvisoArranque from '../components/AvisoArranque'
 import Indicadores from '../components/Indicadores'
@@ -7,7 +8,6 @@ import { Segmentado } from '../components/ui/segmentado'
 import TrendEquipos from '../components/TrendEquipos'
 import EventosHoy from '../components/EventosHoy'
 import NovedadesTurno from '../components/NovedadesTurno'
-import { Panel } from '../components/Panel'
 import { useCamarasStore } from '../store/camaras'
 import { estaVencido } from '../lib/estadoGrupo'
 import { aTramos, horariosVista, type TramoApi } from '../lib/paginaCamara'
@@ -19,7 +19,7 @@ import { useNow } from '../lib/useNow'
 import { iniciarTutorial, tutorialVisto } from '../lib/tutorial'
 
 // Un trend por cámara; componente aparte para que los hooks de datos sean legales dentro del map
-function TrendCamara({ cam }: { cam: string }) {
+function TrendCamara({ cam, accion }: { cam: string; accion: ReactNode }) {
   const estado = useCamarasStore(s => s.estado)
   const recibidoEn = useCamarasStore(s => s.recibidoEn)
   const incompatible = useCamarasStore(s => s.mapa === 'incompatible')
@@ -32,11 +32,7 @@ function TrendCamara({ cam }: { cam: string }) {
   const sinDatos = !estado || incompatible || estaVencido(recibidoEn, ahora)
   const horarios = estado && !sinDatos ? horariosVista(estado, cam, ahora, filas.error ? null : filas.data) : []
   const dia0 = Date.parse(`${dia}T00:00:00${PLANTA_OFFSET}`)
-  return (
-    <div>
-      <TrendEquipos tramos={tramos} filas={filas.error ? null : filas.data} horarios={horarios} camara={cam} dia0={dia0} ahora={ahora} minutosPlan={minutosPlan} error={tr.error} />
-    </div>
-  )
+  return <TrendEquipos tramos={tramos} filas={filas.error ? null : filas.data} horarios={horarios} camara={cam} dia0={dia0} ahora={ahora} minutosPlan={minutosPlan} error={tr.error} accion={accion} />
 }
 
 export default function General() {
@@ -58,10 +54,9 @@ export default function General() {
         <div className="min-w-0 space-y-3"><div data-tour="alarma"><TarjetaAlarma /></div><NovedadesTurno /></div>
       </div>
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_300px]">
-        <Panel grande titulo="Qué hizo cada equipo hoy" data-tour="trend" className="min-w-0"
-          accion={<Segmentado aria-label="Cámara del gráfico" activo={camTrend} onCambio={setCamTrend} items={CAMARAS.map(c => ({ id: c, label: nombreCamara(c) }))} />}>
-          <TrendCamara cam={camTrend} />
-        </Panel>
+        <div className="min-w-0" data-tour="trend">
+          <TrendCamara cam={camTrend} accion={<Segmentado aria-label="Cámara del gráfico" activo={camTrend} onCambio={setCamTrend} items={CAMARAS.map(c => ({ id: c, label: nombreCamara(c) }))} />} />
+        </div>
         <div className="min-w-0" data-tour="eventos"><EventosHoy eventos={ev.data} error={ev.error} max={6} titulo="Últimos eventos" /></div>
       </div>
     </div>

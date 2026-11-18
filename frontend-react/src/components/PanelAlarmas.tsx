@@ -6,14 +6,13 @@ import QueHacer from './QueHacer'
 import { Check } from 'lucide-react'
 import { Panel } from './Panel'
 import MarcaAlarma from './MarcaAlarma'
-import MarcaSinDatos from './MarcaSinDatos'
 
 type Vista = Omit<AlarmaActivaVista, 'desde'> & { desde?: number | null; claves?: string[] }
 
 // alarmas = null: sin datos frescos del PLC
 export default function PanelAlarmas({ alarmas }: { alarmas: Vista[] | null }) {
   const { vistas, marcar } = useVistas(!!alarmas?.length)
-  if (!alarmas) return <Panel titulo="Alarmas de la cámara"><div className="flex items-center gap-2 text-sm text-estado-invalido"><MarcaSinDatos />Sin datos del PLC</div></Panel>
+  if (!alarmas) return <Panel titulo="Alarmas de la cámara"><div className="text-sm text-texto-2">Sin datos del PLC</div></Panel>
   if (!alarmas.length) return <Panel titulo="Alarmas de la cámara"><div className="flex items-center gap-2 text-sm font-semibold text-ok-texto"><Check size={18} aria-hidden="true" />Sin alarmas activas</div></Panel>
   return (
     <Panel titulo="Alarmas de la cámara">

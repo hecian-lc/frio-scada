@@ -20,7 +20,7 @@ export default function AvisoConexion() {
         <b className="block text-base font-semibold">
           {e.tipo === 'cortada' ? `Sin conexión con el PLC desde las ${hhmm(e.desde!)} (${hace(e.minutos!)})` : 'Sin conexión con el PLC'}
         </b>
-        Lo que ves son los últimos datos recibidos. Las cámaras siguen funcionando con el tablero. Revisá la red de la planta o avisá al técnico.
+        {e.tipo === 'cortada' ? 'Lo que ves son los últimos datos recibidos. ' : 'Todavía no llegó ningún dato del PLC. '}Las cámaras siguen funcionando con el tablero. Revisá la red de la planta o avisá al técnico.
       </div>
       <span className="hidden shrink-0 text-sm sm:inline">Reintentando…</span>
     </div>
