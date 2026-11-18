@@ -21,8 +21,8 @@ export function Segmentado({ items, activo, onCambio, grande, 'aria-label': etiq
       {items.map(it => {
         const on = it.id === activo
         const cls = cn(
-          'inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-3',
-          grande ? 'h-[40px] text-lg' : 'h-[30px] text-sm',
+          'toque md:min-h-0 inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-3',
+          grande ? 'md:h-[40px] text-lg' : 'md:h-[30px] text-sm',
           on ? 'bg-panel font-semibold shadow-tarjeta' : 'text-texto-2'
         )
         const contenido = <>{it.label}{it.marca && <span aria-label="con alarma" className="h-2 w-2 rounded-full bg-estado-alta" />}</>

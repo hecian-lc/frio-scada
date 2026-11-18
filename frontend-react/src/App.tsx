@@ -8,6 +8,7 @@ import BarraEstado from './components/marco/BarraEstado'
 import AvisoAlarmaCelular from './components/marco/AvisoAlarmaCelular'
 import AvisoConexion from './components/marco/AvisoConexion'
 import { useAlarmasActivas } from './lib/useAlarmasActivas'
+import { pantallaDe } from './lib/pantallas'
 import { useLiveStore } from './store/live'
 import { useConfigStore } from './store/config'
 import { useAuthStore, isAdminRole } from './store/auth'
@@ -88,6 +89,7 @@ function Marco() {
   const { pathname } = useLocation()  // el error de una vista no queda pegado al navegar a otra
   const isAdmin = isAdminRole(useAuthStore(s => s.role))
   const alarmas = useAlarmasActivas()
+  const { ruta } = pantallaDe(pathname)
 
   // ☰ de la barra: navegador completo o solo íconos (se recuerda en este navegador)
   const [compacto, setCompacto] = useState(() => { try { return localStorage.getItem('frio-menu-compacto') === '1' } catch { return false } })
@@ -123,7 +125,11 @@ function Marco() {
         <BarraApp compacto={compacto} alternarMenu={alternarMenu} alarmas={alarmas.grupos.length} />
         <AvisoConexion />
         <AvisoAlarmaCelular alarmas={alarmas} />
-        <main className="min-w-0 flex-1 overflow-auto p-3 md:p-6 md:px-8">{contenido}</main>
+        <main className="min-w-0 flex-1 overflow-auto p-3 md:p-6 md:px-8">
+          {/* En el celular el encabezado no lleva el título de la pantalla: va acá, arriba del contenido */}
+          <h1 className="mb-3 text-xl font-bold md:hidden">{ruta[ruta.length - 1]}</h1>
+          {contenido}
+        </main>
         <BarraEstado />
         <NavegadorCelular sinVer={alarmas.sinVer.length} />
       </div>

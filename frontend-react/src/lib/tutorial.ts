@@ -8,28 +8,29 @@ export interface Paso { el: string; titulo: string; texto: string; soloAdmin?: b
 export type Tutorial = 'inicio' | 'camara'
 
 const INICIO: Paso[] = [
-  { el: 'camaras', titulo: 'Cámaras', texto: 'Una fila por cámara con un cuadrado por equipo: azul enfriando, verde azulado descongelando, celeste escurriendo, gris azulado manual, blanco o gris con borde apagado, cuadrado rojo con "!" en alarma y violeta con "?" sin datos. Tocá la fila para ver el detalle de la cámara.' },
-  { el: 'trend', titulo: 'Qué hizo cada equipo', texto: 'Lo que hizo cada equipo hoy, hora por hora, una cámara debajo de la otra. La línea azul es la hora actual.' },
-  { el: 'hoy', titulo: 'Hoy', texto: 'Por cámara: descongelados hechos, alarmas activas y compresores en marcha. La última fila es el total de la planta. "—" quiere decir que no hay dato.' },
+  { el: 'hoy', titulo: 'La planta hoy', texto: 'Los números de toda la planta: compresores en marcha, descongelados hechos y el próximo, alarmas activas y equipos fuera de servicio. "—" quiere decir que no hay dato.' },
+  { el: 'camaras', titulo: 'Cámaras', texto: 'Una tarjeta por cámara con cada equipo: un círculo con su ícono y el estado escrito (enfriando, descongelando, escurriendo, manual, apagado o en alarma, con el cuadrado rojo "!"). "Ver cámara" lleva al detalle.' },
+  { el: 'alarma', titulo: 'Alarmas', texto: 'La alarma activa más reciente, qué hacer y a quién llamar. Con "Visto" avisás que ya la viste: el aviso deja de repetirse por Telegram y correo.' },
+  { el: 'trend', titulo: 'Qué hizo cada equipo', texto: 'Lo que hizo cada equipo hoy, hora por hora. Arriba elegís la cámara. La línea azul "ahora" es la hora actual.' },
   { el: 'eventos', titulo: 'Últimos eventos', texto: 'Lo último que pasó en las cámaras, con la hora. "Ver todos" lleva a la página de Eventos.' },
-  { el: 'nav-camaras', titulo: 'Cámaras', texto: 'El detalle de cada cámara: el gráfico de las últimas horas, los equipos y los horarios de descongelado.' },
+  { el: 'nav-camaras', titulo: 'Cámaras', texto: 'El detalle de cada cámara: los equipos, los descongelados del día, las alarmas y el gráfico.' },
   { el: 'nav-alarmas', titulo: 'Alarmas', texto: 'Las alarmas activas ahora y las que hubo en los días anteriores, con cuánto duraron.' },
   { el: 'nav-eventos', titulo: 'Eventos', texto: 'Todo lo que pasó: cambios de modo, descongelados, maniobras desde el portal.' },
   { el: 'nav-historial', titulo: 'Historial', texto: 'Los descongelados hechos y cuánto trabajó cada equipo, por día. Se puede bajar a Excel.' },
   { el: 'nav-mas', titulo: 'Más', texto: 'El reporte diario en PDF, los avisos por Telegram y mail y el estado del sistema.' },
-  { el: 'nav-mas', titulo: 'Para administradores', texto: 'En Más también están la Programación de descongelados, los Usuarios y la Configuración avanzada. Los ajustes de cada cámara están en el botón ⚙ Ajustes de su página.', soloAdmin: true },
+  { el: 'nav-mas', titulo: 'Para administradores', texto: 'En Más también están la Programación de descongelados, los Usuarios y la Configuración avanzada. Los ajustes de cada cámara están en el botón "Ajustes" de su página.', soloAdmin: true },
 ]
 
 const CAMARA: Paso[] = [
-  { el: 'cam-selector', titulo: 'Elegir la cámara', texto: 'Desde acá se pasa de una cámara a la otra.' },
-  { el: 'cam-estado', titulo: 'Cómo está la cámara', texto: 'El modo en que está, cuándo es el próximo descongelado (o cuánto le falta al que está en curso) y el estado general. Si hay una alarma aparece un cuadrado rojo con "!".' },
-  { el: 'cam-equipos', titulo: 'Los equipos', texto: 'Cada equipo con su estado y sus salidas: C compresor, E evaporador, R resistencia (una salida prendida se ve con un cuadrado lleno, azul; la resistencia descongelando, verde azulado; apagada, cuadrado vacío). También los arranques, las horas de marcha y el tiempo desde su último descongelado.' },
-  { el: 'cam-equipos', titulo: 'Manejar un equipo', texto: 'Con "Cambiar…" se puede pasar un equipo a automático, fuera de servicio o manual, o cortar un descongelado. Solo para usuarios que pueden operar y con la llave de mando remoto habilitada en el tablero.' },
+  { el: 'cam-selector', titulo: 'Elegir la cámara', texto: 'Desde acá se pasa de una cámara a la otra. Un punto rojo marca la cámara que tiene una alarma.' },
+  { el: 'cam-estado', titulo: 'Cómo está la cámara', texto: 'La pastilla del modo en que está la cámara y cuándo es el próximo descongelado (o cuánto le falta al que está en curso).' },
+  { el: 'cam-equipos', titulo: 'Los equipos', texto: 'Una tarjeta por equipo con su estado y sus salidas: Comp. (compresor), Evap. (evaporador) y Resist. (resistencia), que se ven llenas en azul cuando están en marcha (la resistencia descongelando, en verde azulado) y en gris cuando están paradas. También los arranques, las horas de marcha y el tiempo desde su último descongelado.' },
+  { el: 'cam-equipos', titulo: 'Manejar un equipo', texto: 'Con "Cambiar modo" se puede pasar un equipo a automático, fuera de servicio o manual, o cortar un descongelado. Solo para usuarios que pueden operar y con la llave de mando remoto habilitada en el tablero.' },
+  { el: 'cam-horarios', titulo: 'Descongelados de hoy', texto: 'Los descongelados del día: cuáles ya se hicieron, cuál está en curso y cuál es el próximo.' },
   { el: 'cam-alarmas', titulo: 'Alarmas de la cámara', texto: 'Las alarmas activas de esta cámara y qué hacer con cada una. Con "Visto" avisás que ya la viste: el aviso deja de repetirse por Telegram y correo.' },
-  { el: 'cam-horarios', titulo: 'Horarios de hoy', texto: 'Los horarios de descongelado del día: cuáles ya se hicieron, cuál está en curso y cuál es el próximo.' },
-  { el: 'cam-trend', titulo: 'Gráfico del día', texto: 'Lo que hizo cada equipo hoy, hora por hora: azul enfriando, verde azulado descongelando, celeste escurriendo, gris azulado en manual, blanco con borde apagado y rayado sin datos. La línea azul "ahora" es la hora actual y las marcas de arriba son los horarios programados. Pasá el mouse (o tocá) para ver el detalle de ese momento.' },
+  { el: 'cam-trend', titulo: 'Gráfico del día', texto: 'Lo que hizo cada equipo hoy, hora por hora: enfriando, descongelando, apagado o rayado sin datos (los colores están abajo del gráfico). La línea azul "ahora" es la hora actual y las marcas de arriba son los descongelados programados. Pasá el mouse (o tocá) para ver el detalle de ese momento.' },
   { el: 'cam-eventos', titulo: 'Eventos de hoy', texto: 'Lo último que pasó en esta cámara. "Ver todos" lleva a la página de Eventos.' },
-  { el: 'cam-ajustes', titulo: 'Ajustes', texto: 'Los horarios de descongelado, las duraciones y qué equipos van en cada etapa de esta cámara.', soloAdmin: true },
+  { el: 'cam-ajustes', titulo: 'Ajustes', texto: 'Con "Ajustes" cambiás los horarios de descongelado, las duraciones y qué equipos van en cada etapa de esta cámara.', soloAdmin: true },
 ]
 
 const PASOS: Record<Tutorial, Paso[]> = { inicio: INICIO, camara: CAMARA }

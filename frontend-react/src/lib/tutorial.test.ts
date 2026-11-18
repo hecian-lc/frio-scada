@@ -13,7 +13,7 @@ describe('pasos del tutorial', () => {
 describe('tutorial de inicio', () => {
   test('apunta a los paneles de Inicio', () => {
     const els = pasosPara('inicio', true).map(p => p.el)
-    expect(els.slice(0, 4)).toEqual(['camaras', 'trend', 'hoy', 'eventos'])
+    expect(els.slice(0, 5)).toEqual(['hoy', 'camaras', 'alarma', 'trend', 'eventos'])
     expect(els).not.toContain('semaforo')
   })
 })

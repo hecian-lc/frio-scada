@@ -55,7 +55,7 @@ export default function General() {
       <Indicadores filas={filas} />
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_300px]">
         {CAMARAS.map((c, i) => i === 0 ? <div key={c} className="min-w-0" data-tour="camaras"><TarjetaCamara cam={c} filas={filas} /></div> : <TarjetaCamara key={c} cam={c} filas={filas} />)}
-        <div className="min-w-0 space-y-3"><TarjetaAlarma /><NovedadesTurno /></div>
+        <div className="min-w-0 space-y-3"><div data-tour="alarma"><TarjetaAlarma /></div><NovedadesTurno /></div>
       </div>
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_300px]">
         <Panel grande titulo="Qué hizo cada equipo hoy" data-tour="trend" className="min-w-0"

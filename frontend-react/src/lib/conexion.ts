@@ -10,4 +10,8 @@ export function estadoConexion(recibidoEn: number | null, ahora: number): { tipo
   return { tipo: 'cortada', desde: recibidoEn, minutos: Math.floor((ahora - recibidoEn) / 60000) }
 }
 
+// Al abrir el portal todavía no llegó nada ('nunca'): se espera AVISO_MS desde que se montó el marco antes de avisar.
+export const mostrarAviso = (tipo: ReturnType<typeof estadoConexion>['tipo'], montadoEn: number, ahora: number) =>
+  tipo === 'cortada' || (tipo === 'nunca' && ahora - montadoEn > AVISO_MS)
+
 export const textoAlarmas = (n: number) => n === 0 ? '' : n === 1 ? '1 alarma activa' : `${n} alarmas activas`

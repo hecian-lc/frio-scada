@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Sun, Moon, LogOut, Menu } from 'lucide-react'
 import { useTheme } from '../../lib/theme'
 import { useNow } from '../../lib/useNow'
 import { fechaDia, hhmm, hhmmss } from '../../lib/camaras'
-import { estadoConexion, textoAlarmas } from '../../lib/conexion'
+import { estadoConexion, mostrarAviso, textoAlarmas } from '../../lib/conexion'
 import { pantallaDe } from '../../lib/pantallas'
 import { useAuthStore } from '../../store/auth'
 import { useBrandingStore } from '../../store/branding'
@@ -26,6 +27,8 @@ export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto
   const { tipo } = estadoConexion(recibidoEn, ahora)
   const tituloTema = theme === 'dark' ? 'Modo claro' : 'Modo oscuro'
   const enLinea = (tipo === 'ok' || tipo === 'demora') && ts !== null
+  const [montadoEn] = useState(Date.now)
+  const textoPlc = tipo === 'nunca' && !mostrarAviso(tipo, montadoEn, ahora) ? 'PLC conectando…' : 'PLC sin conexión'
   return <>
     <header className="flex h-[60px] shrink-0 items-center gap-2.5 bg-navegador px-3 text-navegador-texto md:hidden">
       <span className="grid h-[36px] w-[36px] shrink-0 place-items-center rounded-md bg-white p-1">
@@ -33,7 +36,7 @@ export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto
       </span>
       <span className="min-w-0 flex-1 leading-tight">
         <b className="block truncate text-base font-semibold text-white">{brandName}</b>
-        <span className="block truncate text-xs">{enLinea ? `PLC en línea · ${hhmm(ts)}` : 'PLC sin conexión'}</span>
+        <span className="block truncate text-xs">{enLinea ? `PLC en línea · ${hhmm(ts)}` : textoPlc}</span>
       </span>
       <span className="shrink-0 font-mono text-base text-white" title="Hora de planta">{hhmmss(ahora)}</span>
       <div className="-mr-2 flex shrink-0 items-center">
@@ -57,7 +60,7 @@ export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto
       </div>
       <div className="flex shrink-0 items-center gap-3">
         {alarmas > 0 && <Link to="/alarmas" className="rounded-full"><Pastilla tono="alta">{textoAlarmas(alarmas)}</Pastilla></Link>}
-        {enLinea ? <Pastilla tono="ok">PLC en línea ·&nbsp;<span className="font-mono">{hhmmss(ts)}</span></Pastilla> : <Pastilla tono="neutro">PLC sin conexión</Pastilla>}
+        {enLinea ? <Pastilla tono="ok">PLC en línea ·&nbsp;<span className="font-mono">{hhmmss(ts)}</span></Pastilla> : <Pastilla tono="neutro">{textoPlc}</Pastilla>}
         <span className="hidden font-mono text-lg lg:inline" title="Hora de planta">{hhmmss(ahora)}</span>
         <div className="flex items-center">
           <button type="button" className={boton} onClick={toggle} title={tituloTema} aria-label={tituloTema}>

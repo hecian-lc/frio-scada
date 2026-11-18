@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { WifiOff } from 'lucide-react'
 import { hhmm } from '../../lib/camaras'
-import { estadoConexion } from '../../lib/conexion'
+import { estadoConexion, mostrarAviso } from '../../lib/conexion'
 import { useNow } from '../../lib/useNow'
 import { useCamarasStore } from '../../store/camaras'
 
@@ -8,10 +9,12 @@ const hace = (m: number) => (m < 1 ? 'hace menos de un minuto' : m === 1 ? 'hace
 
 // Sin datos del PLC por más de 15 s: aviso ámbar debajo del encabezado (las cámaras siguen con el tablero).
 export default function AvisoConexion() {
-  const e = estadoConexion(useCamarasStore(s => s.recibidoEn), useNow(1000))
-  if (e.tipo !== 'cortada' && e.tipo !== 'nunca') return null
+  const [montadoEn] = useState(Date.now)
+  const ahora = useNow(1000)
+  const e = estadoConexion(useCamarasStore(s => s.recibidoEn), ahora)
+  if (!mostrarAviso(e.tipo, montadoEn, ahora)) return null
   return (
-    <div role="alert" className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-aviso-borde bg-aviso-suave p-3 text-aviso-texto md:mx-8 md:mt-6 md:px-4">
+    <div role="status" className="mx-3 mt-3 flex shrink-0 items-center gap-3 rounded-lg border border-aviso-borde bg-aviso-suave p-3 text-aviso-texto md:mx-8 md:mt-6 md:px-4">
       <span className="grid h-[40px] w-[40px] shrink-0 place-items-center rounded-full bg-panel"><WifiOff aria-hidden="true" className="h-5 w-5" /></span>
       <div className="min-w-0 flex-1 text-sm">
         <b className="block text-base font-semibold">

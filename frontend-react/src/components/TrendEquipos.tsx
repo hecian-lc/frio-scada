@@ -4,7 +4,8 @@ import { GRUPOS, hhmm, type FilaDescongelado } from '../lib/camaras'
 import { COLOR_TRAMO, TEXTO_TRAMO, HACHURA, type Tramo, type HorarioVista } from '../lib/paginaCamara'
 import { anclasEtiquetas, detalleEnInstante, posicionTarjeta, type DetalleInstante, type EstadoInstante } from '../lib/trend'
 
-const W = 1000, L = 64, R = 10, Y0 = 26, RH = 14, H = Y0 + GRUPOS.length * RH + 20
+// 1 unidad del SVG = 1 px de pantalla (el ancho es el medido): letra de 12 px y filas de 16 px de verdad
+const L = 64, R = 10, Y0 = 32, RH = 16, H = Y0 + GRUPOS.length * RH + 22
 const DIA = 24 * 3600000
 const COLOR_INST: Record<EstadoInstante, string> = { enfriando: COLOR_TRAMO.frio, descongelando: COLOR_TRAMO.descongelando, apagado: COLOR_TRAMO.apagado, 'sin datos': 'var(--linea)' }
 const aHora = (m: number) => `${String(m).padStart(2, '0')}:00`
@@ -14,13 +15,14 @@ interface Props { tramos: Tramo[] | null; filas: FilaDescongelado[] | null; hora
 export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ahora, minutosPlan, error }: Props) {
   const caja = useRef<HTMLDivElement>(null), svg = useRef<SVGSVGElement>(null), tarjeta = useRef<HTMLDivElement>(null)
   const idHachura = `hachura${useId().replace(/:/g, '')}`
-  const [ancho, setAncho] = useState(1000)
+  const [ancho, setAncho] = useState(0)
   const [cur, setCur] = useState<{ px: number; ts: number; cx: number; cy: number } | null>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = caja.current
-    if (!el || typeof ResizeObserver === 'undefined') return
+    if (!el) return
     setAncho(el.clientWidth)
+    if (typeof ResizeObserver === 'undefined') return
     const ro = new ResizeObserver(() => setAncho(el.clientWidth))
     ro.observe(el)
     return () => ro.disconnect()
@@ -41,6 +43,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
     t.style.top = `${Math.max(0, Math.min(cur.cy - 20, c.clientHeight - t.offsetHeight))}px`
   }, [cur])
 
+  const W = ancho
   const x = (ms: number) => L + ((ms - dia0) / DIA) * (W - L - R)
   const mover = (e: React.PointerEvent) => {
     const r = svg.current!.getBoundingClientRect(), c = caja.current!.getBoundingClientRect()
@@ -62,9 +65,9 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
   if (error) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
   if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy" grande><div className="text-sm text-texto-2">Cargando…</div></Panel>
 
-  const paso = ancho < 480 ? 4 : 2
+  const paso = ancho < 600 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
-  const anclas = anclasEtiquetas(marcas.map(h => x(dia0 + h.min * 60000)), 32)
+  const anclas = anclasEtiquetas(marcas.map(h => x(dia0 + h.min * 60000)), 36)
   const d = det?.descongelado
   const enCurso = !!d && d.finEtapa == null
   const nCam = camara.replace(/\D/g, '')
@@ -73,7 +76,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
     <Panel titulo="Qué hizo cada equipo hoy" grande>
       <div className="space-y-3">
       <div ref={caja} className="relative">
-        <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'pan-y' }}
+        {W > 0 && <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'pan-y' }}
           role="img" aria-label={`Qué hizo cada equipo de la cámara ${nCam} hoy, de 00:00 a 24:00: enfriando, descongelando, apagado o sin datos`}
           onPointerDown={mover} onPointerMove={mover} onPointerLeave={e => { if (e.pointerType !== 'touch') ocultar() }} onPointerCancel={ocultar}>
           <defs>
@@ -84,14 +87,14 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           {Array.from({ length: 25 }, (_, h) => (
             <g key={h}>
               <line x1={x(dia0 + h * 3600000)} x2={x(dia0 + h * 3600000)} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="currentColor" strokeOpacity={0.12} />
-              {h % paso === 0 && <text x={x(dia0 + h * 3600000)} y={Y0 + GRUPOS.length * RH + 12} textAnchor="middle" fontSize={10} className="fill-muted-foreground">{aHora(h)}</text>}
+              {h % paso === 0 && <text x={x(dia0 + h * 3600000)} y={Y0 + GRUPOS.length * RH + 16} textAnchor="middle" fontSize={12} className="fill-muted-foreground">{aHora(h)}</text>}
             </g>
           ))}
           {GRUPOS.map((g, i) => {
             const y = Y0 + i * RH
             return (
               <g key={g}>
-                <text x={4} y={y + 11} fontSize={11} className="fill-foreground">Equipo {g}</text>
+                <text x={4} y={y + 12} fontSize={12} className="fill-foreground">Equipo {g}</text>
                 {tramos.filter(t => t.grupo === `G${g}` && t.fin > dia0 && t.inicio < ahora).map((t, k) => {
                   const a = x(Math.max(t.inicio, dia0)), b = x(Math.min(t.fin, ahora))
                   return b > a ? <rect key={k} x={a} y={y + 2} width={b - a} height={RH - 5} fill={t.estado === 'sin-datos' ? `url(#${idHachura})` : COLOR_TRAMO[t.estado]} stroke={t.estado === 'apagado' ? 'var(--borde-campo)' : undefined} strokeWidth={1} /> : null
@@ -102,15 +105,15 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           {marcas.map((h, i) => (
             // La punta del triángulo y la línea punteada marcan la hora exacta (el texto va arriba; corrido si hay otra cerca)
             <g key={h.h} className="fill-texto-2 stroke-texto-2">
-              <text x={x(dia0 + h.min * 60000) + (anclas[i] === 'start' ? -3 : anclas[i] === 'end' ? 3 : 0)} y={9} textAnchor={anclas[i]} fontSize={10} stroke="none">{h.hora}</text>
-              <polygon points={`${x(dia0 + h.min * 60000) - 4},12 ${x(dia0 + h.min * 60000) + 4},12 ${x(dia0 + h.min * 60000)},18`} stroke="none" />
-              <line x1={x(dia0 + h.min * 60000)} x2={x(dia0 + h.min * 60000)} y1={18} y2={Y0 + GRUPOS.length * RH} strokeWidth={1} strokeDasharray="2 3" opacity={0.6} />
+              <text x={x(dia0 + h.min * 60000) + (anclas[i] === 'start' ? -3 : anclas[i] === 'end' ? 3 : 0)} y={12} textAnchor={anclas[i]} fontSize={12} stroke="none">{h.hora}</text>
+              <polygon points={`${x(dia0 + h.min * 60000) - 4},15 ${x(dia0 + h.min * 60000) + 4},15 ${x(dia0 + h.min * 60000)},21`} stroke="none" />
+              <line x1={x(dia0 + h.min * 60000)} x2={x(dia0 + h.min * 60000)} y1={21} y2={Y0 + GRUPOS.length * RH} strokeWidth={1} strokeDasharray="2 3" opacity={0.6} />
             </g>
           ))}
           <line x1={x(ahora)} x2={x(ahora)} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="var(--accion)" strokeWidth={1.5} />
-          <text x={x(ahora)} y={Y0 - 9} textAnchor="middle" fontSize={10} fill="var(--accion)">ahora</text>
+          <text x={x(ahora)} y={Y0 - 10} textAnchor="middle" fontSize={12} fill="var(--accion)">ahora</text>
           {cur && <line x1={cur.px} x2={cur.px} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="currentColor" strokeDasharray="3 2" />}
-        </svg>
+        </svg>}
         {cur && det && (
           <div ref={tarjeta} className="pointer-events-none absolute z-10 border border-linea bg-popover text-popover-foreground px-3 py-2.5 text-xs"
             style={{ width: 'max-content', maxWidth: 'min(320px, 100%)', left: 0, top: 0 }}>
