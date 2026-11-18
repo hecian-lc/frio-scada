@@ -1,5 +1,6 @@
 import { test, expect } from 'vitest'
 import type { Estado } from '../store/camaras'
+import type { FilaDescongelado } from './camaras'
 import { resumenPlanta, porCamara } from './resumen'
 
 const AHORA = Date.UTC(2026, 9, 16, 15, 0) // 12:00 de planta
@@ -19,3 +20,11 @@ test('descongelados de = horarios habilitados de las dos cámaras', () => expect
 test('sin filas todavía, hechos es null', () => expect(resumenPlanta(est, null, AHORA).descongelados.hechos).toBeNull())
 test('próximo: el más temprano con nombre de cámara', () => expect(resumenPlanta(est, [], AHORA).proximo).toBe('Cámara 4: hoy 16:00'))
 test('porCamara', () => expect(porCamara(est, 'C4', [], AHORA)).toEqual({ compresores: '6/8', hechos: '0 de 3', proximo: 'hoy 16:00' }))
+test('comp distinto de 1 no cuenta como en marcha (igual que el panel Hoy)', () => expect(resumenPlanta({ ...est, 'C4.G1.comp': 2 }, [], AHORA).compresores.en).toBe(10))
+test('porCamara sin filas: raya, no signo de pregunta', () => expect(porCamara(est, 'C4', null, AHORA).hechos).toBe('— de 3'))
+const fila = (camara: string, horario: string): FilaDescongelado => ({ camara, horario, etapa: 1, grupos: 'G1', inicio: Date.parse('2026-10-16T04:01:00-03:00'), fin: Date.parse('2026-10-16T04:11:00-03:00'), duracionS: 600, cortados: '', saltado: false, noEjecutada: false })
+test('porCamara hechos sale de contarDescongelados con las filas de esa cámara', () => {
+  const filas = [fila('C4', 'H1'), fila('C5', 'H1'), fila('C5', 'H2')]
+  expect(porCamara(est, 'C4', filas, AHORA).hechos).toBe('1 de 3')
+  expect(porCamara(est, 'C5', filas, AHORA).hechos).toBe('2 de 2')
+})

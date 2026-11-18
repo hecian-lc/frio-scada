@@ -4,7 +4,7 @@ import { estadoEquipo, alarmasActivas, proximoTexto } from './frases'
 import { contarDescongelados } from './historial'
 import { horariosVista } from './paginaCamara'
 
-const enMarcha = (e: Estado, c: string) => GRUPOS.filter(g => num(e, `${c}.G${g}.comp`) > 0).length
+const enMarcha = (e: Estado, c: string) => GRUPOS.filter(g => num(e, `${c}.G${g}.comp`) === 1).length
 
 // "hoy 20:00" < "mañana 04:00"; las frases sin hora no compiten
 const orden = (t: string) => { const m = /^(hoy|mañana) (\d{2}:\d{2})$/.exec(t); return m ? (m[1] === 'hoy' ? 0 : 1440) + aMin(m[2]) : null }
@@ -25,7 +25,7 @@ export function porCamara(estado: Estado, c: string, filas: FilaDescongelado[] |
   const hs = horariosVista(estado, c, ahora, filas)
   return {
     compresores: `${enMarcha(estado, c)}/${GRUPOS.length}`,
-    hechos: `${filas ? hs.filter(h => h.estado === 'hecho').length : '?'} de ${hs.length}`,
+    hechos: `${filas ? contarDescongelados(filas.filter(f => f.camara === c)).hechos : '—'} de ${hs.length}`,
     proximo: proximoTexto(estado, c, ahora),
   }
 }
