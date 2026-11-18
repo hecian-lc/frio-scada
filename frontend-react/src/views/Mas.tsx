@@ -19,7 +19,6 @@ export default function Mas() {
   const navigate = useNavigate()
   return (
     <div className="max-w-xl space-y-3">
-      <h1 className="text-xl font-semibold">Más</h1>
       <Panel titulo="Más opciones" className="[&>div]:p-0">
         <ul className="divide-y divide-linea-fila">
           {ITEMS.filter(i => !i.admin || isAdmin).map(i => (

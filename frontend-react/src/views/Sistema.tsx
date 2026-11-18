@@ -90,7 +90,6 @@ export default function Sistema() {
   }, [])
   return (
     <div className="space-y-3 max-w-md md:max-w-none">
-      <h1 className="text-xl font-semibold">Estado del sistema</h1>
       <EstadoApp />
       <Panel titulo="Estado" className="[&>div]:p-0">
         {filasSistema(res, ahora).map(f => (

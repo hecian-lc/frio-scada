@@ -116,7 +116,6 @@ export default function Reportes() {
 
   return (
     <div className="space-y-3 max-w-md">
-      <h1 className="text-xl font-semibold">Reportes</h1>
       <Panel titulo={`Ayer, ${fechaDia(Date.parse(`${dia}T12:00:00-03:00`))}`}>
         <div className="space-y-1 text-sm">
           <div>Descongelados: <span className="font-mono">{n(r.descongelados)}</span>{r.saltados ? <> (<span className="font-mono">{r.saltados}</span> se saltaron)</> : ''}</div>

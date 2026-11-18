@@ -7,7 +7,7 @@ import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Switch } from '../components/ui/switch'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs'
+import { Segmentado } from '../components/ui/segmentado'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table'
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger } from '../components/ui/dialog'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select'
@@ -32,6 +32,8 @@ export default function Config() {
   // Marca, Conexión y Réplicas: solo el superadmin
   const superadmin = useAuthStore(s => s.role === 'superadmin')
 
+  const [tab, setTab] = useState(() => { const t = new URLSearchParams(window.location.search).get('tab'); return t === 'telegram' || t === 'copias' || t === 'guardia' ? t : 'smtp' })
+
   useEffect(() => { if (!store.config) store.load() }, [])
 
   // Sin gate de contraseña propio: la ruta /config ya es solo-admin (por rol).
@@ -47,17 +49,14 @@ export default function Config() {
   return (
     <div className="space-y-3">
     <a href="/grafana/" target="_blank" rel="noreferrer" className="text-sm underline text-primary">Gráficos de largo plazo</a>
-    <Tabs defaultValue={(t => (t === 'telegram' || t === 'copias' || t === 'guardia' ? t : 'smtp'))(new URLSearchParams(window.location.search).get('tab'))} className="space-y-3">
-      <TabsList>
-        <TabsTrigger value="smtp">Correo</TabsTrigger>
-        <TabsTrigger value="telegram">Telegram</TabsTrigger>
-        <TabsTrigger value="guardia">Guardia</TabsTrigger>
-        <TabsTrigger value="camaras">Cámaras</TabsTrigger>
-        {!replica && <TabsTrigger value="copias">Copias</TabsTrigger>}
-        {superadmin && <TabsTrigger value="brand">Marca</TabsTrigger>}
-        {superadmin && <TabsTrigger value="conexion">Conexión</TabsTrigger>}
-        {superadmin && !replica && <TabsTrigger value="replicas">Réplicas</TabsTrigger>}
-      </TabsList>
+    <div className="overflow-x-auto">
+      <Segmentado aria-label="Secciones de configuración" activo={tab} onCambio={setTab} items={[
+        { id: 'smtp', label: 'Correo' }, { id: 'telegram', label: 'Telegram' }, { id: 'guardia', label: 'Guardia' }, { id: 'camaras', label: 'Cámaras' },
+        ...(!replica ? [{ id: 'copias', label: 'Copias' }] : []),
+        ...(superadmin ? [{ id: 'brand', label: 'Marca' }, { id: 'conexion', label: 'Conexión' }] : []),
+        ...(superadmin && !replica ? [{ id: 'replicas', label: 'Réplicas' }] : []),
+      ]} />
+    </div>
 
       {replica && (
         <div className="border border-linea bg-panel px-3 py-2 text-sm">
@@ -66,15 +65,14 @@ export default function Config() {
         </div>
       )}
       {/* fieldset disabled deshabilita inputs/botones (incl. Switch/Select de Radix, que son <button>) */}
-      <TabsContent value="smtp"><SmtpTab /></TabsContent>
-      <TabsContent value="telegram"><TelegramTab /></TabsContent>
-      <TabsContent value="guardia"><GuardiaTab /></TabsContent>
-      {!replica && <TabsContent value="copias"><CopiasTab /></TabsContent>}
-      <TabsContent value="camaras"><CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} /></TabsContent>
-      {superadmin && <TabsContent value="brand"><BrandingTab /></TabsContent>}
-      {superadmin && <TabsContent value="conexion"><ConexionTab /></TabsContent>}
-      {superadmin && !replica && <TabsContent value="replicas"><ReplicasTab /></TabsContent>}
-    </Tabs>
+      {tab === 'smtp' && <SmtpTab />}
+      {tab === 'telegram' && <TelegramTab />}
+      {tab === 'guardia' && <GuardiaTab />}
+      {tab === 'copias' && !replica && <CopiasTab />}
+      {tab === 'camaras' && <CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} />}
+      {tab === 'brand' && superadmin && <BrandingTab />}
+      {tab === 'conexion' && superadmin && <ConexionTab />}
+      {tab === 'replicas' && superadmin && !replica && <ReplicasTab />}
     </div>
   )
 }

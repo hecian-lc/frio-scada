@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { Filtros, SinDatos, type Rango } from '../components/Filtros'
 import { useDatos, hoy } from '../lib/useDatos'
 import { useCamarasStore } from '../store/camaras'
@@ -11,7 +11,7 @@ import QueHacer from '../components/QueHacer'
 import { agruparActivas, agruparPeriodos, alarmasActivasVista, periodosAlarma, ultimoPorClave } from '../lib/alarmas'
 import { equiposPorCamara, equiposDistintos, duracionTxt, equipoDe, horasTxt, prepararAvisos, filasEventos, type EquipoHist, filasAlarmas, filasCompresores, filasDescongelados } from '../lib/historial'
 import { downloadXlsx } from '../lib/xlsx'
-import { cn } from '../lib/utils'
+import { Segmentado } from '../components/ui/segmentado'
 import { Icono } from '../components/Icono'
 import { Panel } from '../components/Panel'
 import MarcaAlarma from '../components/MarcaAlarma'
@@ -26,7 +26,6 @@ const PESTANAS = [
 ]
 const PESTANAS_FIJAS = [{ id: 'alarmas', label: 'Alarmas' }, { id: 'eventos', label: 'Eventos' }]
 const TITULO: Record<string, string> = { descongelados: 'Descongelados', compresores: 'Equipos', alarmas: 'Alarmas del período', eventos: 'Eventos' }
-const pestanaCls = (on: boolean) => cn('toque inline-flex items-center border px-4 text-sm font-medium whitespace-nowrap', on ? 'border-accion bg-accion text-accion-texto' : 'border-borde-campo bg-placa')
 const C = (k: string) => colorEstadoGrupo(k).fondo
 // completo: sin color (lo normal no se marca); cortado o saltado: color de descongelando
 const COLOR_BADGE: Record<string, string | undefined> = { completo: undefined, 'cortado a mano': C('DESCONGELANDO'), saltado: C('DESCONGELANDO') }
@@ -119,13 +118,8 @@ export default function Historial({ fija }: { fija?: 'alarmas' | 'eventos' }) {
 
   return (
     <div className="space-y-3">
-      <h1 className="text-xl font-semibold">{fija === 'alarmas' ? 'Alarmas' : fija === 'eventos' ? 'Eventos' : 'Historial'}</h1>
-      {!fija && <div className="flex gap-2 overflow-x-auto">
-        {PESTANAS.map(p => <Link key={p.id} to={`/historial/${p.id}`} className={pestanaCls(p.id === pestana)}>{p.label}</Link>)}
-      </div>}
-      {fija && <div className="flex gap-2 md:hidden">
-        {PESTANAS_FIJAS.map(p => <Link key={p.id} to={`/${p.id}`} className={pestanaCls(p.id === fija)}>{p.label}</Link>)}
-      </div>}
+      {!fija && <div className="overflow-x-auto"><Segmentado aria-label="Secciones del historial" activo={pestana} items={PESTANAS.map(p => ({ id: p.id, label: p.label, to: `/historial/${p.id}` }))} /></div>}
+      {fija && <div className="md:hidden"><Segmentado aria-label="Alarmas o eventos" activo={fija} items={PESTANAS_FIJAS.map(p => ({ id: p.id, label: p.label, to: `/${p.id}` }))} /></div>}
       <Filtros r={r} set={setR} />
       {pestana === 'alarmas' && (!fresco || !estado
         ? <div className="flex items-center gap-2 border border-linea bg-panel px-2 py-2 text-sm text-estado-invalido"><MarcaSinDatos />Sin datos del PLC</div>

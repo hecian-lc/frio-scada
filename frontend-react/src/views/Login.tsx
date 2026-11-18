@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuthStore } from '../store/auth'
 import { useBrandingStore } from '../store/branding'
-import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import { Panel } from '../components/Panel'
 import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function Login() {
@@ -39,14 +37,13 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 gap-6 bg-suelo text-texto">
-      <div className={`w-full max-w-[420px] ${shake ? 'animate-shake' : ''}`}>
-        <div className="flex flex-col items-center gap-2 mb-4 text-center">
-          <img src={logoUrl} alt={brandName} className="h-[80px] w-auto max-w-[320px] object-contain" />
-          <h1 className="text-2xl font-semibold">Cámaras de frío</h1>
-          <p className="text-base text-texto-2">Unifrisa</p>
+      <div className={`w-full max-w-[400px] rounded-lg bg-panel p-8 shadow-tarjeta ${shake ? 'animate-shake' : ''}`}>
+        <div className="flex flex-col items-center gap-2 mb-6 text-center">
+          <img src={logoUrl} alt="" className="h-[80px] w-auto max-w-[320px] object-contain" />
+          <h1 className="text-xl font-bold">{brandName}</h1>
+          <p className="text-base text-texto-2">Cámaras de frío</p>
         </div>
 
-        <Panel titulo="Iniciar sesión">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="username" className="text-sm">Usuario</Label>
@@ -58,7 +55,7 @@ export default function Login() {
                   value={user}
                   onChange={e => { setUser(e.target.value); setError('') }}
                   autoComplete="username"
-                  className={`h-10 text-base pl-10 ${error ? 'border-destructive' : ''}`}
+                  className={`h-11 rounded-md border-borde-campo text-base pl-10 ${error ? 'border-destructive' : ''}`}
                   placeholder="usuario"
                 />
               </div>
@@ -74,7 +71,7 @@ export default function Login() {
                   value={pass}
                   onChange={e => { setPass(e.target.value); setError('') }}
                   autoComplete="current-password"
-                  className={`h-10 text-base pl-10 pr-10 ${error ? 'border-destructive' : ''}`}
+                  className={`h-11 rounded-md border-borde-campo text-base pl-10 pr-10 ${error ? 'border-destructive' : ''}`}
                   placeholder="••••••••"
                 />
                 <button type="button" onClick={() => setShowPass(v => !v)} tabIndex={-1}
@@ -89,12 +86,11 @@ export default function Login() {
               <p className="text-destructive text-sm text-center">{error}</p>
             )}
 
-            <Button type="submit" className="w-full h-auto py-2.5 text-base" disabled={!user || !pass || loading}>
+            <button type="submit" className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accion text-base font-medium text-accion-texto disabled:opacity-60" disabled={!user || !pass || loading}>
               {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Entrando…</> : 'Entrar'}
-            </Button>
+            </button>
           </form>
-        </Panel>
-        </div>
+      </div>
 
         {brandFooter && <p className="text-xs text-texto-2">
           Powered by <strong>{brandFooter}</strong>
