@@ -34,7 +34,8 @@ Todos en `src/hmi/tokens.css`, con un juego para claro y otro para oscuro bajo `
 | `--suelo` | `#F3F5F8` | `#0E1622` | fondo de la página |
 | `--panel` | `#FFFFFF` | `#172231` | tarjetas |
 | `--linea` | `#E4E8EE` | `#263449` | bordes de tarjetas |
-| `--borde-campo` | `#D5DBE4` | `#3A4A60` | botones secundarios y campos |
+| `--borde-campo` | `#8A94A6` | `#5C6E86` | campos de formulario (3:1, WCAG 1.4.11) |
+| `--linea-boton` | `#D5DBE4` | `#3A4A60` | borde decorativo de botones secundarios |
 | `--texto` | `#101828` | `#E6EDF6` | texto principal |
 | `--texto-2` | `#5A6578` | `#9AA8BA` | texto secundario |
 | `--navegador` | `#0F2A4D` | `#091425` | menú lateral (texto `#C9D8EC` / `#B8C8DD`) |
@@ -106,7 +107,7 @@ La prueba de contraste (`src/hmi/contraste.test.ts`) se actualiza con estos pare
 4. **"Qué hizo cada equipo hoy"** a todo el ancho, con selector Cámara 4 / Cámara 5, filas de 16 px y una línea de "ahora". Al lado, Últimos eventos.
 
 ### Cámara
-- En el encabezado, un selector segmentado Cámara 4 / Cámara 5 (con punto rojo si la otra cámara tiene alarma), el modo, el estado general y "Ajustes".
+- En la primera fila del contenido (el título "Cámara 4" lo pone el encabezado común), un selector segmentado Cámara 4 / Cámara 5 (con punto rojo si la otra cámara tiene alarma), el modo, el estado general y "Ajustes".
 - **8 tarjetas de equipo** en 4 × 2, cada una con:
   - el ícono y el estado;
   - los chips Comp./Evap./Resist. (relleno = en marcha);
@@ -122,7 +123,11 @@ La prueba de contraste (`src/hmi/contraste.test.ts`) se actualiza con estos pare
 
 ## 5. Sin conexión con el PLC
 
-Se aplica cuando el último dato tiene más de 5 s, el mismo umbral de "sin datos" que hoy (`estaVencido` en `lib/estadoGrupo.ts`):
+Dos umbrales, porque el PLC llega al servidor por un enlace inalámbrico (2 NanoStation 5AC) que puede cortar unos segundos:
+- a los **5 s** sin dato (el umbral de "sin datos" de hoy, `estaVencido` en `lib/estadoGrupo.ts`) los valores se atenúan;
+- el aviso aparece recién a los **15 s seguidos**, para que no parpadee con cada corte corto.
+
+Con el aviso:
 - **Un solo aviso** ámbar debajo del encabezado: "Sin conexión con el PLC desde las hh:mm (hace N minutos)" y una línea de qué hacer.
 - La pastilla del encabezado pasa a "PLC sin conexión" (gris).
 - Las tarjetas muestran el **último dato atenuado** (opacidad 0,55) con la etiqueta "Último dato hh:mm". No se pintan los equipos con "?".
