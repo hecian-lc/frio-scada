@@ -15,8 +15,9 @@ interface Props {
 }
 
 export function Segmentado({ items, activo, onCambio, grande, 'aria-label': etiqueta }: Props) {
+  const Raiz = items.some(it => it.to) ? 'nav' : 'div'
   return (
-    <div role="tablist" aria-label={etiqueta} className="inline-flex items-center gap-1 rounded-[12px] bg-fila-total p-1">
+    <Raiz role={Raiz === 'div' ? 'tablist' : undefined} aria-label={etiqueta} className="inline-flex items-center gap-1 rounded-[12px] bg-fila-total p-1">
       {items.map(it => {
         const on = it.id === activo
         const cls = cn(
@@ -29,6 +30,6 @@ export function Segmentado({ items, activo, onCambio, grande, 'aria-label': etiq
           ? <Link key={it.id} to={it.to} className={cls} aria-current={on ? 'page' : undefined}>{contenido}</Link>
           : <button key={it.id} type="button" role="tab" aria-selected={on} className={cls} onClick={() => onCambio?.(it.id)}>{contenido}</button>
       })}
-    </div>
+    </Raiz>
   )
 }
