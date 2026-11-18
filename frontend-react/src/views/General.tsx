@@ -45,14 +45,16 @@ export default function General() {
   const ahora = useNow(60000)
   const dia = diaPlanta(ahora)
   const ev = useDatos<Evento>('eventos', dia, dia, '', 60000)
+  const fd = useDatos<FilaDescongelado>('descongelados', dia, dia, '', 60000)
+  const filas = fd.error ? null : fd.data
   const [camTrend, setCamTrend] = useState<string>(CAMARAS[0])
   useEffect(() => { if (!tutorialVisto('inicio', user)) iniciarTutorial('inicio', user, admin) }, [user, admin])
   return (
     <div className="space-y-3">
       <AvisoArranque />
-      <Indicadores />
+      <Indicadores filas={filas} />
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1fr_300px]">
-        {CAMARAS.map((c, i) => i === 0 ? <div key={c} className="min-w-0" data-tour="camaras"><TarjetaCamara cam={c} /></div> : <TarjetaCamara key={c} cam={c} />)}
+        {CAMARAS.map((c, i) => i === 0 ? <div key={c} className="min-w-0" data-tour="camaras"><TarjetaCamara cam={c} filas={filas} /></div> : <TarjetaCamara key={c} cam={c} filas={filas} />)}
         <div className="min-w-0 space-y-3"><TarjetaAlarma /><NovedadesTurno /></div>
       </div>
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_300px]">

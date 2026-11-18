@@ -6,26 +6,24 @@ import { useCamarasStore } from '../store/camaras'
 import { estadoConexion } from '../lib/conexion'
 import { alarmasActivas, estadoEquipo } from '../lib/frases'
 import { porCamara } from '../lib/resumen'
-import { GRUPOS, diaPlanta, hhmm, nombreCamara, txt, type FilaDescongelado } from '../lib/camaras'
-import { useDatos } from '../lib/useDatos'
+import { GRUPOS, hhmm, nombreCamara, txt, type FilaDescongelado } from '../lib/camaras'
 import { useNow } from '../lib/useNow'
 import { cn } from '../lib/utils'
 
 const MODOS: Record<string, string> = { AUTOMATICO: 'Automático', MANUAL: 'Manual', STOP: 'Detenido' }
 
-export default function TarjetaCamara({ cam }: { cam: string }) {
+export default function TarjetaCamara({ cam, filas }: { cam: string; filas: FilaDescongelado[] | null }) {
   const estado = useCamarasStore(s => s.estado)
   const recibidoEn = useCamarasStore(s => s.recibidoEn)
   const ts = useCamarasStore(s => s.ts)
+  const incompatible = useCamarasStore(s => s.mapa === 'incompatible')
   const ahora = useNow(1000)
-  const dia = diaPlanta(ahora)
-  const { data, error } = useDatos<FilaDescongelado>('descongelados', dia, dia, '', 60000)
   const tipo = estadoConexion(recibidoEn, ahora).tipo
-  const cargando = tipo === 'nunca' || !estado
+  const cargando = tipo === 'nunca' || !estado || incompatible
   const atenuado = tipo === 'demora' || tipo === 'cortada'
-  const modo = estado ? MODOS[txt(estado, `${cam}.modo`)] : undefined
-  const nAl = estado ? alarmasActivas(estado, cam).length : 0
-  const p = estado ? porCamara(estado, cam, error ? null : data, ahora) : null
+  const modo = estado && !incompatible ? MODOS[txt(estado, `${cam}.modo`)] : undefined
+  const nAl = estado && !incompatible ? alarmasActivas(estado, cam).length : 0
+  const p = estado && !incompatible ? porCamara(estado, cam, filas, ahora) : null
   return (
     <Panel titulo={nombreCamara(cam)} className="min-w-0"
       accion={<>
@@ -34,6 +32,7 @@ export default function TarjetaCamara({ cam }: { cam: string }) {
         {nAl > 0 && <Pastilla tono="alta">{nAl} {nAl === 1 ? 'alarma' : 'alarmas'}</Pastilla>}
         <Link to={`/camara/${cam}`} className="toque ml-1 inline-flex items-center text-sm font-semibold text-accion">Ver cámara</Link>
       </>}>
+      {incompatible && <p className="mb-2 text-sm text-texto-2">El PLC tiene un programa viejo</p>}
       <div className={cn('grid grid-cols-2 gap-2 sm:grid-cols-4', atenuado && 'opacity-[.55] grayscale-[.6]')}>
         {GRUPOS.map(g => {
           if (cargando) return <div key={g} className="h-[52px] animate-pulse rounded-[10px] bg-fila-total" />

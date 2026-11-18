@@ -8,8 +8,9 @@ import { useAlarmasActivas } from '../lib/useAlarmasActivas'
 import { hhmm } from '../lib/camaras'
 
 export default function TarjetaAlarma() {
-  const { grupos, sinVer, vistas, marcar } = useAlarmasActivas()
+  const { grupos, sinVer, sinDatos, vistas, marcar } = useAlarmasActivas()
   const g = sinVer[0] ?? grupos[0]
+  if (!g && sinDatos) return <Panel titulo="Alarmas"><div className="text-texto-2">Sin datos del PLC</div></Panel>
   if (!g) return (
     <Panel titulo="Alarmas"><div className="flex items-center gap-2 font-semibold text-ok-texto"><Check size={20} aria-hidden="true" />Sin alarmas activas</div></Panel>
   )
