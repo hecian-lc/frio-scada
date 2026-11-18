@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Input } from './ui/input'
 import { CAMARAS, nombreCamara } from '../lib/camaras'
 import { hoy } from '../lib/useDatos'
-import { cn } from '../lib/utils'
+import { chipCls } from './ui/segmentado'
 
 export interface Rango { desde: string; hasta: string; camara: string }
 
@@ -11,7 +11,6 @@ const PRESETS = [
   { id: 'ayer', label: 'Ayer', rango: () => ({ desde: hoy(-1), hasta: hoy(-1) }) },
   { id: '7', label: '7 días', rango: () => ({ desde: hoy(-6), hasta: hoy() }) },
 ]
-const chip = (on: boolean) => cn('toque inline-flex items-center border px-3 text-sm whitespace-nowrap', on ? 'border-accion bg-accion text-accion-texto' : 'border-borde-campo bg-placa')
 
 export function Filtros({ r, set, sinCamara }: { r: Rango; set: (r: Rango) => void; sinCamara?: boolean }) {
   const [elegir, setElegir] = useState(false)
@@ -19,8 +18,8 @@ export function Filtros({ r, set, sinCamara }: { r: Rango; set: (r: Rango) => vo
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        {PRESETS.map(p => <button key={p.id} className={chip(activo === p.id)} onClick={() => { setElegir(false); set({ ...r, ...p.rango() }) }}>{p.label}</button>)}
-        <button className={chip(activo === 'fecha')} onClick={() => setElegir(true)}>Elegir fecha</button>
+        {PRESETS.map(p => <button key={p.id} className={chipCls(activo === p.id)} onClick={() => { setElegir(false); set({ ...r, ...p.rango() }) }}>{p.label}</button>)}
+        <button className={chipCls(activo === 'fecha')} onClick={() => setElegir(true)}>Elegir fecha</button>
         {!sinCamara && (
           <select aria-label="Cámara" className="toque border border-borde-campo bg-placa px-2 text-sm" value={r.camara} onChange={e => set({ ...r, camara: e.target.value })}>
             <option value="">Todas las cámaras</option>
