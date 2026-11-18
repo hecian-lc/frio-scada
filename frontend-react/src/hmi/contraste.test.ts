@@ -24,6 +24,17 @@ for (const tema of ['claro', 'oscuro'] as const) {
       }
       expect(contraste(t['--eq-sobre-claro'], t['--eq-escurre'])).toBeGreaterThanOrEqual(3)
     })
+    it('texto sobre los fondos suaves ≥ 4.5', () => {
+      expect(contraste(t['--alta-texto'], t['--alta-suave'])).toBeGreaterThanOrEqual(4.5)
+      expect(contraste(t['--ok-texto'], t['--ok-suave'])).toBeGreaterThanOrEqual(4.5)
+      expect(contraste(t['--aviso-texto'], t['--aviso-suave'])).toBeGreaterThanOrEqual(4.5)
+      expect(contraste(t['--alta-texto'], t['--panel'])).toBeGreaterThanOrEqual(4.5)
+    })
+    it('menú y botón primario ≥ 4.5', () => {
+      expect(contraste(t['--navegador-texto'], t['--navegador'])).toBeGreaterThanOrEqual(4.5)
+      expect(contraste(t['--accion-texto'], t['--accion'])).toBeGreaterThanOrEqual(4.5)
+      expect(contraste(t['--accion'], t['--panel'])).toBeGreaterThanOrEqual(4.5)
+    })
   })
 }
 

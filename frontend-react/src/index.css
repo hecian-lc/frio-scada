@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  html { font-size: 14px; }
+  html { font-size: 16px; }
 
   /* Las variables de shadcn apuntan a los tokens HMI (src/hmi/tokens.css), que ya cambian con el tema */
   :root {
@@ -28,7 +28,7 @@
     --ring: var(--accion);
     --brand: var(--accion);
     --brand-foreground: var(--accion-texto);
-    --radius: 0px;
+    --radius: 10px;
   }
 
   body {
@@ -45,12 +45,12 @@
 }
 
 /* Tutorial (driver.js) con la letra y los botones del portal */
-body .driver-popover, body .driver-popover * { font-family: "IBM Plex Sans", system-ui, sans-serif; }
-.driver-popover { border-radius: 0; max-width: 340px; background: var(--card); color: var(--card-foreground); }
+body .driver-popover, body .driver-popover * { font-family: "Inter", system-ui, sans-serif; }
+.driver-popover { border-radius: 14px; max-width: 340px; background: var(--card); color: var(--card-foreground); }
 .driver-popover-title { font-size: 16px; font-weight: 700; }
 .driver-popover-description { font-size: 14px; line-height: 20px; }
 .driver-popover-progress-text { font-size: 12px; color: var(--muted-foreground); }
-.driver-popover-footer button { font-family: inherit; font-size: 13px; text-shadow: none; padding: 8px 14px; border-radius: 0; min-height: 36px; background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+.driver-popover-footer button { font-family: inherit; font-size: 13px; text-shadow: none; padding: 8px 14px; border-radius: 10px; min-height: 36px; background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
 .driver-popover-footer .driver-popover-next-btn { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
 .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--card); }
 .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--card); }

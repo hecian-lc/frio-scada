@@ -7,21 +7,22 @@ export default {
   ],
   theme: {
     extend: {
-      // En px: la letra no depende del rem de 14 px del html
+      // En px: la letra no depende del rem del html
       fontSize: {
-        xs: ['11px', '15px'],
-        sm: ['12px', '17px'],
-        base: ['13px', '19px'],
-        lg: ['15px', '21px'],
-        xl: ['18px', '24px'],
-        '2xl': ['24px', '30px'],
-        '3xl': ['24px', '30px'],
+        xs: ['12px', '16px'],
+        sm: ['13px', '18px'],
+        base: ['15px', '22px'],
+        lg: ['18px', '24px'],
+        xl: ['24px', '30px'],
+        '2xl': ['28px', '36px'],
+        '3xl': ['28px', '36px'],
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        cond: ['"IBM Plex Sans Condensed"', '"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        cond: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
       },
+      boxShadow: { tarjeta: 'var(--sombra-tarjeta)' },
       colors: {
         'marco': 'var(--marco)',
         'marco-2': 'var(--marco-2)',
@@ -54,6 +55,17 @@ export default {
         'estado-baja': 'var(--estado-baja)',
         'estado-invalido': 'var(--estado-invalido)',
         'estado-contorno': 'var(--estado-contorno)',
+        'linea-boton': 'var(--linea-boton)',
+        'alta-suave': 'var(--alta-suave)',
+        'alta-texto': 'var(--alta-texto)',
+        'alta-borde': 'var(--alta-borde)',
+        'ok-suave': 'var(--ok-suave)',
+        'ok-texto': 'var(--ok-texto)',
+        'aviso-suave': 'var(--aviso-suave)',
+        'aviso-borde': 'var(--aviso-borde)',
+        'aviso-texto': 'var(--aviso-texto)',
+        'eq-apagado': 'var(--eq-apagado)',
+        'navegador-texto': 'var(--navegador-texto)',
         'eq-frio': 'var(--eq-frio)',
         'eq-desc': 'var(--eq-desc)',
         'eq-escurre': 'var(--eq-escurre)',
@@ -100,9 +112,9 @@ export default {
         }
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        lg: '14px',
+        md: '10px',
+        sm: '6px'
       }
     }
   },

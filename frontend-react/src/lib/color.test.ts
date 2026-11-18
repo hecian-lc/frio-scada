@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { aplicarColorPortal } from './color'
-import { contraste } from '../hmi/contraste'
+import { contraste, TOKENS } from '../hmi/contraste'
 
 // Sin jsdom en el proyecto: un `style` mínimo en memoria
 const props = new Map<string, string>()
@@ -19,7 +19,7 @@ describe('color de la marca', () => {
   })
   test('azul en oscuro se aclara hasta 4.5:1 sobre el panel oscuro', () => {
     expect(aplicarColorPortal('#1F5FAF', 'dark').usado).toBe(true)
-    expect(contraste(st.getPropertyValue('--accion'), '#19232F')).toBeGreaterThanOrEqual(4.5)
+    expect(contraste(st.getPropertyValue('--accion'), TOKENS.oscuro['--panel'])).toBeGreaterThanOrEqual(4.5)
   })
   test('azul en claro: se usa tal cual, con marco oscuro y texto legible', () => {
     expect(aplicarColorPortal('#1F5FAF', 'light').usado).toBe(true)
