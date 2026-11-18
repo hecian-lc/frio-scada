@@ -1,6 +1,5 @@
 import { Icono } from './Icono'
 import { Button } from './ui/button'
-import { usePermiso } from './Confirmar'
 import { estadoEquipo, faltanMin } from '../lib/frases'
 import { num, txt } from '../lib/camaras'
 import { horasTxt } from '../lib/historial'
@@ -9,8 +8,7 @@ import type { Estado } from '../store/camaras'
 
 const SALIDAS = [['comp', 'Comp.', 'Compresor'], ['eva', 'Evap.', 'Evaporador'], ['res', 'Resist.', 'Resistencia']] as const
 
-export default function TarjetaEquipo({ estado, cam, g, hayDatos, atenuado, onCambiar }: { estado: Estado | null; cam: string; g: number; hayDatos: boolean; atenuado: boolean; onCambiar: () => void }) {
-  const permiso = usePermiso(1)
+export default function TarjetaEquipo({ estado, cam, g, hayDatos, atenuado, permitido, onCambiar }: { estado: Estado | null; cam: string; g: number; hayDatos: boolean; atenuado: boolean; permitido: boolean; onCambiar: () => void }) {
   const eq = hayDatos && estado ? estadoEquipo(estado, cam, g) : null
   const falta = hayDatos && estado ? faltanMin(estado, cam) : null
   const desc = eq?.clave === 'DESCONGELANDO'
@@ -31,16 +29,17 @@ export default function TarjetaEquipo({ estado, cam, g, hayDatos, atenuado, onCa
       </div>
       <div className="mt-3 flex gap-1.5">
         {SALIDAS.map(([k, l, n]) => {
-          const on = hayDatos && num(estado, `${cam}.G${g}.${k}`) === 1
+          if (!hayDatos) return <span key={k} aria-label={`${n}: sin datos`} className="h-[24px] w-[52px] animate-pulse rounded-[6px] bg-fila-total" />
+          const on = num(estado, `${cam}.G${g}.${k}`) === 1
           return <span key={k} aria-label={`${n}: ${on ? 'en marcha' : 'parado'}`} className={cn('inline-flex h-[24px] items-center rounded-[6px] px-2 text-xs font-semibold', on ? (k === 'res' && desc ? 'bg-eq-desc text-accion-texto' : 'bg-accion text-accion-texto') : 'bg-fila-total text-texto-2')}>{l}</span>
         })}
       </div>
       <dl className="mt-3 space-y-1 text-sm">
         {([['Horas de marcha', 'horas_marcha'], ['Arranques', 'arranques'], ['Sin descongelar', 'horas_sin_desc']] as const).map(([t, k]) => (
-          <div key={k} className="flex items-baseline justify-between gap-2"><dt className="text-xs text-texto-2">{t}</dt><dd className="font-mono font-semibold">{dato(k)}</dd></div>
+          <div key={k} className="flex items-baseline justify-between gap-2"><dt className="text-xs text-texto-2">{t}</dt>{hayDatos ? <dd className="font-mono font-semibold">{dato(k)}</dd> : <dd className="h-[18px] w-14 animate-pulse rounded-[10px] bg-fila-total" />}</div>
         ))}
       </dl>
-      <Button variant="outline" className="mt-3 w-full max-md:min-h-[44px]" disabled={!permiso.ok || !hayDatos || atenuado} title={!hayDatos || atenuado ? 'Sin conexión con el PLC' : undefined} onClick={onCambiar}>Cambiar modo</Button>
+      <Button variant="outline" className="mt-3 w-full max-md:min-h-[44px]" disabled={!permitido || !hayDatos || atenuado} title={!hayDatos || atenuado ? 'Sin conexión con el PLC' : undefined} onClick={onCambiar}>Cambiar modo</Button>
     </div>
   )
 }

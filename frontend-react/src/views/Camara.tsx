@@ -89,7 +89,7 @@ export default function Camara() {
       <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
         <div className="min-w-0 space-y-4">
           <div data-tour="cam-equipos" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {GRUPOS.map(g => <TarjetaEquipo key={`${cam}${g}`} estado={estado} cam={cam} g={g} hayDatos={hayDatos} atenuado={atenuado} onCambiar={() => setHoja(g)} />)}
+            {GRUPOS.map(g => <TarjetaEquipo key={`${cam}${g}`} estado={estado} cam={cam} g={g} hayDatos={hayDatos} atenuado={atenuado} permitido={permiso.ok} onCambiar={() => setHoja(g)} />)}
           </div>
           {!permiso.ok && <div className="text-xs text-texto-2">{permiso.motivo}</div>}
           {hoja != null && <HojaEquipo cam={cam} g={hoja} onCerrar={() => setHoja(null)} />}
