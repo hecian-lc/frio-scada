@@ -12,8 +12,8 @@ async function servir(rol, router, base, fn) {
   app.use((req, res, next) => { req.auth = { role: rol, user: 'x' }; next(); });
   app.use(base, router);
   const srv = app.listen(0);
-  const f = (path, body) => fetch(`http://127.0.0.1:${srv.address().port}${base}${path}`, body
-    ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {})
+  const f = (path, body, method = 'POST') => fetch(`http://127.0.0.1:${srv.address().port}${base}${path}`, body
+    ? { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {})
     .then(async (r) => ({ status: r.status, body: await r.json() }));
   try { return await fn(f); } finally { srv.close(); }
 }
@@ -129,4 +129,58 @@ test('avisos/activas y visto: cualquier usuario marca con su nombre; claves inv�
   assert.deepEqual(marcadas, [[['C4.alarma_manual'], 'x']]);
   const rep = createAvisosRouter({ notifyCanal: async () => {}, isReplica: true });
   assert.equal((await servir('admin', rep, '/api/avisos', (f) => f('/visto', { claves: ['C4.alarma_manual'] }))).status, 409);
+});
+
+test('avisos/visto: nota de 201 → 400; nota de espacios → marcarVisto recibe null; GET /novedades', async () => {
+  const llamadas = [];
+  const router = createAvisosRouter({
+    marcarVisto: async (c, u, n) => { llamadas.push(n); return []; },
+    getNovedades: async () => [{ ts: 1, usuario: 'ana', texto: 't', nota: 'n', camara: 'C4' }],
+  });
+  await servir('operador', router, '/api/avisos', async (f) => {
+    const r = await f('/visto', { claves: ['com'], nota: 'x'.repeat(201) });
+    assert.equal(r.status, 400); assert.equal(r.body.error, 'Nota: hasta 200 caracteres');
+    assert.equal((await f('/visto', { claves: ['com'], nota: 5 })).body.error, 'Nota inválida');
+    assert.equal(llamadas.length, 0);
+    assert.equal((await f('/visto', { claves: ['com'], nota: '   ' })).status, 200);
+    assert.equal((await f('/visto', { claves: ['com'], nota: ' llamé\na Juan ' })).status, 200);
+    assert.equal((await f('/visto', { claves: ['com'] })).status, 200);
+    assert.deepEqual(llamadas, [null, 'llamé a Juan', null]);
+    assert.deepEqual((await f('/novedades')).body, [{ ts: 1, usuario: 'ana', texto: 't', nota: 'n', camara: 'C4' }]);
+  });
+});
+
+test('avisos/guardia: GET con actual; PUT operador 403, réplica 409, inválido 400, ok', async () => {
+  const turno = { nombre: 'Juan', desde: '00:00', hasta: '23:59', telefono: '+598 99 1', whatsapp: false };
+  let guardado = { turnos: [], instrucciones: {} };
+  const opts = {
+    ahora: () => Date.parse('2026-11-10T15:00:00Z'),
+    getGuardia: () => guardado,
+    setGuardia: (p) => { if (!p.turnos) { const e = new Error('Turnos inválidos'); e.status = 400; throw e; } guardado = p; return guardado; },
+  };
+  const router = createAvisosRouter(opts);
+  assert.equal((await servir('operador', router, '/api/avisos', (f) => f('/guardia', { turnos: [] }, 'PUT'))).status, 403);
+  await servir('admin', router, '/api/avisos', async (f) => {
+    assert.deepEqual((await f('/guardia')).body, { turnos: [], instrucciones: {}, actual: null });
+    const bad = await f('/guardia', {}, 'PUT');
+    assert.equal(bad.status, 400); assert.deepEqual(bad.body, { error: 'Turnos inválidos' });
+    const ok = await f('/guardia', { turnos: [turno], instrucciones: {} }, 'PUT');
+    assert.equal(ok.status, 200); assert.deepEqual(ok.body, { turnos: [turno], instrucciones: {}, actual: turno });
+    assert.deepEqual((await f('/guardia')).body.actual, turno);
+  });
+  const rep = createAvisosRouter({ ...opts, isReplica: true });
+  const r = await servir('admin', rep, '/api/avisos', (f) => f('/guardia', { turnos: [] }, 'PUT'));
+  assert.equal(r.status, 409); assert.equal(r.body.error, 'La guardia se configura en la planta');
+});
+
+test('avisos/visto: avisarVisto recibe usuario, cambiadas y nota; si falla no rompe el 200', async () => {
+  const llamadas = [];
+  const router = createAvisosRouter({ notifyCanal: async () => {}, marcarVisto: async (c) => c.map((clave) => ({ clave, texto: 't' })),
+    avisarVisto: async (...a) => { llamadas.push(a); throw new Error('caído'); } });
+  const orig = console.error; console.error = () => {};
+  try {
+    const r = await servir('operador', router, '/api/avisos', (f) => f('/visto', { claves: ['C4.alarma_manual'], nota: 'n' }));
+    assert.equal(r.status, 200);
+    assert.deepEqual(llamadas, [['x', [{ clave: 'C4.alarma_manual', texto: 't' }], 'n']]);
+  } finally { console.error = orig; }
 });

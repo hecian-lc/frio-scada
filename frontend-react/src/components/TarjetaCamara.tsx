@@ -1,49 +1,56 @@
 import { Link } from 'react-router-dom'
-import { Card } from './ui/card'
-import { Badge } from './ui/badge'
-import BotonEquipo from './BotonEquipo'
+import { Icono } from './Icono'
+import { Panel } from './Panel'
+import { Pastilla } from './ui/pastilla'
 import { useCamarasStore } from '../store/camaras'
-import { estaVencido } from '../lib/estadoGrupo'
-import { alarmasActivas, fraseCamara, proximoTexto, badgeCamara } from '../lib/frases'
-import { GRUPOS, nombreCamara, hhmm } from '../lib/camaras'
+import { estadoConexion } from '../lib/conexion'
+import { alarmasActivas, estadoEquipo } from '../lib/frases'
+import { porCamara } from '../lib/resumen'
+import { GRUPOS, hhmm, nombreCamara, txt, type FilaDescongelado } from '../lib/camaras'
 import { useNow } from '../lib/useNow'
+import { cn } from '../lib/utils'
 
-export default function TarjetaCamara({ cam }: { cam: string }) {
+const MODOS: Record<string, string> = { AUTOMATICO: 'Automático', MANUAL: 'Manual', STOP: 'Detenido' }
+
+export default function TarjetaCamara({ cam, filas }: { cam: string; filas: FilaDescongelado[] | null }) {
   const estado = useCamarasStore(s => s.estado)
-  const ts = useCamarasStore(s => s.ts)
   const recibidoEn = useCamarasStore(s => s.recibidoEn)
-  const ahora = useNow(1000)
+  const ts = useCamarasStore(s => s.ts)
   const incompatible = useCamarasStore(s => s.mapa === 'incompatible')
-  const vencido = !estado || estaVencido(recibidoEn, ahora)
-  const f = estado && !vencido && !incompatible ? fraseCamara(estado, cam, ahora) : null
-  const hayDatos = !!f && f.nivel !== 'sin-datos'
-  const alarma = f?.nivel === 'alarma'
-  const nAlarmas = estado && !vencido && !incompatible ? alarmasActivas(estado).filter(a => !a.c || a.c === cam).length : 0
-  const badge = hayDatos ? badgeCamara(estado!, cam, f!.nivel) : null
-  // Siempre título + 2 renglones (los que sobran quedan vacíos): la tarjeta no cambia de alto con el estado.
-  const renglones: { t: string; c: string }[] = hayDatos ? [
-    ...(nAlarmas > 0 ? [{ t: `${nAlarmas} ${nAlarmas === 1 ? 'alarma activa' : 'alarmas activas'}`, c: 'font-semibold text-red-600' }] : []),
-    ...(f!.detalle ? [{ t: f!.detalle, c: 'text-muted-foreground' }] : []),
-    ...(!/Próximo|Sin descongelados/.test(f!.detalle) ? [{ t: `Próximo: ${proximoTexto(estado!, cam, ahora)}`, c: 'text-muted-foreground' }] : []),
-  ].slice(0, 2) : []
-  const titulo = hayDatos ? f!.titulo : incompatible ? 'El PLC tiene un programa viejo' : ts ? `Sin datos desde ${hhmm(ts)}` : 'Sin datos todavía'
+  const ahora = useNow(1000)
+  const tipo = estadoConexion(recibidoEn, ahora).tipo
+  const cargando = tipo === 'nunca' || !estado || incompatible
+  const atenuado = tipo === 'demora' || tipo === 'cortada'
+  const modo = estado && !incompatible ? MODOS[txt(estado, `${cam}.modo`)] : undefined
+  const nAl = estado && !incompatible ? alarmasActivas(estado, cam).length : 0
+  const p = estado && !incompatible ? porCamara(estado, cam, filas, ahora) : null
   return (
-    <Link to={`/camara/${cam}`} className="block h-full">
-      <Card className={`h-full p-3 space-y-3 rounded-xl shadow-sm hover:border-primary transition-colors ${alarma ? 'border-2 border-red-600' : ''} ${vencido || incompatible ? 'grayscale bg-muted opacity-70' : ''}`}>
-        <div className="flex items-center gap-2">
-          <div className="font-semibold text-lg">{nombreCamara(cam)}</div>
-          {badge && <Badge className="ml-auto border-transparent text-white" style={{ backgroundColor: badge.c }}>{badge.t}</Badge>}
-        </div>
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <div className="grid grid-cols-4 sm:flex gap-2 justify-items-center">
-            {GRUPOS.map(g => <BotonEquipo key={g} c={cam} g={g} />)}
-          </div>
-          <div className="min-w-[14rem] flex-1 text-sm">
-            <div className={`truncate font-bold text-base ${hayDatos ? '' : 'text-muted-foreground'}`} title={titulo}>{titulo}</div>
-            {[0, 1].map(i => <div key={i} className={`truncate ${renglones[i]?.c ?? ''}`} title={renglones[i]?.t}>{renglones[i]?.t ?? ' '}</div>)}
-          </div>
-        </div>
-      </Card>
-    </Link>
+    <Panel titulo={nombreCamara(cam)} className="min-w-0"
+      accion={<>
+        {atenuado && ts && <Pastilla tono="neutro">Último dato {hhmm(ts)}</Pastilla>}
+        {modo && <Pastilla tono="neutro">{modo}</Pastilla>}
+        {nAl > 0 && <Pastilla tono="alta">{nAl} {nAl === 1 ? 'alarma' : 'alarmas'}</Pastilla>}
+        <Link to={`/camara/${cam}`} className="toque ml-1 inline-flex items-center text-sm font-semibold text-accion">Ver cámara</Link>
+      </>}>
+      {incompatible && <p className="mb-2 text-sm text-texto-2">El PLC tiene un programa viejo</p>}
+      <div className={cn('grid grid-cols-4 gap-1.5 sm:gap-2', atenuado && 'opacity-[.55] grayscale-[.6]')}>
+        {GRUPOS.map(g => {
+          if (cargando) return <div key={g} className="h-[52px] animate-pulse rounded-[10px] bg-fila-total" />
+          const eq = estadoEquipo(estado!, cam, g)
+          return (
+            <div key={g} className="flex flex-col items-center gap-1 rounded-[10px] bg-fila-total px-1 py-2 text-center sm:flex-row sm:gap-2 sm:p-2 sm:text-left">
+              <span className="inline-grid h-8 w-8 shrink-0 place-items-center rounded-full" style={{ background: eq.color, color: eq.sobre, border: eq.borde ? `1px solid ${eq.borde}` : undefined }}><Icono nombre={eq.icono} size={18} /></span>
+              <div className="min-w-0 max-w-full text-xs leading-tight sm:text-sm"><div className="truncate font-semibold">Equipo {g}</div><div className="truncate text-texto-2">{eq.texto}</div></div>
+            </div>
+          )
+        })}
+      </div>
+      <dl className="mt-3 grid grid-cols-3 gap-2 border-t border-linea-fila pt-3 text-sm">
+        {([['Compresores', p?.compresores], ['Descongelados', p?.hechos], ['Próximo', p?.proximo]] as const).map(([t, v]) => (
+          <div key={t} className="min-w-0"><dt className="text-xs text-texto-2">{t}</dt>
+            {cargando || !v ? <dd className="mt-0.5 h-[18px] animate-pulse rounded-[10px] bg-fila-total" /> : <dd className="truncate font-mono font-semibold">{v}</dd>}</div>
+        ))}
+      </dl>
+    </Panel>
   )
 }

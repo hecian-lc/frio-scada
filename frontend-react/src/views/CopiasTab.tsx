@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -22,8 +22,8 @@ function Linea({ titulo, r }: { titulo: string; r?: Resultado }) {
     <div className="flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
       <span className="font-medium">{titulo}</span>
       {!r ? <span className="text-muted-foreground">todavía no hay copias</span>
-        : <span className={r.ok ? 'text-green-700 dark:text-green-400' : 'text-destructive'}>
-            {r.ok ? '✓' : '✗'} {fechaHora(r.ts).slice(0, 17)} · {r.detalle}
+        : <span className={r.ok ? undefined : 'text-destructive'}>
+            {r.ok ? 'bien' : 'falló'} · {fechaHora(r.ts).slice(0, 17)} · {r.detalle}
             {!r.ok && r.ultimaOk ? ` (la última buena: ${fechaHora(r.ultimaOk).slice(0, 10)})` : ''}
           </span>}
     </div>
@@ -75,7 +75,7 @@ export default function CopiasTab() {
   const e = info.estado
   return (
     <div className="max-w-2xl space-y-3">
-      <Card className="p-3 space-y-2">
+      <Panel titulo="Copias de seguridad"><div className="space-y-2">
         <p className="text-sm text-muted-foreground">
           Todos los domingos a las 03:00 se hace una copia de la base de datos y de la configuración (usuarios, horarios, marca y avisos).
           Queda en esta PC y en los destinos que prendas abajo, con las últimas 12 copias. Si una copia falla, avisa por Telegram y correo.
@@ -84,24 +84,24 @@ export default function CopiasTab() {
         {info.drive.activo && <Linea titulo="Google Drive" r={e.drive} />}
         {info.red.activo && <Linea titulo="Carpeta de red" r={e.red} />}
         <Button size="sm" variant="outline" onClick={() => pedir('ahora', {}, 'local', 'La copia arranca en menos de un minuto; puede tardar unos minutos')}>Hacer una copia ahora</Button>
-      </Card>
+      </div></Panel>
 
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Google Drive"><div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <div className="font-semibold">Google Drive</div>
+          <span className="text-sm">Copiar a Google Drive</span>
           <Switch checked={info.drive.activo} disabled={ocupado || !info.drive.conectado} onCheckedChange={v => guardar({ drive: { activo: v } }, v ? 'Google Drive prendido' : 'Google Drive apagado')} />
         </div>
-        <p className="text-sm">{info.drive.conectado ? '✓ Cuenta conectada.' : 'Todavía no hay una cuenta conectada.'}</p>
+        <p className="text-sm">{info.drive.conectado ? 'Cuenta conectada.' : 'Todavía no hay una cuenta conectada.'}</p>
         <details className="text-sm" open={!info.drive.conectado}>
           <summary className="cursor-pointer font-medium">{info.drive.conectado ? 'Conectar otra cuenta' : 'Cómo conectar la cuenta (una sola vez)'}</summary>
           <ol className="list-decimal pl-5 space-y-1 mt-2 text-muted-foreground">
             <li>En cualquier PC con Windows, bajá rclone de <a className="underline" href="https://rclone.org/downloads/" target="_blank" rel="noreferrer">rclone.org/downloads</a> (Windows, Intel/AMD 64 bit) y descomprimilo.</li>
-            <li>En esa carpeta, abrí una terminal (clic derecho → "Abrir en Terminal") y escribí: <code className="rounded bg-muted px-1">.\rclone authorize "drive"</code></li>
+            <li>En esa carpeta, abrí una terminal (clic derecho → "Abrir en Terminal") y escribí: <code className="bg-fila-total px-1">.\rclone authorize "drive"</code></li>
             <li>Se abre el navegador: entrá con la cuenta de Google donde querés guardar las copias y tocá "Permitir".</li>
             <li>En la terminal aparece un texto entre <code>---&gt;</code> y <code>&lt;---</code> que empieza con <code>{'{'}</code> y termina con <code>{'}'}</code>. Copialo entero y pegalo acá:</li>
           </ol>
           <textarea value={token} onChange={ev => setToken(ev.target.value)} rows={3} placeholder='{"access_token":"…","refresh_token":"…",…}'
-            className="mt-2 w-full rounded-md border bg-background p-2 font-mono text-xs" />
+            className="mt-2 w-full border border-borde-campo bg-placa p-2 font-mono text-xs" />
           <Button size="sm" className="mt-1" disabled={ocupado || !token.trim()} onClick={async () => { if (await guardar({ drive: { token, activo: true } }, 'Cuenta de Google Drive conectada')) setToken('') }}>Conectar</Button>
         </details>
         <div className="flex flex-wrap items-end gap-2">
@@ -110,11 +110,11 @@ export default function CopiasTab() {
           <Button size="sm" variant="outline" disabled={!info.drive.conectado} onClick={() => pedir('probar', { destino: 'drive' }, 'prueba_drive', 'Probando Google Drive (menos de un minuto)…')}>Probar</Button>
         </div>
         {e.prueba_drive && <Linea titulo="Última prueba" r={e.prueba_drive} />}
-      </Card>
+      </div></Panel>
 
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Carpeta compartida de otra PC"><div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <div className="font-semibold">Carpeta compartida de otra PC</div>
+          <span className="text-sm">Copiar a la carpeta</span>
           <Switch checked={info.red.activo} disabled={ocupado || !info.red.ruta} onCheckedChange={v => guardar({ red: { activo: v } }, v ? 'Carpeta de red prendida' : 'Carpeta de red apagada')} />
         </div>
         <p className="text-sm text-muted-foreground">Una carpeta compartida de Windows en otra PC de la red. Conviene un usuario de Windows solo para esto, con permiso de escritura en esa carpeta.</p>
@@ -128,7 +128,7 @@ export default function CopiasTab() {
           </div>
         </div>
         {e.prueba_red && <Linea titulo="Última prueba" r={e.prueba_red} />}
-      </Card>
+      </div></Panel>
     </div>
   )
 }

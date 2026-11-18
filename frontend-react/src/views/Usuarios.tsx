@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { authFetch, useAuthStore, ROLE_LABEL, type Role } from '../store/auth'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
@@ -120,7 +120,7 @@ export default function Usuarios() {
         </Button>
       </div>
 
-      <Card className="overflow-hidden">
+      <Panel titulo="Usuarios" className="[&>div]:p-0">
         <Table>
           <TableHeader>
             <TableRow><TableHead>Usuario</TableHead><TableHead>Rol</TableHead><TableHead>Contraseña</TableHead><TableHead className="w-24" /></TableRow>
@@ -139,7 +139,7 @@ export default function Usuarios() {
                 </TableCell>
                 <TableCell>
                   {u.hasPassword ? <span className="text-xs text-muted-foreground">configurada</span>
-                    : <span className="text-xs text-yellow-600 dark:text-yellow-400">sin contraseña</span>}
+                    : <b className="text-xs font-semibold">sin contraseña</b>}
                 </TableCell>
                 <TableCell className="text-right whitespace-nowrap">
                   {canEdit(u) && (
@@ -158,7 +158,7 @@ export default function Usuarios() {
             ))}
           </TableBody>
         </Table>
-      </Card>
+      </Panel>
       {users.some(u => u.role === 'superadmin' && !u.hasPassword) && (
         <p className="text-xs text-muted-foreground">
           El superadmin se configura desde la consola del servidor: <code>docker exec -it frio-api node src/cli/superadmin.js</code>

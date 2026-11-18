@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -37,14 +37,15 @@ export default function CamarasTab() {
   }
 
   return (
-    <Card className="p-3 space-y-3 max-w-xl">
-      <div className="font-semibold">Conexión con el PLC (Modbus TCP)</div>
+    <div className="max-w-xl space-y-3">
+    <Panel titulo="Conexión con el PLC (Modbus TCP)">
       <div className="grid grid-cols-4 gap-2">
         <div className="col-span-2 space-y-1"><Label>Dirección IP</Label><Input value={ip} onChange={e => setIp(e.target.value)} placeholder="192.168.3.71" /></div>
         <div className="space-y-1"><Label>Puerto</Label><Input value={port} onChange={e => setPort(e.target.value)} inputMode="numeric" /></div>
         <div className="space-y-1"><Label>Unidad</Label><Input value={unit} onChange={e => setUnit(e.target.value)} inputMode="numeric" /></div>
       </div>
-      <div className="font-semibold">Rangos de temperatura (°C) para alertas</div>
+    </Panel>
+    <Panel titulo="Rangos de temperatura (°C) para alertas"><div className="space-y-3">
       {CAMARAS.map(k => (
         <div key={k} className="grid grid-cols-3 gap-2 items-end">
           <div className="text-sm pb-2">{nombreCamara(k)}</div>
@@ -53,6 +54,7 @@ export default function CamarasTab() {
         </div>
       ))}
       <Button onClick={guardar} disabled={loading}>Guardar</Button>
-    </Card>
+    </div></Panel>
+    </div>
   )
 }

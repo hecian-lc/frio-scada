@@ -104,8 +104,11 @@ function parseEventos(csv, { camara, texto } = {}) {
 // Filas de mando con la forma de los eventos + maniobra:true (el portal les pone el ícono de la mano).
 function parseMando(csv, { camara, texto } = {}) {
   const q = texto ? String(texto).toLowerCase() : '';
-  return filasPivot(csv).map((o) => ({ ts: ms(o._time), hora_plc: '', texto: `${o.usuario}: ${o.texto}`, estado: num(o.resultado), maniobra: true,
-    usuario: o.usuario, accion: o.texto, camara: o.camara, respuesta: o.respuesta ?? '', comando: o.comando }))
+  return filasPivot(csv).map((o) => {
+    const nota = o.nota ?? '', accion = nota ? `${o.texto} · Nota: ${nota}` : o.texto;
+    return { ts: ms(o._time), hora_plc: '', texto: `${o.usuario}: ${accion}`, estado: num(o.resultado), maniobra: true,
+      usuario: o.usuario, accion, nota, camara: o.camara, respuesta: o.respuesta ?? '', comando: o.comando };
+  })
     .filter((e) => (!camara || e.camara === camara) && (!q || e.texto.toLowerCase().includes(q)));
 }
 

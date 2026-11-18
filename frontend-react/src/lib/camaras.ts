@@ -27,6 +27,7 @@ const enPlanta = (ms: number) => new Date(ms + PLANTA_OFFSET_MS)
 // Día de planta (YYYY-MM-DD) de un instante, +offsetDias
 export const diaPlanta = (ms: number, offsetDias = 0) => enPlanta(ms + offsetDias * 864e5).toISOString().slice(0, 10)
 export const hhmm = (ms: number) => enPlanta(ms).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'UTC' })
+export const hhmmss = (ms: number) => enPlanta(ms).toISOString().slice(11, 19)
 export const fechaHora = (ms: number) => enPlanta(ms).toLocaleString('es-AR', { hourCycle: 'h23', timeZone: 'UTC' })
 export const fechaDia = (ms: number) => enPlanta(ms).toLocaleDateString('es-AR', { timeZone: 'UTC' })
 // Minutos desde las 00:00 de planta

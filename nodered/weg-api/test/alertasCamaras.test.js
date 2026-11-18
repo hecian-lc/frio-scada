@@ -202,3 +202,9 @@ test('visto: corta la repetición, queda quién y cuándo; el resuelto llega igu
   r = evaluar(est(T0 + 23 * MIN), T0 + 23 * MIN, r.memoria);
   assert.deepEqual(r.avisos, ['✅ resuelto: C5: alarma de manual prolongado']);
 });
+
+test('marcarVistas guarda la nota y activas la devuelve', () => {
+  const mem = { inicio: T0, ultimoOk: T0, activos: { 'C5.alarma_manual': { ultimo: T0, desde: T0, texto: 'C5: alarma de manual prolongado', repes: 0 } } };
+  marcarVistas(mem, ['C5.alarma_manual'], 'ana', T0 + MIN, 'llamé');
+  assert.deepEqual(activas(mem)[0].visto, { usuario: 'ana', ts: T0 + MIN, nota: 'llamé' });
+});

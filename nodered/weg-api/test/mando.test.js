@@ -271,3 +271,11 @@ test('textoResultado: motivo vencido dice que no se mandó', () => {
   const t = require('../src/services/mando').textoResultado(0, 'vencido');
   assert.equal(t, 'El pedido tardó demasiado y no se mandó; revisá el estado antes de repetir');
 });
+
+test('lineaMando: nota con coma, comillas, barra y salto queda en una línea', () => {
+  const base = { usuario: 'ana', camara: 'C4', comando: 'visto', destino: 0, anterior: null, valor: 0, resultado: 1, motivo: 0, texto: 'Vio la alarma: x', respuesta: '', ts: 1 };
+  const l = m.lineaMando({ ...base, nota: 'llamé, "Juan"\\ viene\na las 16' });
+  assert.equal(l.split('\n').length, 1);
+  assert.match(l, /nota="llamé, \\"Juan\\"\\\\ viene a las 16"/);
+  assert.doesNotMatch(m.lineaMando({ ...base, texto: 't' }), /nota=/);
+});

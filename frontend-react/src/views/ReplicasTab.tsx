@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { apiJson } from '../lib/api'
 import { copyText } from '../lib/utils'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import { Badge } from '../components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog'
 import { Plus, Copy, Ban, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -62,18 +61,18 @@ export default function ReplicasTab() {
         <p className="text-sm text-muted-foreground">Servidores de solo lectura que copian los datos de esta planta.</p>
         <Button size="sm" onClick={openNew}><Plus className="h-3.5 w-3.5 mr-1" />Nueva réplica</Button>
       </div>
-      {rows.length === 0 && <Card className="p-6 text-sm text-muted-foreground text-center">No hay réplicas.</Card>}
+      {rows.length === 0 && <Panel titulo="Réplicas"><div className="py-4 text-center text-sm text-muted-foreground">No hay réplicas.</div></Panel>}
       {rows.map(r => (
-        <Card key={r.id} className="p-3 flex flex-wrap items-center gap-3">
+        <Panel key={r.id} titulo={r.name} accion={<span className="normal-case">{r.status}</span>}>
+        <div className="flex flex-wrap items-center gap-3">
           <div className="min-w-0">
-            <div className="font-medium">{r.name}</div>
             <div className="text-xs text-muted-foreground">Última conexión: {fmt(r.lastSeenAt)}{r.lastIp ? ` · desde ${r.lastIp}` : ''}</div>
           </div>
-          <Badge variant={r.status === 'revocada' ? 'outline' : 'secondary'} className="ml-auto">{r.status}</Badge>
           {!r.legacy && r.status !== 'revocada' && (
-            <Button size="sm" variant="outline" onClick={() => revoke(r)}><Ban className="h-3.5 w-3.5 mr-1" />Revocar</Button>
+            <Button size="sm" variant="outline" className="ml-auto" onClick={() => revoke(r)}><Ban className="h-3.5 w-3.5 mr-1" />Revocar</Button>
           )}
-        </Card>
+        </div>
+        </Panel>
       ))}
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -87,7 +86,7 @@ export default function ReplicasTab() {
           ) : (
             <div className="space-y-2">
               <p className="text-sm">Pegá este código en la réplica (Configuración → Conexión). <strong>Se muestra una sola vez.</strong></p>
-              <textarea readOnly value={code} rows={4} className="w-full rounded-md border border-input bg-muted px-3 py-2 text-xs font-mono" />
+              <textarea readOnly value={code} rows={4} className="w-full border border-borde-campo bg-fila-total px-3 py-2 text-xs font-mono" />
             </div>
           )}
           <DialogFooter>

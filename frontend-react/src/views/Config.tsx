@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useConfigStore } from '../store/config'
 import { authFetch, useAuthStore, ROLE_LABEL, type Role } from '../store/auth'
-import { Card } from '../components/ui/card'
+import { Panel } from '../components/Panel'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Switch } from '../components/ui/switch'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs'
+import { Segmentado } from '../components/ui/segmentado'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table'
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogTrigger } from '../components/ui/dialog'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/select'
 import CamarasTab from './CamarasTab'
+import GuardiaTab from './GuardiaTab'
 import { Plus, Trash2, Pencil, Save, X, ChevronRight, RotateCcw, ScanSearch, Loader2, Mail, Lock, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import BrandingTab from './BrandingTab'
@@ -31,6 +32,8 @@ export default function Config() {
   // Marca, Conexión y Réplicas: solo el superadmin
   const superadmin = useAuthStore(s => s.role === 'superadmin')
 
+  const [tab, setTab] = useState(() => { const t = new URLSearchParams(window.location.search).get('tab'); return t === 'telegram' || t === 'copias' || t === 'guardia' ? t : 'smtp' })
+
   useEffect(() => { if (!store.config) store.load() }, [])
 
   // Sin gate de contraseña propio: la ruta /config ya es solo-admin (por rol).
@@ -46,32 +49,30 @@ export default function Config() {
   return (
     <div className="space-y-3">
     <a href="/grafana/" target="_blank" rel="noreferrer" className="text-sm underline text-primary">Gráficos de largo plazo</a>
-    <Tabs defaultValue={(t => (t === 'telegram' || t === 'copias' ? t : 'smtp'))(new URLSearchParams(window.location.search).get('tab'))} className="space-y-3">
-      <TabsList>
-        <TabsTrigger value="smtp">Correo</TabsTrigger>
-        <TabsTrigger value="telegram">Telegram</TabsTrigger>
-        <TabsTrigger value="camaras">Cámaras</TabsTrigger>
-        {!replica && <TabsTrigger value="copias">Copias</TabsTrigger>}
-        {superadmin && <TabsTrigger value="brand">Marca</TabsTrigger>}
-        {superadmin && <TabsTrigger value="conexion">Conexión</TabsTrigger>}
-        {superadmin && !replica && <TabsTrigger value="replicas">Réplicas</TabsTrigger>}
-      </TabsList>
+    <div className="overflow-x-auto">
+      <Segmentado aria-label="Secciones de configuración" activo={tab} onCambio={setTab} items={[
+        { id: 'smtp', label: 'Correo' }, { id: 'telegram', label: 'Telegram' }, { id: 'guardia', label: 'Guardia' }, { id: 'camaras', label: 'Cámaras' },
+        ...(!replica ? [{ id: 'copias', label: 'Copias' }] : []),
+        ...(superadmin ? [{ id: 'brand', label: 'Marca' }, { id: 'conexion', label: 'Conexión' }] : []),
+        ...(superadmin && !replica ? [{ id: 'replicas', label: 'Réplicas' }] : []),
+      ]} />
+    </div>
 
       {replica && (
-        <div className="rounded-md border border-sky-500/30 bg-sky-500/10 px-3 py-2 text-sm text-sky-800 dark:text-sky-200">
+        <div className="border border-linea bg-panel px-3 py-2 text-sm">
           Servidor réplica: la configuración se sincroniza desde planta y es solo lectura.
           Correo y marca son de este servidor.
         </div>
       )}
       {/* fieldset disabled deshabilita inputs/botones (incl. Switch/Select de Radix, que son <button>) */}
-      <TabsContent value="smtp"><SmtpTab /></TabsContent>
-      <TabsContent value="telegram"><TelegramTab /></TabsContent>
-      {!replica && <TabsContent value="copias"><CopiasTab /></TabsContent>}
-      <TabsContent value="camaras"><CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} /></TabsContent>
-      {superadmin && <TabsContent value="brand"><BrandingTab /></TabsContent>}
-      {superadmin && <TabsContent value="conexion"><ConexionTab /></TabsContent>}
-      {superadmin && !replica && <TabsContent value="replicas"><ReplicasTab /></TabsContent>}
-    </Tabs>
+      {tab === 'smtp' && <SmtpTab />}
+      {tab === 'telegram' && <TelegramTab />}
+      {tab === 'guardia' && <GuardiaTab />}
+      {tab === 'copias' && !replica && <CopiasTab />}
+      {tab === 'camaras' && <CamarasTab key={JSON.stringify(store.config?.camaras ?? null)} />}
+      {tab === 'brand' && superadmin && <BrandingTab />}
+      {tab === 'conexion' && superadmin && <ConexionTab />}
+      {tab === 'replicas' && superadmin && !replica && <ReplicasTab />}
     </div>
   )
 }
@@ -136,7 +137,7 @@ function SmtpTab() {
 
   return (
     <div className="max-w-2xl">
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Correo saliente"><div className="space-y-3">
         <p className="text-sm text-muted-foreground">Servidor de correo saliente usado para alertas y el reporte diario.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="sm:col-span-2"><Label>Servidor (host)</Label><Input value={cfg.host} onChange={e => patch({ host: e.target.value })} placeholder="smtp.gmail.com" /></div>
@@ -164,7 +165,7 @@ function SmtpTab() {
             Guardar
           </Button>
         </div>
-      </Card>
+      </div></Panel>
       <DailyReportCard />
     </div>
   )
@@ -191,9 +192,8 @@ function RepeticionCard() {
     } catch (e: any) { toast.error(e.message) } finally { setGuardando(false) }
   }
   return (
-    <Card className="p-3 space-y-3 mt-3">
+    <div className="mt-3"><Panel titulo="Repetir el aviso de alarma"><div className="space-y-3">
       <div>
-        <div className="font-semibold">Repetir el aviso de alarma</div>
         <p className="text-sm text-muted-foreground">Mientras la alarma siga activa y nadie toque "Visto" (en el portal o en Telegram), el aviso se manda de nuevo. 0 veces = no repetir.</p>
       </div>
       <div className="flex flex-wrap items-end gap-3">
@@ -201,7 +201,7 @@ function RepeticionCard() {
         <div><Label htmlFor="rep-veces">Hasta (veces)</Label><Input id="rep-veces" type="number" min={0} max={20} className="w-28" value={veces} onChange={e => setVeces(e.target.value)} /></div>
         <Button size="sm" disabled={guardando} onClick={guardar}>{guardando ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}Guardar</Button>
       </div>
-    </Card>
+    </div></Panel></div>
   )
 }
 
@@ -282,13 +282,13 @@ function TelegramTab() {
 
   return (
     <div className="max-w-2xl">
-      <Card className="p-3 space-y-3">
+      <Panel titulo="Telegram"><div className="space-y-3">
         <p className="text-sm text-muted-foreground">Bot de Telegram que manda las alarmas y los avisos.</p>
         <div>
           <Label>Token del bot</Label>
           <Input type="password" value={token} onChange={e => setToken(e.target.value)} autoComplete="new-password"
             placeholder={hasToken ? '•••••• (sin cambios)' : '123456:ABC…'} />
-          {hasToken && <p className="text-xs text-muted-foreground mt-1">token guardado ✓</p>}
+          {hasToken && <p className="text-xs text-muted-foreground mt-1">token guardado</p>}
         </div>
         <div>
           <Label>Chat ID</Label>
@@ -302,7 +302,7 @@ function TelegramTab() {
         {chatsErr && <p className="text-xs text-destructive">{chatsErr}</p>}
         {chats && chats.length === 0 && <p className="text-sm text-muted-foreground">El bot todavía no vio ningún chat. Escribí /start@NombreDelBot en el grupo y volvé a buscar.</p>}
         {chats && chats.length > 0 && (
-          <ul className="divide-y rounded border">
+          <ul className="divide-y divide-linea-fila border border-linea">
             {chats.map(c => (
               <li key={c.id} className="flex items-center gap-2 p-2">
                 <div className="min-w-0 flex-1">
@@ -333,7 +333,7 @@ function TelegramTab() {
             Guardar
           </Button>
         </div>
-      </Card>
+      </div></Panel>
       <RepeticionCard />
     </div>
   )
@@ -374,16 +374,15 @@ function DailyReportCard() {
   const next = info.nextRunAt ? new Date(info.nextRunAt) : null
 
   return (
-    <Card className="p-3 space-y-3 mt-4">
+    <div className="mt-4"><Panel titulo="Reporte diario automático"><div className="space-y-3">
       <div>
-        <div className="font-semibold text-sm">Reporte diario automático</div>
         <p className="text-sm text-muted-foreground">
           A esta hora se genera el PDF del día anterior y se manda por correo (a los destinatarios de arriba) y/o Telegram, según lo elegido en Más → Reporte diario.
           También es el cierre del día para cargar lluvia y altura del río.
         </p>
       </div>
       {!info.enabled ? (
-        <p className="text-sm text-yellow-600 dark:text-yellow-400">El envío automático está deshabilitado en el servidor (DAILY_REPORT_ENABLED=false).</p>
+        <p className="text-sm font-medium">El envío automático está deshabilitado en el servidor (DAILY_REPORT_ENABLED=false).</p>
       ) : (
         <div className="flex items-end gap-3 flex-wrap">
           <div>
@@ -401,7 +400,7 @@ function DailyReportCard() {
           )}
         </div>
       )}
-    </Card>
+    </div></Panel></div>
   )
 }
 

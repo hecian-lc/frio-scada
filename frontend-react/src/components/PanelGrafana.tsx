@@ -9,7 +9,7 @@ interface Props {
 }
 
 // Panel de Grafana embebido. Same-origin /grafana/ (nginx exige sesión vía cookie frio_token).
-export default function PanelGrafana({ uid, panelId, vars = {}, desde = 'now-24h', hasta = 'now', title = 'Gráfico', className = 'w-full h-80 rounded border' }: Props) {
+export default function PanelGrafana({ uid, panelId, vars = {}, desde = 'now-24h', hasta = 'now', title = 'Gráfico', className = 'w-full h-80 border border-linea' }: Props) {
   const q = new URLSearchParams({ orgId: '1', panelId: String(panelId), from: desde, to: hasta, theme: 'light', kiosk: '' })
   for (const [k, v] of Object.entries(vars)) q.set(`var-${k}`, v)
   return <iframe title={title} className={className} src={`/grafana/d-solo/${encodeURIComponent(uid)}/_?${q.toString()}`} />

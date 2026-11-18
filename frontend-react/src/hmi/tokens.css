@@ -1,0 +1,185 @@
+/* Tokens HMI industrial (skill hmi-industrial; original en ~/monitor-energia/frontend/src/hmi/tokens.css).
+   Se importa UNA vez, al principio.
+   Las pantallas usan SOLO estos nombres: ningún color suelto. Lo normal no lleva color; los colores de estado
+   (--estado-*) significan una sola cosa cada uno y no se usan para botones, gráficos ni marca.
+   Nivel de color 2 (decisión del 2026-11-09): el tono de marca va en el marco, la interacción y las series
+   de los gráficos; suelo y paneles con un tinte apenas de ese tono. Estos valores son los del monitor de energía
+   (azul de Tecno Electric, marco #12305A y acción #1F5FAF): en otro proyecto se cambia el tono y se mantienen
+   los papeles y los contrastes.
+
+   Contrastes medidos con la fórmula de WCAG 2.2 (claro / oscuro):
+     texto sobre panel 15,0 / 13,5 · texto secundario sobre panel 6,1 / 7,4 y sobre la banda de título 5,2 / 6,1
+     borde de campos sobre placa 3,9 / 4,5 (1.4.11) · acción sobre panel 6,1 / 6,4 · foco en la barra 5,2 / 7,8
+     texto 2 de la barra sobre el marco 7,3 / 8,2 · series sobre panel ≥ 4,0 / ≥ 6,4
+     alta como texto sobre panel 5,8 / 5,8 · dato no válido como texto 7,2 / 6,8
+     trazo de media reconocida 4,7 / 6,1 · trazo de baja reconocida 4,4 / 8,8 (los rellenos llevan contorno oscuro) */
+:root {
+  /* marco de la aplicación (barra de arriba y barra de estado) */
+  --marco: #12305A;            /* azul de marca */
+  --marco-2: #1C4275;          /* módulo activo, botones de la barra */
+  --marco-texto: #EEF3FA;
+  --marco-texto-2: #AFC3DD;
+  --marco-linea: #33557F;
+  --marco-foco: #5FA8F0;       /* foco y subrayado del módulo activo sobre la barra */
+  --marco-invalido: #C7AEF5;   /* dato no válido sobre la barra (el violeta del panel no llega a 3:1 ahí) */
+
+  /* superficies */
+  --suelo: #F3F5F8;
+  --panel: #FFFFFF;
+  --placa: #FFFFFF;            /* placas internas, campos */
+  --panel-titulo: #E2E9F3;     /* banda de título de panel (28 px) */
+  --panel-titulo-texto: #1E3A61;
+  --barra-pantalla: #F3F6FA;
+  --navegador: #0F2A4D;
+  --fila-total: #EDF2F8;       /* fila de total y hover de filas */
+
+  /* líneas */
+  --linea: #E4E8EE;            /* borde de panel */
+  --linea-fila: #DCE3EC;       /* separador de filas */
+  --borde-campo: #8A94A6;      /* campos, botones secundarios y barras de indicador: 3:1 */
+
+  /* texto */
+  --texto: #101828;
+  --texto-2: #5A6578;
+
+  /* interacción: botón primario, enlaces, selección, foco */
+  --accion: #1F5FAF;
+  --accion-texto: #FFFFFF;
+  --accion-hover: #184C8C;
+  --seleccion: #D2E2F5;
+  --foco: var(--accion);
+
+  /* indicador analógico y gráficos */
+  --rango: #BFD6EE;            /* banda normal del indicador (dentro de un borde de 3:1) */
+  --rango-fondo: #E6F1F0;      /* banda normal de fondo en los gráficos */
+  --serie-1: #1F5FAF;          /* familia de la marca (azules y verdes azulados) Y trazo distinto; nunca tonos de estado */
+  --serie-2: #138A8A;
+  --serie-3: #5C7591;
+  --serie-4: #0B3B6E;
+  --relleno-1: #1F5FAF;        /* las barras llevan contorno de --serie-1 */
+  --relleno-2: #6FB3AE;
+  --relleno-3: #9CC3EB;
+  --relleno-4: #CFDCEA;
+
+  /* estados: los únicos colores fuertes */
+  --estado-alta: #E5484D;
+  --estado-alta-sobre: #FFFFFF;    /* el «1» sobre el cuadrado relleno */
+  --estado-media: #D96A00;
+  --estado-media-trazo: #B35600;   /* contorno de la media reconocida o normalizada */
+  --estado-baja: #E2B100;
+  --estado-baja-trazo: #8F7000;
+  --estado-invalido: #6A3FA0;      /* sin comunicación, dato viejo, fuera del rango del instrumento, N/D */
+  --estado-contorno: #1D2228;      /* contorno de los rellenos naranja y amarillo (3:1 sobre el panel) */
+  --estado-sobre: #1D2228;         /* el «2» y el «3» */
+
+  /* equipos (proyecto frio-scada) */
+  --eq-frio: #1F5FAF; --eq-desc: #138A8A; --eq-escurre: #9CC3EB; --eq-escurre-borde: #1F5FAF; --eq-manual: #5C7591;
+  --eq-sobre: #FFFFFF; --eq-sobre-claro: #0B3B6E;
+
+  /* tipografía */
+  --fuente: 'Inter', system-ui, sans-serif;
+  --fuente-condensada: var(--fuente);
+  --fuente-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* medidas del marco */
+  --alto-barra-app: 40px;
+  --alto-barra-pantalla: 36px;
+  --ancho-navegador: 248px;
+  --alto-banda: 28px;
+  --alto-estado: 22px;
+
+
+  /* estilo C: pastillas, avisos y menú */
+  --linea-boton: #D5DBE4;
+  --alta-suave: #FDECEC;
+  --alta-texto: #B42318;
+  --alta-borde: #F3B8B5;
+  --ok-suave: #EAF7EF;
+  --ok-texto: #17663A;
+  --aviso-suave: #FFF7E6;
+  --aviso-borde: #F2C46D;
+  --aviso-texto: #5C3A00;
+  --eq-apagado: #E4E8EE;
+  --navegador-texto: #C9D8EC;
+  --sombra-tarjeta: 0 1px 2px rgba(16,24,40,.06);
+
+  color-scheme: light;
+}
+
+/* Tema oscuro (provisorio, mismos papeles). Los colores de estado se redefinen para seguir llegando a 3:1 como
+   objeto gráfico y a 4,5:1 como texto sobre el panel oscuro; el «1» va oscuro sobre el rojo claro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --marco: #0A1A31; --marco-2: #15315A; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #26436A; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
+    --suelo: #0E1622; --panel: #172231; --placa: #1E2A3B; --panel-titulo: #223144; --panel-titulo-texto: #C3D3E7;
+    --barra-pantalla: #17202B; --navegador: #091425; --fila-total: #22303F;
+    --linea: #263449; --linea-fila: #2A3848; --borde-campo: #5C6E86;
+    --texto: #E6EDF6; --texto-2: #9AA8BA;
+    --accion: #5B95DD; --accion-texto: #0A1A31; --accion-hover: #8DB8EE; --seleccion: #21406A;
+    --rango: #3D5677; --rango-fondo: #1E3138;
+    --serie-1: #6FA8EE; --serie-2: #3DBDB5; --serie-3: #A3B4CA; --serie-4: #C9DCF3;
+    --relleno-1: #5B95DD; --relleno-2: #2E8D87; --relleno-3: #2D5A8E; --relleno-4: #34475E;
+    --estado-alta: #E5484D; --estado-alta-sobre: #FFFFFF; --estado-media: #F28C28; --estado-media-trazo: #F28C28;
+    --estado-baja: #E8C547; --estado-baja-trazo: #E8C547; --estado-invalido: #B99AF0; --estado-contorno: #0A1A31; --estado-sobre: #0A1A31;
+    --eq-frio: #5B95DD; --eq-desc: #2E9C95; --eq-escurre: #2D5A8E; --eq-escurre-borde: #5B95DD; --eq-manual: #7A8FA8;
+    --eq-sobre: #0A1A31; --eq-sobre-claro: #E6EDF6;
+    --linea-boton: #3A4A60; --alta-suave: #3A1A1D; --alta-texto: #FFA3A6; --alta-borde: #7A2E31; --ok-suave: #12301F; --ok-texto: #7FD8A4; --aviso-suave: #33260F; --aviso-borde: #8A6420; --aviso-texto: #F2C46D; --eq-apagado: #2A3646; --navegador-texto: #B8C8DD; --sombra-tarjeta: none;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"], :root.dark {
+  --marco: #0A1A31; --marco-2: #15315A; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #26436A; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
+  --suelo: #0E1622; --panel: #172231; --placa: #1E2A3B; --panel-titulo: #223144; --panel-titulo-texto: #C3D3E7;
+  --barra-pantalla: #17202B; --navegador: #091425; --fila-total: #22303F;
+  --linea: #263449; --linea-fila: #2A3848; --borde-campo: #5C6E86;
+  --texto: #E6EDF6; --texto-2: #9AA8BA;
+  --accion: #5B95DD; --accion-texto: #0A1A31; --accion-hover: #8DB8EE; --seleccion: #21406A;
+  --rango: #3D5677; --rango-fondo: #1E3138;
+  --serie-1: #6FA8EE; --serie-2: #3DBDB5; --serie-3: #A3B4CA; --serie-4: #C9DCF3;
+  --relleno-1: #5B95DD; --relleno-2: #2E8D87; --relleno-3: #2D5A8E; --relleno-4: #34475E;
+  --estado-alta: #E5484D; --estado-alta-sobre: #FFFFFF; --estado-media: #F28C28; --estado-media-trazo: #F28C28;
+  --estado-baja: #E8C547; --estado-baja-trazo: #E8C547; --estado-invalido: #B99AF0; --estado-contorno: #0A1A31; --estado-sobre: #0A1A31;
+  --eq-frio: #5B95DD; --eq-desc: #2E9C95; --eq-escurre: #2D5A8E; --eq-escurre-borde: #5B95DD; --eq-manual: #7A8FA8;
+  --eq-sobre: #0A1A31; --eq-sobre-claro: #E6EDF6;
+  --linea-boton: #3A4A60; --alta-suave: #3A1A1D; --alta-texto: #FFA3A6; --alta-borde: #7A2E31; --ok-suave: #12301F; --ok-texto: #7FD8A4; --aviso-suave: #33260F; --aviso-borde: #8A6420; --aviso-texto: #F2C46D; --eq-apagado: #2A3646; --navegador-texto: #B8C8DD; --sombra-tarjeta: none;
+  color-scheme: dark;
+}
+
+
+/* Base */
+body {
+  font: 15px/22px var(--fuente);
+  font-variant-numeric: tabular-nums;   /* las cifras no bailan al refrescar */
+  background: var(--suelo);
+  color: var(--texto);
+}
+
+/* Foco visible en todo lo que se puede enfocar (WCAG 2.4.7). El !important pisa los «outline: none» viejos
+   (marco.css: buscador de la biblioteca y nombre de la tendencia), que nunca deben quedar sin reemplazo. */
+:focus-visible {
+  outline: 2px solid var(--foco) !important;
+  outline-offset: 1px;
+}
+
+/* Texto solo para lectores de pantalla */
+.hmi-solo-lector {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Impresión: siempre en claro, sea cual sea el tema */
+@media print {
+  :root, :root.dark, :root[data-theme="dark"], :root[data-theme="light"] {
+    --suelo: #F3F5F8; --panel: #FFFFFF; --placa: #FFFFFF; --panel-titulo: #EDF2F8; --panel-titulo-texto: #1E3A61;
+    --linea: #E4E8EE; --linea-fila: #DCE3EC; --borde-campo: #8A94A6; --texto: #101828; --texto-2: #5A6578;
+    --accion: #1F5FAF; --rango: #BFD6EE; --rango-fondo: #E6F1F0;
+    --serie-1: #1F5FAF; --serie-2: #138A8A; --serie-3: #5C7591; --serie-4: #0B3B6E;
+    --relleno-1: #1F5FAF; --relleno-2: #6FB3AE; --relleno-3: #9CC3EB; --relleno-4: #CFDCEA;
+    --estado-alta: #E5484D; --estado-alta-sobre: #FFFFFF; --estado-media: #D96A00; --estado-media-trazo: #B35600;
+    --estado-baja: #E2B100; --estado-baja-trazo: #8F7000; --estado-invalido: #6A3FA0; --estado-contorno: #1D2228; --estado-sobre: #1D2228;
+    --eq-frio: #1F5FAF; --eq-desc: #138A8A; --eq-escurre: #9CC3EB; --eq-escurre-borde: #1F5FAF; --eq-manual: #5C7591;
+    --eq-sobre: #FFFFFF; --eq-sobre-claro: #0B3B6E;
+    --navegador: #0F2A4D; --linea-boton: #D5DBE4; --alta-suave: #FDECEC; --alta-texto: #B42318; --alta-borde: #F3B8B5; --ok-suave: #EAF7EF; --ok-texto: #17663A; --aviso-suave: #FFF7E6; --aviso-borde: #F2C46D; --aviso-texto: #5C3A00; --eq-apagado: #E4E8EE; --navegador-texto: #C9D8EC; --sombra-tarjeta: none;
+    color-scheme: light;
+  }
+}

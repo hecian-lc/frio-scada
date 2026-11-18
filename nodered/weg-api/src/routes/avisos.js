@@ -3,10 +3,12 @@
 const express = require('express');
 const { requireAdmin } = require('../middleware/auth');
 const { hhmm } = require('../services/alertasCamaras');
+const { limpiarNota } = require('../services/novedades');
+const { guardiaActual } = require('../services/guardia');
 
 // POST /api/avisos/prueba {canal:'telegram'|'mail'} — solo admin, 1 por minuto por canal.
-// GET /api/avisos/activas — alarmas activas con quién las vio. POST /api/avisos/visto {claves:[...]} — cualquier usuario.
-function createAvisosRouter({ notifyCanal, isReplica = false, ahora = Date.now, getActivas = () => [], marcarVisto = async () => [] }) {
+// GET /api/avisos/activas — alarmas activas con quién las vio. POST /api/avisos/visto {claves:[...], nota?} — cualquier usuario. GET /api/avisos/novedades — notas del Visto de las últimas 12 h.
+function createAvisosRouter({ notifyCanal, isReplica = false, ahora = Date.now, getActivas = () => [], marcarVisto = async () => [], getNovedades = async () => [], getGuardia = () => ({ turnos: [], instrucciones: {} }), setGuardia, avisarVisto = async () => {} }) {
   const router = express.Router();
   const ultimo = new Map(); // canal -> ms del último intento
   router.post('/prueba', requireAdmin, async (req, res) => {
@@ -25,14 +27,31 @@ function createAvisosRouter({ notifyCanal, isReplica = false, ahora = Date.now, 
     }
   });
   router.get('/activas', (req, res) => res.json({ activas: getActivas() }));
+  router.get('/novedades', async (req, res) => {
+    try { res.json(await getNovedades()); } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  const guardiaConActual = () => { const g = getGuardia(); return { turnos: g.turnos, instrucciones: g.instrucciones, actual: guardiaActual(g.turnos, ahora()) }; };
+  router.get('/guardia', (req, res) => res.json(guardiaConActual()));
+  router.put('/guardia', requireAdmin, (req, res) => {
+    if (isReplica) return res.status(409).json({ error: 'La guardia se configura en la planta' });
+    try { setGuardia(req.body); res.json(guardiaConActual()); } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+  });
   router.post('/visto', async (req, res) => {
     if (isReplica) return res.status(409).json({ error: 'Las alarmas se marcan como vistas en la planta' });
     const claves = req.body && req.body.claves;
     if (!Array.isArray(claves) || !claves.length || claves.length > 50 || !claves.every((c) => typeof c === 'string' && /^[\w.]{1,40}$/.test(c))) {
       return res.status(400).json({ error: 'Alarmas inválidas' });
     }
+    const nota = req.body.nota;
+    if (nota !== undefined && typeof nota !== 'string') return res.status(400).json({ error: 'Nota inválida' });
+    if (nota !== undefined && nota.length > 200) return res.status(400).json({ error: 'Nota: hasta 200 caracteres' });
     const usuario = (req.auth && req.auth.user) || 'desconocido';
-    try { res.json({ ok: true, vistas: await marcarVisto(claves, usuario) }); } catch (e) { res.status(500).json({ error: e.message }); }
+    try {
+      const n = limpiarNota(nota);
+      const vistas = await marcarVisto(claves, usuario, n);
+      if (vistas.length) Promise.resolve().then(() => avisarVisto(usuario, vistas, n)).catch(console.error);
+      res.json({ ok: true, vistas });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
   return router;
 }

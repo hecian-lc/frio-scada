@@ -65,10 +65,12 @@ function setIcons(href: string) {
   }
 }
 
+const temaActual = () => document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+
 function apply(b: Branding) {
   document.title = b.name
   setIcons(b.faviconUrl)
-  aplicarColorPortal(b.colorPortal)
+  aplicarColorPortal(b.colorPortal, temaActual())
   try {
     const { name, subtitle, footer, logoUrl, customLogo, faviconUrl, customFavicon, colorPortal, colorInforme } = b
     localStorage.setItem(CACHE_KEY, JSON.stringify({ name, subtitle, footer, logoUrl, customLogo, faviconUrl, customFavicon, colorPortal, colorInforme }))
@@ -76,7 +78,7 @@ function apply(b: Branding) {
 }
 
 const initial = cached()
-if (initial !== DEFAULT_BRANDING) { document.title = initial.name; setIcons(initial.faviconUrl); aplicarColorPortal(initial.colorPortal) }
+if (initial !== DEFAULT_BRANDING) { document.title = initial.name; setIcons(initial.faviconUrl); aplicarColorPortal(initial.colorPortal, temaActual()) }
 
 export const useBrandingStore = create<BrandingState>((set, get) => ({
   ...initial,

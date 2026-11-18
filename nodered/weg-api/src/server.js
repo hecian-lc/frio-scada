@@ -122,18 +122,30 @@ app.use('/api/camaras', createCamarasRouter({
   queryCsv: influxRaw.queryAnnotatedCsv, getEstado: configService.getEstadoCamaras,
 }));
 // "Visto" de una alarma (portal o Telegram): corta la repetición y queda en Eventos como acción del usuario
-async function marcarVisto(claves, usuario) {
-  const cambiadas = alertasCamaras.reconocer(claves, usuario);
+async function marcarVisto(claves, usuario, nota) {
+  const cambiadas = alertasCamaras.reconocer(claves, usuario, Date.now(), nota);
   const ts = Date.now();
   if (cambiadas.length) {
     await influxRaw.writeLines(cambiadas.map((c, i) => require('./services/mando').lineaMando({
       usuario, camara: (/^(C\d+)\./.exec(c.clave) || [])[1] || 'general', comando: 'visto', destino: 0, anterior: null, valor: 0,
-      resultado: 1, motivo: 0, texto: `Vio la alarma: ${c.texto}`, respuesta: '', ts: ts + i,
+      resultado: 1, motivo: 0, texto: `Vio la alarma: ${c.texto}`, respuesta: '', ts: ts + i, nota,
     })).join('\n')).catch((e) => console.error('[VISTO] no se pudo registrar:', e.message));
   }
   return cambiadas;
 }
-app.use('/api/avisos', createAvisosRouter({ notifyCanal: alerts.notifyCanal, isReplica: REPLICA_MODE, getActivas: alertasCamaras.getActivas, marcarVisto }));
+async function avisarVisto(usuario, cambiadas, nota) {
+  if (!alerts.telegramConfigurado()) return;
+  const { textoVisto } = require('./services/guardia');
+  await alerts.notifyCanal('telegram', textoVisto(usuario, cambiadas.map((c) => c.texto).join(', '), nota));
+}
+app.use('/api/avisos', createAvisosRouter({ notifyCanal: alerts.notifyCanal, isReplica: REPLICA_MODE, getActivas: alertasCamaras.getActivas, marcarVisto,
+  getGuardia: settingsService.getGuardia, setGuardia: settingsService.setGuardia, avisarVisto,
+  getNovedades: async () => {
+    const t = Date.now(), { fluxMando, parseMando } = require('./services/camaras');
+    const csv = await influxRaw.queryAnnotatedCsv(fluxMando({ desde: new Date(t - 12 * 3600000).toISOString(), hasta: new Date(t).toISOString() }));
+    return require('./services/novedades').novedades(parseMando(csv), t);
+  },
+}));
 // Maniobras al PLC: pasan por el poller (único escritor del 502) con MANDO_TOKEN; ver docs/modbus/mapa_modbus.md
 app.use('/api/mando', createMandoRouter({
   pollerUrl: process.env.POLLER_URL || '', token: process.env.MANDO_TOKEN || '', getEstado: configService.getEstadoCamaras,

@@ -69,7 +69,7 @@ export function useMando() {
     <>
       <Confirmar abierto={!!p} frase={p ? fraseConfirmacion(p.comando, p.camara ?? '', p.grupo, p.horario, p.valor) : ''}
         enviando={enviando} resultado={res} onConfirmar={confirmar} onCerrar={cerrar} />
-      {listo && <div role="status" className="fixed inset-x-3 bottom-20 z-[60] mx-auto max-w-md rounded-xl bg-green-600 px-4 py-3 text-center text-base font-medium text-white shadow-lg">✓ {listo}</div>}
+      {listo && <div role="status" className="fixed inset-x-3 bottom-20 z-[60] mx-auto max-w-md border border-linea bg-panel px-4 py-3 text-center text-base font-medium text-foreground">{listo}</div>}
     </>
   )
   // Descarta una pregunta vieja sin tocar un pedido en vuelo ni un resultado que el usuario todavía no leyó

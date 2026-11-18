@@ -18,7 +18,7 @@ export default function AjustesCamara({ cam, onCerrar }: { cam: string; onCerrar
       <DialogContent className="flex max-h-[90vh] w-[calc(100vw-1.5rem)] max-w-2xl flex-col gap-0 p-0"
         onInteractOutside={e => { if (est.current.corriendo) e.preventDefault() }}
         onEscapeKeyDown={e => { if (est.current.corriendo) e.preventDefault() }}>
-        <DialogHeader className="p-4 pr-12"><DialogTitle>Ajustes de {nombreCamara(cam)}</DialogTitle></DialogHeader>
+        <DialogHeader className="m-0"><DialogTitle>Ajustes de {nombreCamara(cam)}</DialogTitle></DialogHeader>
         <EditorProgramacion camaraFija={cam} enDialogo onEstado={setE} />
       </DialogContent>
     </Dialog>

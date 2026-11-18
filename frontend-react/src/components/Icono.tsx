@@ -8,12 +8,14 @@ const PATHS: Record<NombreIcono, string> = {
   descongelando: 'M6 3c-2 3 2 6 0 9s2 6 0 9M12 3c-2 3 2 6 0 9s2 6 0 9M18 3c-2 3 2 6 0 9s2 6 0 9',
   // dos gotas
   escurriendo: 'M8 3.5C8 3.5 3.5 9 3.5 12.5a4.5 4.5 0 009 0C12.5 9 8 3.5 8 3.5zM17 11C17 11 13.5 15 13.5 17.5a3.5 3.5 0 007 0C20.5 15 17 11 17 11z',
-  // triángulo con !
-  alarma: 'M12 3L2.5 20h19L12 3zM12 10v4.5M12 17.4v.2',
+  // cuadrado con !
+  alarma: 'M4 4h16v16H4zM12 8v5.5M12 16.6v.2',
   // mano
   manual: 'M8 13V6a1.5 1.5 0 013 0v5M11 11V4.5a1.5 1.5 0 013 0V11M14 11V6a1.5 1.5 0 013 0v6M17 10a1.5 1.5 0 013 0v4c0 4-2.5 7-7 7-3 0-4.5-1.5-6-4l-2.5-4a1.5 1.5 0 012.4-1.8L8 14',
-  // pausa
-  apagado: 'M9 5v14M15 5v14',
+  // símbolo de encendido
+  apagado: 'M12 3v8M7.5 6.5a7 7 0 109 0',
+  // círculo con ?
+  'sin-datos': 'M12 3a9 9 0 100 18 9 9 0 000-18zM9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1.2-1.5 2.5M12 17v.2',
 }
 
 export function Icono({ nombre, size = 24 }: { nombre: NombreIcono; size?: number }) {
@@ -33,6 +35,7 @@ const NAV = {
   mas: 'M4 6h16M4 12h16M4 18h16',
   alarmas: 'M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4',
   eventos: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+  reportes: 'M6 3h9l3 3v15H6zM9 11h6M9 15h6',
 }
 export function IconoNav({ nombre, size = 22 }: { nombre: keyof typeof NAV; size?: number }) {
   return (

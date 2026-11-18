@@ -5,6 +5,7 @@ import { Input } from './ui/input'
 import { Switch } from './ui/switch'
 import { Confirmar, usePermiso, refrescarLuego } from './Confirmar'
 import { useCamarasStore } from '../store/camaras'
+import MarcaAlarma from './MarcaAlarma'
 import { CAMARAS, GRUPOS, HORARIOS, nombreCamara } from '../lib/camaras'
 import { campos, cambios, enviarMando, fraseConfirmacion, textoResultado, type Valor, type Pedido } from '../lib/mando'
 
@@ -69,7 +70,7 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
 
   const num = (id: string, props: { step?: string; max?: number } = {}) => (
     <Input type="number" inputMode="decimal" step={props.step ?? '1'} min={0} max={props.max} value={String(val(id))} disabled={off}
-      onChange={e => set(id, e.target.value)} aria-invalid={malos.has(id)} className={`min-w-0 text-base ${malos.has(id) ? 'border-red-500' : ''}`} />
+      onChange={e => set(id, e.target.value)} aria-invalid={malos.has(id)} className={`min-w-0 text-base ${malos.has(id) ? 'border-estado-alta' : ''}`} />
   )
   const tiene = (id: string) => id in porId
   const sw = (id: string, n: string) => tiene(id) && (
@@ -90,16 +91,15 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
     <div className={enDialogo ? 'space-y-3' : 'max-w-2xl space-y-3'}>
       {!enDialogo && (
         <div className="sticky -top-3 z-10 -mx-3 -mt-3 flex flex-wrap items-center gap-2 border-b bg-background px-3 pb-2 pt-5 sm:-top-6 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-8">
-          <h1 className="text-xl font-semibold">Programación de descongelados</h1>
           {/* Guardar arriba y fijo al hacer scroll: no tapa los campos */}
           {botonGuardar}
         </div>
       )}
-      {!permiso.ok && <div role="alert" className="rounded-md bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400">{permiso.motivo}</div>}
+      {!permiso.ok && <div role="alert" className="border border-linea bg-fila-total p-3 text-sm">{permiso.motivo}</div>}
       {!estado && <div className="text-sm text-muted-foreground">Sin datos todavía</div>}
 
-      {!camaraFija && <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1 text-center text-sm font-medium">
-        {CAMARAS.map(k => <button key={k} onClick={() => setCam(k)} className={`toque rounded-md ${k === cam ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}>{nombreCamara(k)}{camMalas.includes(k) && ' ⚠'}</button>)}
+      {!camaraFija && <div className="flex border-b border-linea text-center text-sm font-semibold">
+        {CAMARAS.map(k => <button key={k} onClick={() => setCam(k)} className={`toque flex-1 border-b-[3px] ${k === cam ? 'border-accion' : 'border-transparent text-texto-2'}`}>{nombreCamara(k)}{camMalas.includes(k) && ' !'}</button>)}
       </div>}
 
       {HORARIOS.filter(h => tiene(`${cam}.H${h}.hora`)).map(h => {
@@ -110,7 +110,7 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
         const abierto = conError || abiertos.has(p)
         const min = (k: string) => (tiene(p + k) ? `${String(val(p + k))} min` : '—')
         return (
-          <Card key={h} className="rounded-xl p-3">
+          <Card key={h} className="p-3">
             <button type="button" aria-expanded={abierto} onClick={() => setAbiertos(a => { const n = new Set(a); n.has(p) ? n.delete(p) : n.add(p); return n })}
               className="toque flex w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-left">
               <span className="text-muted-foreground">{abierto ? '▾' : '▸'}</span>
@@ -118,13 +118,13 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
               {!abierto && <span className="min-w-0 text-sm text-muted-foreground">
                 {String(val(p + 'hora')).padStart(5, '0')} · {tiene(p + 'hab') ? (val(p + 'hab') ? 'habilitado' : 'deshabilitado') : ''} · etapa 1 {min('t1')} · etapa 2 {min('t2')}
               </span>}
-              {editado && <span className="ml-auto text-xs font-semibold text-amber-600 dark:text-amber-400">cambios sin guardar</span>}
-              {conError && <span className="ml-auto text-xs font-semibold text-red-600">revisar</span>}
+              {editado && <span className="ml-auto text-xs font-semibold text-texto-2">cambios sin guardar</span>}
+              {conError && <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-estado-alta"><MarcaAlarma size={14} />revisar</span>}
             </button>
             {abierto && <div className="mt-3 space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <label className="space-y-1 text-sm"><span>Hora</span>
-                <Input type="time" value={String(val(p + 'hora')).padStart(5, '0')} disabled={off} onChange={e => set(p + 'hora', e.target.value)} className={`min-w-0 text-base ${malos.has(p + 'hora') ? 'border-red-500' : ''}`} /></label>
+                <Input type="time" value={String(val(p + 'hora')).padStart(5, '0')} disabled={off} onChange={e => set(p + 'hora', e.target.value)} className={`min-w-0 text-base ${malos.has(p + 'hora') ? 'border-estado-alta' : ''}`} /></label>
               <div className="self-end">{sw(p + 'hab', 'Habilitado')}</div>
               <label className="space-y-1 text-sm"><span>Etapa 1 (min)</span>{tiene(p + 't1') && num(p + 't1', { step: '0.1' })}</label>
               <div className="self-end">{sw(p + 'e1', 'Etapa 1 activa')}</div>
@@ -141,23 +141,23 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
                   return <>
                     <div className="grid grid-cols-1 gap-2 min-[400px]:grid-cols-2">
                       {GRUPOS.map((g, i) => (
-                        <div key={g} className="flex min-w-0 items-center justify-between gap-2 rounded-md border px-2 py-1">
+                        <div key={g} className="flex min-w-0 items-center justify-between gap-2 border border-borde-campo px-2 py-1">
                           <span className="whitespace-nowrap text-sm">Equipo {g}</span>
-                          <div className="flex overflow-hidden rounded-md border" role="radiogroup" aria-label={`Etapa del equipo ${g}`}>
+                          <div className="flex overflow-hidden border border-borde-campo" role="radiogroup" aria-label={`Etapa del equipo ${g}`}>
                             {(['1', '2'] as const).map(e => (
                               <button key={e} type="button" role="radio" aria-checked={s[i] === e} disabled={off} onClick={() => poner(i, e)}
-                                className={`toque min-w-[40px] px-2 text-sm font-semibold ${s[i] === e ? (e === '1' ? 'bg-sky-600 text-white' : 'bg-violet-600 text-white') : 'bg-background text-muted-foreground'}`}>{e}</button>
+                                className={`toque min-w-[40px] px-2 text-sm font-semibold ${s[i] === e ? 'bg-accion text-accion-texto' : 'bg-placa text-texto-2'}`}>{e}</button>
                             ))}
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      <span className="font-semibold text-sky-700 dark:text-sky-400">Etapa 1:</span> equipos {en('1')} · <span className="font-semibold text-violet-700 dark:text-violet-400">Etapa 2:</span> equipos {en('2')}
+                      <span className="font-semibold">Etapa 1:</span> equipos {en('1')} · <span className="font-semibold">Etapa 2:</span> equipos {en('2')}
                     </div>
                   </>
                 })()}
-                {malos.has(p + 'etapas') && <div className="text-xs text-red-600">Tiene que haber al menos un equipo en cada etapa</div>}
+                {malos.has(p + 'etapas') && <div className="text-xs text-estado-alta">Tiene que haber al menos un equipo en cada etapa</div>}
               </fieldset>
             )}
             </div>}
@@ -165,7 +165,7 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
         )
       })}
 
-      <Card className="space-y-3 rounded-xl p-3">
+      <Card className="space-y-3 p-3">
         <div className="font-semibold">Recuperación y ajustes</div>
         <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
           {tiene(`${cam}.recuperacion`) && <label className="block space-y-1 text-sm"><span>Tiempo de recuperación de {nombreCamara(cam)} (min)</span>{num(`${cam}.recuperacion`, { max: 60 })}</label>}
@@ -182,7 +182,7 @@ export default function EditorProgramacion({ camaraFija, enDialogo, inicial, onE
         detalle={total === 0 && <ul className="max-h-[40vh] list-disc space-y-1 overflow-y-auto pl-5 text-sm">{listos.map(x => <li key={x.campo.id}>{frase(x.pedido!)}</li>)}</ul>}
         resultado={total === 0 ? null : (
           <ul className="max-h-[50vh] space-y-2 overflow-y-auto text-sm">
-            {hechos.map(h => <li key={h.id} className={h.ok ? '' : 'text-red-600'}><div>{h.texto}</div><b>{h.res}</b></li>)}
+            {hechos.map(h => <li key={h.id} className={h.ok ? '' : 'text-estado-alta'}><div>{h.texto}</div><b>{h.res}</b></li>)}
             {corriendo && <li className="text-muted-foreground">Mandando el pedido {hechos.length + 1} de {total}…</li>}
           </ul>
         )}

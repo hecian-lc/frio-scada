@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Switch } from '../components/ui/switch'
+import { Panel } from '../components/Panel'
 import { apiBlob, apiJson } from '../lib/api'
 import { useDatos } from '../lib/useDatos'
 import { resumenAyer } from '../lib/sistema'
@@ -17,7 +18,7 @@ const NOMBRE: Record<Tipo, string> = { dia: 'de ayer', semana: 'semanal (última
 type ResultadoEnvio = { tipo?: Tipo; correo: string; telegram: string; historyError?: boolean }
 
 // Resultado de un canal en palabras ('ok' | 'error: …' | 'no configurado' | 'apagado')
-const resultado = (r: string) => (r === 'ok' ? 'enviado ✓' : r === 'apagado' ? 'apagado' : r === 'no configurado' ? 'no está configurado' : `no se pudo (${r.replace(/^error: /, '')})`)
+const resultado = (r: string) => (r === 'ok' ? 'enviado' : r === 'apagado' ? 'apagado' : r === 'no configurado' ? 'no está configurado' : `no se pudo (${r.replace(/^error: /, '')})`)
 
 function Envio({ admin }: { admin: boolean }) {
   const [info, setInfo] = useState<Info | null>(null)
@@ -43,12 +44,11 @@ function Envio({ admin }: { admin: boolean }) {
     finally { setEnviando(false) }
   }
 
-  if (!admin) return <p className="text-sm text-muted-foreground">El reporte sale solo todos los días.</p>
-  if (!info) return err ? <p className="text-sm text-destructive">{err}</p> : null
+  if (!admin) return <p className="text-sm text-texto-2">El reporte sale solo todos los días.</p>
+  if (!info) return err ? <p className="text-sm text-estado-alta">{err}</p> : null
   return (
-    <div className="rounded-xl bg-white dark:bg-card shadow-sm p-3 space-y-2 text-sm">
-      <div className="font-semibold">Envío automático</div>
-      <p className="text-muted-foreground">
+    <Panel titulo="Envío automático"><div className="space-y-2 text-sm">
+      <p className="text-texto-2">
         {info.enabled ? `Sale todos los días a las ${info.time} con el PDF del día anterior.` : 'El envío automático está apagado en el servidor.'}{' '}
         La hora se cambia en <Link to="/config" className="underline">Configuración avanzada</Link>.
       </p>
@@ -59,16 +59,16 @@ function Envio({ admin }: { admin: boolean }) {
       <label className="toque flex items-center justify-between gap-3">
         <span>
           Mandar por Telegram
-          {!info.telegramConfigurado && <span className="block text-xs text-muted-foreground">Configurá Telegram en <Link to="/config?tab=telegram" className="underline">Configuración avanzada</Link></span>}
+          {!info.telegramConfigurado && <span className="block text-xs text-texto-2">Configurá Telegram en <Link to="/config?tab=telegram" className="underline">Configuración avanzada</Link></span>}
         </span>
         <Switch checked={info.telegramConfigurado && info.canales.telegram} disabled={guardando || !info.telegramConfigurado} onCheckedChange={(v) => cambiar('telegram', v)} />
       </label>
       <label className="toque flex items-center justify-between gap-3">
-        <span>Reporte semanal<span className="block text-xs text-muted-foreground">Los lunes, de lunes a domingo, con la comparación con la semana anterior</span></span>
+        <span>Reporte semanal<span className="block text-xs text-texto-2">Los lunes, de lunes a domingo, con la comparación con la semana anterior</span></span>
         <Switch checked={info.semanal} disabled={guardando} onCheckedChange={(v) => guardar({ semanal: v })} />
       </label>
       <label className="toque flex items-center justify-between gap-3">
-        <span>Reporte mensual<span className="block text-xs text-muted-foreground">El día 1, con el mes anterior completo</span></span>
+        <span>Reporte mensual<span className="block text-xs text-texto-2">El día 1, con el mes anterior completo</span></span>
         <Switch checked={info.mensual} disabled={guardando} onCheckedChange={(v) => guardar({ mensual: v })} />
       </label>
       <div className="space-y-2 pt-1">
@@ -78,13 +78,13 @@ function Envio({ admin }: { admin: boolean }) {
       </div>
       {envio && (
         <div>
-          {envio.historyError && <div className="text-destructive">No se pudo leer el historial: salió solo el aviso, sin PDF.</div>}
+          {envio.historyError && <div className="text-estado-alta">No se pudo leer el historial: salió solo el aviso, sin PDF.</div>}
           <div>Correo: {resultado(envio.correo)}</div>
           <div>Telegram: {resultado(envio.telegram)}</div>
         </div>
       )}
-      {err && <p className="text-destructive">{err}</p>}
-    </div>
+      {err && <p className="text-estado-alta">{err}</p>}
+    </div></Panel>
   )
 }
 
@@ -116,22 +116,22 @@ export default function Reportes() {
 
   return (
     <div className="space-y-3 max-w-md">
-      <h1 className="text-xl font-semibold">Reportes</h1>
-      <div className="rounded-xl bg-white dark:bg-card shadow-sm p-3 space-y-1 text-sm">
-        <div className="font-semibold">Ayer, {fechaDia(Date.parse(`${dia}T12:00:00-03:00`))}</div>
-        <div>Descongelados: {n(r.descongelados)}{r.saltados ? ` (${r.saltados} se saltaron)` : ''}</div>
-        <div>Alarmas: {n(r.avisos)} (sin contar acciones de operarios)</div>
-        <div>Horas de compresores: {n(r.horas, ' h')}</div>
-      </div>
+      <Panel titulo={`Ayer, ${fechaDia(Date.parse(`${dia}T12:00:00-03:00`))}`}>
+        <div className="space-y-1 text-sm">
+          <div>Descongelados: <span className="font-mono">{n(r.descongelados)}</span>{r.saltados ? <> (<span className="font-mono">{r.saltados}</span> se saltaron)</> : ''}</div>
+          <div>Alarmas: <span className="font-mono">{n(r.avisos)}</span> (sin contar acciones de operarios)</div>
+          <div>Horas de compresores: <span className="font-mono">{n(r.horas, ' h')}</span></div>
+        </div>
+      </Panel>
       <div className="flex flex-wrap items-center gap-2">
-        <select aria-label="Tipo de reporte" value={tipo} onChange={(e) => setTipo(e.target.value as Tipo)} className="toque rounded-md border bg-background px-2 text-sm">
+        <select aria-label="Tipo de reporte" value={tipo} onChange={(e) => setTipo(e.target.value as Tipo)} className="toque border border-borde-campo bg-placa px-2 text-sm">
           <option value="dia">Diario</option><option value="semana">Semanal</option><option value="mes">Mensual</option>
         </select>
         <input type="date" aria-label={tipo === 'dia' ? 'Día del reporte' : tipo === 'semana' ? 'Un día de la semana' : 'Un día del mes'} title={tipo === 'dia' ? undefined : `Cualquier día ${tipo === 'semana' ? 'de la semana' : 'del mes'} que querés`} value={fecha} max={dia} min="2000-01-01" onChange={(e) => setFecha(e.target.value)}
-          className="toque rounded-md border bg-background px-2 text-sm" />
-        <Button className="flex-1" onClick={descargar} disabled={busy || !fecha}>{busy ? 'Generando…' : '⬇ Descargar PDF'}</Button>
+          className="toque border border-borde-campo bg-placa px-2 text-sm" />
+        <Button className="flex-1" onClick={descargar} disabled={busy || !fecha}>{busy ? 'Generando…' : 'Descargar PDF'}</Button>
       </div>
-      {err && <p className="text-sm text-destructive">{err}</p>}
+      {err && <p className="text-sm text-estado-alta">{err}</p>}
       <Envio admin={admin} />
     </div>
   )

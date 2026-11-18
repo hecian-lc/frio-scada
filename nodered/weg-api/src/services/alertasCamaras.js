@@ -5,6 +5,8 @@
 
 const configService = require('./config');
 const alerts = require('./alerts');
+const guardia = require('./guardia');
+const { textoAvisoAlarmas } = guardia;
 
 const COM_MAX_MS = 2 * 60 * 1000;     // sin dato fresco > 2 min = PLC sin comunicación
 const DESVIO_MAX_S = 120;
@@ -110,12 +112,12 @@ function activas(memoria) {
 }
 
 // Marca como vistas las claves activas que no lo estaban (corta la repetición). Devuelve las que cambió.
-function marcarVistas(memoria, claves, usuario, ahoraMs) {
+function marcarVistas(memoria, claves, usuario, ahoraMs, nota) {
   const cambiadas = [];
   for (const c of claves) {
     const a = memoria.activos[c];
     if (!a || a.visto) continue;
-    memoria.activos[c] = { ...a, visto: { usuario, ts: ahoraMs } };
+    memoria.activos[c] = { ...a, visto: { usuario, ts: ahoraMs, ...(nota && { nota }) } };
     cambiadas.push({ clave: c, texto: a.texto });
   }
   return cambiadas;
@@ -127,7 +129,7 @@ const fallidos = new Set(); // avisos ya registrados como fallidos (no llenar el
 
 async function tick(state) {
   const ahora = Date.now();
-  const rep = require('./settings').getRepeticion();
+  const settings = require('./settings'), rep = settings.getRepeticion(), g = settings.getGuardia();
   const r = evaluar(configService.getEstadoCamaras(), ahora, state.memoria, { repetirMs: rep.minutos * 60000, veces: rep.veces });
   const textos = new Set(r.items.map((i) => i.texto));
   for (const t of fallidos) if (!textos.has(t)) fallidos.delete(t);
@@ -136,7 +138,11 @@ async function tick(state) {
     let ok = false;
     // Telegram: un botón "Visto" por alarma nueva o repetida
     const botones = r.items.filter((i) => i.alarma).map((i) => ({ texto: `👀 Visto: ${r.memoria.activos[i.clave].texto}`.slice(0, 60), data: `v:${i.clave}` }));
-    try { ok = await alerts.notify(r.items.map((i) => i.texto).join('\n'), { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
+    // Una guardia mal formada en settings.json no debe frenar el aviso: cae al texto simple
+    let txt;
+    try { txt = textoAvisoAlarmas(r.items, { instruccion: (c) => guardia.instruccion(c, g.instrucciones), guardia: guardia.guardiaActual(g.turnos, ahora) }); }
+    catch (e) { console.error('[ALERT] guardia:', e.message); txt = r.items.map((i) => i.texto).join('\n'); }
+    try { ok = await alerts.notify(txt, { botones }); } catch (e) { console.error('[ALERT] notify:', e.message); }
     if (!ok) {
       for (const it of r.items) {
         const prev = state.memoria.activos[it.clave];
@@ -169,6 +175,6 @@ function start() {
 
 // Para el portal y el bot de Telegram: sobre la memoria viva del monitoreo
 const getActivas = () => activas(estado.memoria);
-const reconocer = (claves, usuario, ahoraMs = Date.now()) => marcarVistas(estado.memoria, claves, usuario, ahoraMs);
+const reconocer = (claves, usuario, ahoraMs = Date.now(), nota) => marcarVistas(estado.memoria, claves, usuario, ahoraMs, nota);
 
 module.exports = { evaluar, start, desvioRelojS, hhmm, activas, marcarVistas, getActivas, reconocer };

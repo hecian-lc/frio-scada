@@ -122,9 +122,10 @@ function textoResultado(resultado, motivo, tope = 0) {
 const sinSaltos = (s) => String(s).replace(/[\r\n]+/g, ' ');   // un salto de línea cortaría la línea del protocolo
 const escTag = (s) => sinSaltos(s).replace(/[\\,= ]/g, '\\$&');
 const escStr = (s) => '"' + sinSaltos(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
-function lineaMando({ usuario, camara, comando, destino, anterior, valor, resultado, motivo, texto, respuesta, ts }) {
+function lineaMando({ usuario, camara, comando, destino, anterior, valor, resultado, motivo, texto, respuesta, ts, nota }) {
   const campos = [`destino=${destino}`, anterior === null ? null : `valor_anterior=${anterior}`, `valor_nuevo=${valor}`, `resultado=${resultado}`,
-    `motivo=${typeof motivo === 'number' ? motivo : 0}`, `texto=${escStr(texto)}`, `respuesta=${escStr(respuesta)}`].filter(Boolean);
+    `motivo=${typeof motivo === 'number' ? motivo : 0}`, `texto=${escStr(texto)}`, `respuesta=${escStr(respuesta)}`,
+    typeof nota === 'string' && nota ? `nota=${escStr(nota)}` : null].filter(Boolean);
   return `mando,usuario=${escTag(usuario)},camara=${escTag(camara || 'general')},comando=${comando} ${campos.join(',')} ${BigInt(Math.round(ts)) * 1000000n}`;
 }
 
