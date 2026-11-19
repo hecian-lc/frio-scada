@@ -57,6 +57,14 @@ test('comunicacion: Influx devuelve solo los cambios, con todos los campos que e
   for (const c of campos) assert.ok(q.includes(`exists r.${c} then int(v: r.${c})`) && q.includes(`r._${c} != 0`), `falta ${c} en el dedup`);
 });
 
+// descartadas solo sube: si el flapping es de lecturas partidas, cada ciclo es un "cambio". El tope va en Influx, no después de parsear.
+test('comunicacion: ordena por tiempo antes del dedup y trae como mucho las últimas 1000 filas', () => {
+  const q = s.fluxComunicacion({ desde: D, hasta: H, bucket: 'camaras' });
+  const orden = q.indexOf('sort(columns: ["_time"])');
+  assert.ok(orden > q.indexOf('pivot(') && orden < q.indexOf('difference('), 'sort entre pivot y difference');
+  assert.ok(q.trimEnd().endsWith('|> group()\n  |> sort(columns: ["_time"])\n  |> tail(n: 1000)'), q.slice(-80));
+});
+
 test('parseTramos: CSV de latidos con filas de foto (texto) y comunicacion (bool) mezcladas', () => {
   const lat = LAT + foto('2026-09-30T20:00:00Z', '2026-10-01T04:00:00Z') + ',,0,2026-10-01T04:00:00Z,comunicacion,true\n' + foto('2026-10-01T04:01:00Z', '2026-10-05T00:00:00Z');
   const csv = CAB + est('2026-09-30T20:00:00Z', 'FRIO');

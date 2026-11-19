@@ -90,11 +90,14 @@ function fluxComunicacion({ desde, hasta, bucket }) {
   const aux = CAMPOS_COM.map((c) => `_${c}`);
   return `${fuente(bucket, rango(desde, hasta))}\n  |> filter(fn: (r) => r._measurement == "comunicacion")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+  |> sort(columns: ["_time"])
   |> map(fn: (r) => ({r with ${CAMPOS_COM.map((c) => `_${c}: if exists r.${c} then int(v: r.${c}) else 0`).join(', ')}}))
   |> difference(columns: ${JSON.stringify(aux)}, keepFirst: true)
   |> filter(fn: (r) => not exists r._conectado or ${aux.map((c) => `r.${c} != 0`).join(' or ')})
   |> drop(columns: ${JSON.stringify(aux)})
-  |> group()`;
+  |> group()
+  |> sort(columns: ["_time"])
+  |> tail(n: ${MAX_COMUNICACION})`;
 }
 
 const NO_CAMPO = new Set(['', 'result', 'table', '_start', '_stop', '_time', '_measurement']);
