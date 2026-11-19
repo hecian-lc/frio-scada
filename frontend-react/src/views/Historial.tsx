@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
+import { Check } from 'lucide-react'
 import { Filtros, SinDatos, type Rango } from '../components/Filtros'
 import { useDatos, hoy } from '../lib/useDatos'
 import { useCamarasStore } from '../store/camaras'
@@ -122,10 +123,10 @@ export default function Historial({ fija }: { fija?: 'alarmas' | 'eventos' }) {
       {fija && <div className="md:hidden"><Segmentado aria-label="Alarmas o eventos" activo={fija} items={PESTANAS_FIJAS.map(p => ({ id: p.id, label: p.label, to: `/${p.id}` }))} /></div>}
       <Filtros r={r} set={setR} />
       {pestana === 'alarmas' && (!fresco || !estado
-        ? <div className="flex items-center gap-2 border border-linea bg-panel px-2 py-2 text-sm text-estado-invalido"><MarcaSinDatos />Sin datos del PLC</div>
+        ? <div className="flex items-center gap-2 rounded-lg border border-linea bg-panel px-[18px] py-3 text-sm text-estado-invalido shadow-tarjeta"><MarcaSinDatos />Sin datos del PLC</div>
         : activas.length === 0
-          ? <div className="border border-linea bg-panel px-2 py-2 text-sm">Sin alarmas activas</div>
-          : <ul role="alert" className="space-y-1 border-2 border-estado-alta bg-panel px-2 py-2">
+          ? <div className="flex items-center gap-2 rounded-lg border border-linea bg-panel px-[18px] py-3 font-semibold text-ok-texto shadow-tarjeta"><Check size={20} aria-hidden="true" />Sin alarmas activas</div>
+          : <ul role="alert" className="space-y-2 rounded-lg border border-alta-borde bg-alta-suave px-[18px] py-3 shadow-tarjeta">
               {grupos.map(a => <li key={a.clave} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
                 <MarcaAlarma /><b className="text-estado-alta">{a.titulo}</b>
                                 {cargado && finHoy && (!r.camara || a.camara === r.camara) && <span className="font-mono text-xs text-texto-2">{a.desde ? `desde ${dia(a.desde).slice(0, 5)} ${hm(a.desde)}` : 'desde antes de este período'}</span>}

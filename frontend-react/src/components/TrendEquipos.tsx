@@ -88,7 +88,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
           {Array.from({ length: 25 }, (_, h) => (
             <g key={h}>
               <line x1={x(dia0 + h * 3600000)} x2={x(dia0 + h * 3600000)} y1={Y0 - 6} y2={Y0 + GRUPOS.length * RH} stroke="currentColor" strokeOpacity={0.12} />
-              {h % paso === 0 && <text x={x(dia0 + h * 3600000)} y={Y0 + GRUPOS.length * RH + 16} textAnchor="middle" fontSize={12} className="fill-muted-foreground">{aHora(h)}</text>}
+              {h % paso === 0 && <text x={x(dia0 + h * 3600000)} y={Y0 + GRUPOS.length * RH + 16} textAnchor={h === 0 ? 'start' : h === 24 ? 'end' : 'middle'} fontSize={12} className="fill-muted-foreground">{aHora(h)}</text>}
             </g>
           ))}
           {GRUPOS.map((g, i) => {
