@@ -66,7 +66,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
   if (error) return <Panel titulo="Qué hizo cada equipo hoy" grande accion={accion}><div className="text-sm text-texto-2">No se pudo cargar el gráfico</div></Panel>
   if (!tramos) return <Panel titulo="Qué hizo cada equipo hoy" grande accion={accion}><div className="text-sm text-texto-2">Cargando…</div></Panel>
 
-  const paso = ancho < 600 ? 4 : 2
+  const paso = ancho < 420 ? 6 : ancho < 600 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
   const centros = centrosEtiquetas(marcas.map(h => x(dia0 + h.min * 60000)), 38, 0, ancho)
   const d = det?.descongelado
