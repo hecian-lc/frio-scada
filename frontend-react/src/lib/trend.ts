@@ -44,16 +44,24 @@ export function posicionTarjeta(cursorX: number, anchoTarjeta: number, anchoCont
   return Math.max(0, Math.min(izq, anchoContenedor - anchoTarjeta))
 }
 
-// Anclaje de las etiquetas de horario (xs ordenadas): si dos quedan a menos de `minimo`, la primera se corre a la
-// izquierda de su marca y la segunda a la derecha, así "10:00" y "10:41" no se pisan. Copia en weg-api/services/reporteDiario.js.
-export type Ancla = 'start' | 'middle' | 'end'
-export function anclasEtiquetas(xs: number[], minimo: number): Ancla[] {
-  const r: Ancla[] = xs.map(() => 'middle')
-  for (let i = 0; i + 1 < xs.length; i++) {
-    if (xs[i + 1] - xs[i] < minimo) {
-      if (r[i] === 'middle') r[i] = 'end'
-      r[i + 1] = 'start'
+// Centro de cada etiqueta de horario (xs ordenadas, en px). Las que quedarían a menos de `ancho` se agrupan y se
+// reparten alrededor del promedio de sus marcas, separadas `ancho`; después se meten dentro de [desde, hasta].
+// El triángulo y la línea siguen en la hora exacta. Copia en weg-api/services/reporteDiario.js.
+export function centrosEtiquetas(xs: number[], ancho: number, desde: number, hasta: number): number[] {
+  let grupos = xs.map(x => ({ xs: [x], ini: x }))
+  for (let unio = true; unio;) {
+    unio = false
+    for (let i = 1; i < grupos.length; i++) {
+      const a = grupos[i - 1], b = grupos[i]
+      if (a.ini + a.xs.length * ancho > b.ini) {
+        const todas = [...a.xs, ...b.xs], medio = todas.reduce((s, x) => s + x, 0) / todas.length
+        grupos.splice(i - 1, 2, { xs: todas, ini: medio - (todas.length - 1) * ancho / 2 })
+        unio = true; break
+      }
     }
   }
-  return r
+  const c = grupos.flatMap(g => g.xs.map((_, k) => g.ini + k * ancho))
+  for (let i = 0; i < c.length; i++) c[i] = Math.max(c[i], desde + ancho / 2, i ? c[i - 1] + ancho : -Infinity)
+  for (let i = c.length - 1; i >= 0; i--) c[i] = Math.min(c[i], hasta - ancho / 2, i < c.length - 1 ? c[i + 1] - ancho : Infinity)
+  return c
 }

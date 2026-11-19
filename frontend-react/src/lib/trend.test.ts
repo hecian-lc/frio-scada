@@ -60,9 +60,19 @@ test('horario con prefijo H sigue dando el número', () => {
   expect(detalleEnInstante(tramos, f, 'C5', m(3)).descongelado).toMatchObject({ horario: 2, etapa: 1 })
 })
 
-import { anclasEtiquetas } from './trend'
-test('anclasEtiquetas: separa las cercanas, deja centradas las lejanas', () => {
-  expect(anclasEtiquetas([100, 400], 30)).toEqual(['middle', 'middle'])
-  expect(anclasEtiquetas([100, 120, 600], 30)).toEqual(['end', 'start', 'middle'])
-  expect(anclasEtiquetas([], 30)).toEqual([])
+import { centrosEtiquetas } from './trend'
+test('centrosEtiquetas: las lejanas quedan sobre su marca', () => {
+  expect(centrosEtiquetas([100, 400], 36, 0, 1000)).toEqual([100, 400])
+  expect(centrosEtiquetas([], 36, 0, 1000)).toEqual([])
+})
+test('centrosEtiquetas: tres juntas (08:06, 10:00, 10:41 en el celular) no se pisan', () => {
+  const c = centrosEtiquetas([200, 216, 223], 36, 0, 1000)
+  for (let i = 1; i < c.length; i++) expect(c[i] - c[i - 1]).toBeGreaterThanOrEqual(36)
+  // repartidas alrededor de las marcas, no todas corridas a la derecha
+  expect(c[0]).toBeLessThan(200)
+  expect(c[2]).toBeGreaterThan(223)
+})
+test('centrosEtiquetas: no se salen del gráfico', () => {
+  expect(centrosEtiquetas([5], 36, 0, 1000)).toEqual([18])
+  expect(centrosEtiquetas([990, 995], 36, 0, 1000)).toEqual([946, 982])
 })

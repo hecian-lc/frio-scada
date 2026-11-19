@@ -44,14 +44,25 @@ function filasEventos(eventos) {
     : [hhmm(e.ts), f.TIPO[f.tipoAviso(e.texto, e.estado)], f.fraseEvento(e.texto, e.estado)]));
 }
 
-// Etiquetas de horario: si dos quedan a menos de `minimo`, la primera va a la izquierda de su marca y la segunda a
-// la derecha (copia de anclasEtiquetas de frontend-react/src/lib/trend.ts).
-function anclasEtiquetas(xs, minimo) {
-  const r = xs.map(() => 'middle');
-  for (let i = 0; i + 1 < xs.length; i++) {
-    if (xs[i + 1] - xs[i] < minimo) { if (r[i] === 'middle') r[i] = 'end'; r[i + 1] = 'start'; }
+// Centro de cada etiqueta de horario (xs ordenadas): las cercanas se reparten alrededor del promedio de sus marcas,
+// separadas `ancho`, y quedan dentro de [desde, hasta] (copia de centrosEtiquetas de frontend-react/src/lib/trend.ts).
+function centrosEtiquetas(xs, ancho, desde, hasta) {
+  const grupos = xs.map((x) => ({ xs: [x], ini: x }));
+  for (let unio = true; unio;) {
+    unio = false;
+    for (let i = 1; i < grupos.length; i++) {
+      const a = grupos[i - 1], b = grupos[i];
+      if (a.ini + a.xs.length * ancho > b.ini) {
+        const todas = [...a.xs, ...b.xs], medio = todas.reduce((s, x) => s + x, 0) / todas.length;
+        grupos.splice(i - 1, 2, { xs: todas, ini: medio - (todas.length - 1) * ancho / 2 });
+        unio = true; break;
+      }
+    }
   }
-  return r;
+  const c = grupos.flatMap((g) => g.xs.map((_, k) => g.ini + k * ancho));
+  for (let i = 0; i < c.length; i++) c[i] = Math.max(c[i], desde + ancho / 2, i ? c[i - 1] + ancho : -Infinity);
+  for (let i = c.length - 1; i >= 0; i--) c[i] = Math.min(c[i], hasta - ancho / 2, i < c.length - 1 ? c[i + 1] - ancho : Infinity);
+  return c;
 }
 
 // "Qué hizo cada equipo" del día, en fracciones del día (0 = 00:00, 1 = 24:00): una fila por equipo con sus tramos
@@ -220,13 +231,13 @@ function renderPdf(modelo, { ahora = Date.now() } = {}) {
         doc.font('Helvetica').fontSize(7.5).fillColor(DARK).text(`Equipo ${fl.equipo}`, mL, y + 1.5, { width: LBL - 4, lineBreak: false });
         for (const tr of fl.tramos) doc.rect(X(tr.a), y + 1, X(tr.b) - X(tr.a), RH - 3).fill(COLOR[tr.estado] || COLOR['sin-datos']);
       });
-      const anclas = anclasEtiquetas(t.marcas.map((m) => X(m.x)), 24);
+      const centros = centrosEtiquetas(t.marcas.map((m) => X(m.x)), 28, x0, x0 + w);
       t.marcas.forEach((m, i) => {
         const x = X(m.x);
         doc.moveTo(x - 3, top - 8).lineTo(x + 3, top - 8).lineTo(x, top - 3).fill(VERDE);
         doc.moveTo(x, top - 3).lineTo(x, abajo).lineWidth(0.6).dash(1.5, { space: 2 }).strokeColor(VERDE).stroke().undash();
-        const tw = 26, lx = anclas[i] === 'end' ? x + 2 - tw : anclas[i] === 'start' ? x - 2 : x - tw / 2;
-        doc.font('Helvetica-Bold').fontSize(7).fillColor(VERDE).text(m.hora, lx, top - 17, { width: tw, align: anclas[i] === 'end' ? 'right' : anclas[i] === 'start' ? 'left' : 'center', lineBreak: false });
+        const tw = 26;
+        doc.font('Helvetica-Bold').fontSize(7).fillColor(VERDE).text(m.hora, centros[i] - tw / 2, top - 17, { width: tw, align: 'center', lineBreak: false });
       });
       let lx = mL; const ly = abajo + 14;
       for (const [k, txt] of [['frio', 'Enfriando'], ['descongelando', 'Descongelando'], ['apagado', 'Apagado'], ['sin-datos', 'Sin datos']]) {
@@ -267,4 +278,4 @@ async function generarPdf(fecha, { queryCsv, sigue } = {}) {
   return { modelo, pdf: await renderPdf(modelo) };
 }
 
-module.exports = { armarReporte, lineasResumen, renderPdf, generarPdf, resultadoManiobra, anclasEtiquetas };
+module.exports = { armarReporte, lineasResumen, renderPdf, generarPdf, resultadoManiobra, centrosEtiquetas };

@@ -143,9 +143,12 @@ test('trend: tramos en fracción del día por equipo, marcas al inicio de cada h
   assert.equal(rd.armarReporte({ fecha: FECHA }).camaras[0].trend.hayDatos, false);
 });
 
-test('anclasEtiquetas: igual que la del portal', () => {
-  assert.deepEqual(rd.anclasEtiquetas([100, 400], 30), ['middle', 'middle']);
-  assert.deepEqual(rd.anclasEtiquetas([100, 120, 600], 30), ['end', 'start', 'middle']);
+test('centrosEtiquetas: igual que la del portal (tres juntas no se pisan, no se salen)', () => {
+  assert.deepEqual(rd.centrosEtiquetas([100, 400], 36, 0, 1000), [100, 400]);
+  const c = rd.centrosEtiquetas([200, 216, 223], 36, 0, 1000);
+  assert.deepEqual(c, [177, 213, 249]);
+  assert.deepEqual(rd.centrosEtiquetas([5], 36, 0, 1000), [18]);
+  assert.deepEqual(rd.centrosEtiquetas([990, 995], 36, 0, 1000), [946, 982]);
 });
 
 test('PDF: Buffer no vacío que empieza con %PDF, también sin datos', async () => {

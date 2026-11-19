@@ -3,7 +3,7 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 're
 import { Panel } from './Panel'
 import { GRUPOS, hhmm, type FilaDescongelado } from '../lib/camaras'
 import { COLOR_TRAMO, TEXTO_TRAMO, HACHURA, type Tramo, type HorarioVista } from '../lib/paginaCamara'
-import { anclasEtiquetas, detalleEnInstante, posicionTarjeta, type DetalleInstante, type EstadoInstante } from '../lib/trend'
+import { centrosEtiquetas, detalleEnInstante, posicionTarjeta, type DetalleInstante, type EstadoInstante } from '../lib/trend'
 
 // 1 unidad del SVG = 1 px de pantalla (el ancho es el medido): letra de 12 px y filas de 16 px de verdad
 const L = 64, R = 10, Y0 = 32, RH = 16, H = Y0 + GRUPOS.length * RH + 22
@@ -68,7 +68,7 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
 
   const paso = ancho < 600 ? 4 : 2
   const marcas = horarios.filter(h => h.estado !== 'mal configurado' && Math.abs(x(dia0 + h.min * 60000) - x(ahora)) >= 40).sort((p, q) => p.min - q.min)
-  const anclas = anclasEtiquetas(marcas.map(h => x(dia0 + h.min * 60000)), 36)
+  const centros = centrosEtiquetas(marcas.map(h => x(dia0 + h.min * 60000)), 38, 0, ancho)
   const d = det?.descongelado
   const enCurso = !!d && d.finEtapa == null
   const nCam = camara.replace(/\D/g, '')
@@ -104,9 +104,9 @@ export default function TrendEquipos({ tramos, filas, horarios, camara, dia0, ah
             )
           })}
           {marcas.map((h, i) => (
-            // La punta del triángulo y la línea punteada marcan la hora exacta (el texto va arriba; corrido si hay otra cerca)
+            // La punta del triángulo y la línea punteada marcan la hora exacta (el texto va arriba; corrido lo justo si hay otras cerca)
             <g key={h.h} className="fill-texto-2 stroke-texto-2">
-              <text x={x(dia0 + h.min * 60000) + (anclas[i] === 'start' ? -3 : anclas[i] === 'end' ? 3 : 0)} y={12} textAnchor={anclas[i]} fontSize={12} stroke="none">{h.hora}</text>
+              <text x={centros[i]} y={12} textAnchor="middle" fontSize={12} stroke="none">{h.hora}</text>
               <polygon points={`${x(dia0 + h.min * 60000) - 4},15 ${x(dia0 + h.min * 60000) + 4},15 ${x(dia0 + h.min * 60000)},21`} stroke="none" />
               <line x1={x(dia0 + h.min * 60000)} x2={x(dia0 + h.min * 60000)} y1={21} y2={Y0 + GRUPOS.length * RH} strokeWidth={1} strokeDasharray="2 3" opacity={0.6} />
             </g>
