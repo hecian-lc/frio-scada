@@ -30,6 +30,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
   const { codigo } = pantallaDe(useLocation().pathname)
   const logoUrl = useBrandingStore(s => s.logoUrl)
   const brandName = useBrandingStore(s => s.name)
+  const subtitulo = useBrandingStore(s => s.subtitle)
   const user = useAuthStore(s => s.user)
   const role = useAuthStore(s => s.role)
   return (
@@ -40,7 +41,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
         </span>
         {!compacto && <span className="min-w-0 leading-tight">
           <b className="line-clamp-2 text-base font-semibold leading-tight text-white">{brandName}</b>
-          <span className="block truncate text-xs">Cámaras de frío</span>
+          {subtitulo && <span className="block truncate text-xs" title={subtitulo}>{subtitulo}</span>}
         </span>}
       </div>
       {ITEMS.map(i => {
