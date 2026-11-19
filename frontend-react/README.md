@@ -1,36 +1,29 @@
 # Frío SCADA — Frontend
 
-Interfaz React del sistema de monitoreo Frío SCADA. Servida por nginx (puerto 9090)
+Portal React del monitoreo de cámaras de frío. Servido por nginx (puerto 9090)
 detrás del reverse-proxy que expone `/api` (frio-api) y `/mqtt` (Mosquitto).
 
 ## Stack
 
-React 18 · Vite · TypeScript · Tailwind · Zustand · Recharts · shadcn/ui
+React 18 · Vite · TypeScript · Tailwind · Zustand · shadcn/ui (Radix) · lucide
 
 ## Datos en vivo
 
-Los datos de drives y medidores llegan por **MQTT sobre WebSocket** (`/mqtt`),
-no por polling REST. El store `src/store/drives.ts` mantiene el estado en vivo y
-un buffer en memoria de los últimos ~90 puntos (~3 min) para los gráficos de
-tiempo real. La REST (`/api`, `src/store/auth.ts` + `config.ts`) se usa para
-login, configuración, setpoints, reportes históricos y forma de onda.
-
-## Modos
-
-`VITE_DATA_MODE` (en `.env.production`):
-- `mock` — simulador local sin hardware (`src/mock/drives.ts`), para desarrollo.
-- `live` — MQTT real + API.
+El estado del PLC llega por **MQTT sobre WebSocket** (`/mqtt`): `frio/estado`
+(retenido), `frio/latido`, `frio/eventos` y `frio/status` (`src/store/live.ts` y
+`src/store/camaras.ts`). La REST (`/api`) se usa para login, configuración,
+historial (eventos, descongelados, tramos), mandos a distancia y reportes.
 
 ## Estructura
 
 ```
 src/
-├── views/        Dashboard, Historicos, FormaOnda, Reportes, ReporteDiario, Config, Login
-├── components/   DriveCard, PM8000Card, HalfGauge, TrendChart, TimeRangePicker + ui/ (shadcn)
-├── store/        Zustand: drives (MQTT), config, auth
-├── lib/          utils, timeline (merge por timestamp), theme, gaugeDefaults
-├── mock/         Simulador para modo mock
-└── types.ts      Tipos compartidos (Drive, Meter, AppConfig, WaveformData)
+├── views/        Inicio (General), Camara, Historial, Reportes, Avisos, Mas, Sistema, Config, Usuarios, Login…
+├── components/   Tarjetas, paneles, marco (encabezado, menú, barra de estado) y ui/ (shadcn)
+├── hmi/          Tokens de color y tipografía (estilo C, claro y oscuro)
+├── store/        Zustand: auth, camaras, live (MQTT), config, branding, server
+├── lib/          Lógica pura con tests (Vitest): resumen, conexión, frases, historial, tutorial…
+└── types.ts      Tipos compartidos de la configuración
 ```
 
 ## Comandos
@@ -38,8 +31,8 @@ src/
 ```bash
 npm install
 npm run dev      # servidor de desarrollo
+npm test         # tests de lib/ (Vitest)
 npm run build    # tsc -b && vite build -> dist/ (lo sirve nginx)
-npm run lint
 ```
 
 El build (`dist/`) se monta en el contenedor nginx del stack (ver

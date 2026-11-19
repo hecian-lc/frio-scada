@@ -7,7 +7,6 @@ const mqtt = require('mqtt');
 
 const CONFIG_PATH = process.env.CONFIG_PATH || '/app/config/config.json';
 let config = null;
-let deviceStates = new Map();
 let mqttClient = null;
 let ultimoEstadoCamaras = null; // frio/estado (retenido): estado plano + _ts + _conectado [+ _mapa, _version]
 let ultimoLatido = null;        // frio/latido (cada ciclo): {_ts, _conectado, _mapa?, _version?}
@@ -20,7 +19,7 @@ function replicaSkeleton() {
     pollIntervalMs: 2000, influxWriteIntervalMs: 10000,
     mqtt: { broker: 'mqtt://frio-mosquitto:1883', topicPrefix: 'frio', statusTopic: 'frio/status' },
     influxdb: { url: 'http://frio-influxdb:8086', org: process.env.INFLUXDB_ORG || 'tecnoelectric', bucket: process.env.INFLUXDB_BUCKET || 'camaras', token: '' },
-    alarmSetpoints: {}, gateways: [], devices: [], meters: [], gaugeZones: {},
+    plc: { ip: '', port: 502, unitId: 255 },
   };
 }
 const isReplica = () => ['1', 'true', 'yes'].includes(String(process.env.REPLICA_MODE || '').toLowerCase());
@@ -61,7 +60,7 @@ function get() {
   return config;
 }
 
-// ─── MQTT subscription for live device status ───────────────────────
+// ─── MQTT: estado de las cámaras (frio/estado y frio/latido) ─────────
 function connectMQTT() {
   const cfg = get();
   const broker = process.env.MQTT_BROKER || (cfg && cfg.mqtt ? cfg.mqtt.broker : 'mqtt://frio-mosquitto:1883');
@@ -80,29 +79,11 @@ function connectMQTT() {
     try {
       const data = JSON.parse(payload.toString());
       if (topic === `${prefix}/estado`) { ultimoEstadoCamaras = data; return; }
-      if (topic === `${prefix}/latido`) { ultimoLatido = data; return; }
-      if (data.name) {
-        deviceStates.set(data.name, data);
-      }
+      if (topic === `${prefix}/latido`) { ultimoLatido = data; }
     } catch (e) {}
   });
 
   mqttClient.on('error', (err) => console.error('[MQTT] Error:', err.message));
-}
-
-function getLiveStatus() {
-  const devices = [];
-  for (const [, d] of deviceStates) {
-    devices.push(d);
-  }
-  return {
-    total: devices.length,
-    online: devices.filter(d => d.online).length,
-    running: devices.filter(d => d.running).length,
-    faults: devices.filter(d => d.hasFault).length,
-    devices,
-    ts: Date.now()
-  };
 }
 
 // frio/estado + lo más nuevo entre él y el último latido (_ts/_conectado/_mapa/_version).
@@ -117,10 +98,6 @@ function mezclarEstado(estado, latido) {
   return r;
 }
 function getEstadoCamaras() { return mezclarEstado(ultimoEstadoCamaras, ultimoLatido); }
-
-function getDeviceState(name) {
-  return deviceStates.get(name) || null;
-}
 
 // ─── Watch config for external changes ──────────────────────────────
 // 'add' además de 'change': en una réplica recién enlazada config.json no
@@ -139,4 +116,4 @@ function watchConfig() {
   watchConfigFile();
 }
 
-module.exports = { get, load, save, watchConfig, watchConfigFile, getLiveStatus, getEstadoCamaras, mezclarEstado, getDeviceState, deviceStates };
+module.exports = { get, load, save, watchConfig, watchConfigFile, getEstadoCamaras, mezclarEstado };

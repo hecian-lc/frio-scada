@@ -87,7 +87,7 @@ app.get('/', (req, res) => {
   res.json({
     name: 'Frío SCADA API',
     version: '2.0.0',
-    endpoints: ['/health', '/api/config', '/api/status', '/api/reports', '/api/live']
+    endpoints: ['/health', '/api/config', '/api/camaras', '/api/reports', '/api/reportes']
   });
 });
 
@@ -158,29 +158,6 @@ app.use('/api/system', createSystemRouter({
   agent: createAgentClient({ baseUrl: process.env.AGENT_URL || 'http://frio-agent:3400', token: process.env.AGENT_TOKEN || '' }),
   isReplica: REPLICA_MODE,
 }));
-
-// SSE endpoint for live status updates
-app.get('/api/live', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive'
-  });
-
-  const interval = setInterval(() => {
-    if (res.writableEnded) { clearInterval(interval); return; }
-    try {
-      const status = configService.getLiveStatus();
-      res.write(`data: ${JSON.stringify(status)}\n\n`);
-    } catch (e) {
-      clearInterval(interval);
-      res.end();
-    }
-  }, 3000);
-
-  req.on('close', () => clearInterval(interval));
-  res.on('error', () => clearInterval(interval));
-});
 
 // Error middleware global (issue #13) — captura excepciones y evita fugar stack traces
 app.use((err, req, res, next) => {

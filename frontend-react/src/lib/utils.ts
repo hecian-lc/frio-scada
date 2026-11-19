@@ -10,7 +10,7 @@ export function fmt(v: number | undefined | null, decimals = 2) {
   return v.toFixed(decimals)
 }
 
-// Escape para interpolar datos (nombres de drives, faultText, etc.) en HTML
+// Escape para interpolar datos en HTML
 // generado como string (ventanas de impresion de PDF). Los datos vienen del
 // broker MQTT, asi que nunca deben ejecutarse como markup.
 export function escapeHtml(v: unknown): string {
