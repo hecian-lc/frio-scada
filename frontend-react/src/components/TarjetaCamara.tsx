@@ -38,9 +38,9 @@ export default function TarjetaCamara({ cam, filas }: { cam: string; filas: Fila
           if (cargando) return <div key={g} className="h-[52px] animate-pulse rounded-[10px] bg-fila-total" />
           const eq = estadoEquipo(estado!, cam, g)
           return (
-            <div key={g} className="flex flex-col items-center gap-1 rounded-[10px] bg-fila-total px-1 py-2 text-center 2xl:flex-row 2xl:gap-2 2xl:p-2 2xl:text-left">
+            <div key={g} className="flex flex-col items-center gap-1 rounded-[10px] bg-fila-total px-1 py-2 text-center">
               <span className="inline-grid h-8 w-8 shrink-0 place-items-center rounded-full" style={{ background: eq.color, color: eq.sobre, border: eq.borde ? `1px solid ${eq.borde}` : undefined }}><Icono nombre={eq.icono} size={18} /></span>
-              <div className="min-w-0 max-w-full text-xs leading-tight 2xl:text-sm" title={`Equipo ${g}: ${eq.texto}`}><div className="truncate font-semibold">Equipo {g}</div><div className="truncate text-texto-2">{eq.texto}</div></div>
+              <div className="min-w-0 max-w-full text-xs leading-tight" title={`Equipo ${g}: ${eq.texto}`}><div className="truncate font-semibold">Equipo {g}</div><div className="truncate text-texto-2">{eq.texto}</div></div>
             </div>
           )
         })}
