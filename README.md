@@ -29,7 +29,7 @@ Instalación en servidor: ver [`packaging/README.md`](packaging/README.md).
 
 ## Instalación rápida (recomendada)
 
-En un servidor **Ubuntu o Debian** con internet:
+En un servidor **Ubuntu o Debian** con internet, o en un **Raspberry Pi 4/5 con Raspberry Pi OS de 64 bits** (desde v0.4.1):
 
 ```bash
 curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo bash
@@ -64,6 +64,7 @@ Cómo se arma cada release: [`packaging/README.md`](packaging/README.md).
 **Antes de empezar**
 
 - Ubuntu Server 22.04 o 24.04 (o Desktop), con internet y un usuario con `sudo`.
+- O un Raspberry Pi 4/5 (4 GB o más) con **Raspberry Pi OS de 64 bits** (Lite alcanza). Conviene arrancarlo desde un **SSD por USB**: la base de datos escribe todo el tiempo y gasta las tarjetas SD. Los pasos son los mismos.
 - IP fija para el servidor: lo más simple es una **reserva DHCP en el router** para la placa de red del servidor.
 - El servidor tiene que estar en la misma red que el PLC. Comprobalo (cambiá la IP por la del PLC):
 
