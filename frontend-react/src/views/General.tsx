@@ -57,7 +57,7 @@ export default function General() {
         <div className="min-w-0" data-tour="trend">
           <TrendCamara cam={camTrend} accion={<Segmentado aria-label="Cámara del gráfico" activo={camTrend} onCambio={setCamTrend} items={CAMARAS.map(c => ({ id: c, label: nombreCamara(c) }))} />} />
         </div>
-        <div className="min-w-0" data-tour="eventos"><EventosHoy eventos={ev.data} error={ev.error} max={6} titulo="Últimos eventos" /></div>
+        <div className="min-w-0" data-tour="eventos"><EventosHoy eventos={ev.data} error={ev.error} max={6} titulo="Últimos eventos" conCamara /></div>
       </div>
     </div>
   )
