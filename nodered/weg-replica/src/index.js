@@ -16,7 +16,6 @@ const env = (k, d) => process.env[k] || d;
 const CONFIG_PATH = env('CONFIG_PATH', '/app/config/config.json');
 const CONFIG_DIR = path.dirname(CONFIG_PATH);
 const LINK_FILE = path.join(CONFIG_DIR, 'replica.json');
-const MANUAL_PATH = path.join(CONFIG_DIR, 'manual.json');
 const DATA_DIR = env('DATA_DIR', '/data');
 const FILES_EVERY_MS = 5 * 60000;
 const STATUS_EVERY_MS = 10000;
@@ -50,7 +49,7 @@ function start(conn) {
   });
   history.run();
 
-  const syncFiles = createFileSync({ source, configPath: CONFIG_PATH, manualPath: MANUAL_PATH });
+  const syncFiles = createFileSync({ source, configPath: CONFIG_PATH });
   (async () => {
     while (!stopped) {
       try { await syncFiles(); } catch (e) { console.error(`[FILES] ${e.message}`); }

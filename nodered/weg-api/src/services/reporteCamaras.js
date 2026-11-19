@@ -2,7 +2,7 @@
 
 // Reporte diario de cámaras (C4/C5) en Excel. Reusa las consultas de services/camaras.js.
 const cam = require('./camaras');
-const reports = require('./reports');
+const { toXLSX } = require('./xlsx');
 const influxRaw = require('./influxRaw');
 
 const GRUPOS = Array.from({ length: 8 }, (_, i) => `G${i + 1}`);
@@ -115,7 +115,7 @@ async function leerRango(p, queryCsv = influxRaw.queryAnnotatedCsv, { sinTramos 
 async function generarXlsx(fecha, queryCsv) {
   const datos = await leerDia(fecha, queryCsv);
   const hojas = armarHojas(datos, fecha);
-  return { xlsx: reports.toXLSX(hojas), hojas };
+  return { xlsx: toXLSX(hojas), hojas };
 }
 
 module.exports = { validarFecha, ayer, rangoDia, armarHojas, leerDia, leerRango, generarXlsx };

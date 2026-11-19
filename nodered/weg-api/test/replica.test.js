@@ -25,7 +25,6 @@ async function serve(opts = {}) {
     },
     bucket: () => 'camaras',
     getConfig: () => ({ devices: [{ name: 'Equipo 1' }], influxdb: { url: 'http://influxdb:8086', org: 'o', bucket: 'camaras', token: 'SECRET' } }),
-    getManual: () => ({ '2026-09-26': { rainMm: 3 } }),
     now: () => NOW,
     ...opts,
   };
@@ -53,14 +52,13 @@ test('missing or wrong token → 401, then 429 after 10 failures', async () => {
   } finally { await s.close(); }
 });
 
-test('/config strips influx token; /manual returns the file', async () => {
+test('/config strips influx token', async () => {
   const s = await serve();
   try {
     const cfg = await (await s.get('/config')).json();
     assert.equal(cfg.devices[0].name, 'Equipo 1');
     assert.equal(cfg.influxdb.token, undefined);
     assert.equal(cfg.influxdb.org, 'o');
-    assert.deepEqual(await (await s.get('/manual')).json(), { '2026-09-26': { rainMm: 3 } });
   } finally { await s.close(); }
 });
 

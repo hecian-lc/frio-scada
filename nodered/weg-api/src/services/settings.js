@@ -270,9 +270,8 @@ function setTelegram(patch) {
 }
 
 // ─── Reporte diario: hora de envío ───────────────────────────────────
-// Hora local (TZ del contenedor) a la que sale el reporte del día anterior; es
-// también el cierre de la carga manual (lluvia/río). settings.json sobre el
-// .env (DAILY_REPORT_HOUR, solo horas).
+// Hora local (TZ del contenedor) a la que sale el reporte del día anterior.
+// settings.json sobre el .env (DAILY_REPORT_HOUR, solo horas).
 const pad2 = (n) => String(n).padStart(2, '0');
 function envReportTime() {
   const h = parseInt(process.env.DAILY_REPORT_HOUR || '7', 10);

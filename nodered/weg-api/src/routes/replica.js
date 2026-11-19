@@ -39,7 +39,7 @@ function fluxRange(bucket, start, stop) {
   |> filter(fn: (r) => ${filter})`;
 }
 
-function createReplicaRouter({ token, registry = null, queryCsv, bucket, getConfig, getManual, now = Date.now, version = '2.0.0' }) {
+function createReplicaRouter({ token, registry = null, queryCsv, bucket, getConfig, now = Date.now, version = '2.0.0' }) {
   const router = express.Router();
   const failed = new Map(); // ip -> { count, firstAt }
 
@@ -95,9 +95,6 @@ function createReplicaRouter({ token, registry = null, queryCsv, bucket, getConf
     res.json(cfg);
   });
 
-  router.get('/manual', (req, res) => {
-    res.json(getManual() || {});
-  });
 
   router.get('/points', async (req, res, next) => {
     const sinceMs = Date.parse(String(req.query.since || ''));

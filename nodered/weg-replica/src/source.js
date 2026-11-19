@@ -17,7 +17,6 @@ function createSource({ baseUrl, token, fetchImpl = fetch, timeoutMs = 60000 }) 
   return {
     async info() { return (await get('/info')).json(); },
     async config() { return (await get('/config')).json(); },
-    async manual() { return (await get('/manual')).json(); },
     async points(since, windowSec) {
       const r = await get(`/points?since=${encodeURIComponent(since)}&windowSec=${windowSec}`);
       return { body: await r.text(), next: r.headers.get('x-next-cursor'), more: r.headers.get('x-more') === '1' };

@@ -33,11 +33,10 @@ test('mergeConfig with no local file takes the remote config', () => {
   assert.equal(out.influxdb.org, 'tecnoelectric');
 });
 
-test('syncFiles writes config and manual, second run is a no-op', async () => {
+test('syncFiles writes config, second run is a no-op', async () => {
   const d = tmp();
-  const source = { config: async () => ({ devices: [{ name: 'Equipo 1' }] }), manual: async () => ({ '2026-09-26': { rainMm: 3 } }) };
-  const sync = createFileSync({ source, configPath: path.join(d, 'config.json'), manualPath: path.join(d, 'manual.json'), log: quiet });
-  assert.deepEqual(await sync(), { config: true, manual: true });
-  assert.deepEqual(await sync(), { config: false, manual: false });
-  assert.equal(JSON.parse(fs.readFileSync(path.join(d, 'manual.json'), 'utf8'))['2026-09-26'].rainMm, 3);
+  const source = { config: async () => ({ devices: [{ name: 'Equipo 1' }] }) };
+  const sync = createFileSync({ source, configPath: path.join(d, 'config.json'), log: quiet });
+  assert.deepEqual(await sync(), { config: true });
+  assert.deepEqual(await sync(), { config: false });
 });

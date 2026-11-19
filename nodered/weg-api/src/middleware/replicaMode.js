@@ -18,7 +18,7 @@ function replicaWriteGuard(enabled) {
   return (req, res, next) => {
     if (!enabled || !WRITE_METHODS.has(req.method)) return next();
     const p = normPath(req.path);
-    if (p.startsWith('/api/config') || p === '/api/reports/manual') {
+    if (p.startsWith('/api/config')) {
       return res.status(409).json({ error: MESSAGE });
     }
     next();

@@ -12,7 +12,6 @@ delete process.env.TELEGRAM_CHAT_ID;
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const settings = require('../src/services/settings');
-const manual = require('../src/services/manual');
 
 const reset = () => { try { fs.unlinkSync(settings.SETTINGS_PATH); } catch { /* no existe */ } };
 
@@ -39,9 +38,3 @@ test('guarda HH:MM y valida el formato', () => {
   assert.equal(settings.getDailyReport().time, '05:30'); // un valor inválido no pisa el guardado
 });
 
-test('el cierre de la carga manual sigue la hora de envío', () => {
-  reset();
-  settings.setDailyReport({ time: '08:15' });
-  const c = manual.closeTime('2026-10-01');
-  assert.deepEqual([c.getDate(), c.getHours(), c.getMinutes()], [2, 8, 15]);
-});

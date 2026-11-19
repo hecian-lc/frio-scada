@@ -9,10 +9,9 @@ para demos. Réplica de oficina del stack de planta.
 - La oficina corre el mismo stack sin `modbus-poller` y con `frio-replica`, que:
   - trae el histórico de InfluxDB por ventanas de 1 h (cursor en el volumen `replica-data`);
   - puentea MQTT `frio/#` de planta al Mosquitto local (en vivo);
-  - baja `config.json` y `manual.json` cada 5 min.
-- La `frio-api` de oficina corre con `REPLICA_MODE=1`: equipos/setpoints/lluvia-río son solo
+  - baja `config.json` cada 5 min.
+- La `frio-api` de oficina corre con `REPLICA_MODE=1`: la configuración es solo
   lectura (409); usuarios, correo y marca son locales. Sin alertas ni reporte diario automático.
-- La vista Forma de onda no funciona en la réplica (lee el medidor en vivo por Modbus).
 
 ## Enlazar una réplica (desde la web)
 

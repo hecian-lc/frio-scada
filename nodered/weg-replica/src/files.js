@@ -25,13 +25,11 @@ function mergeConfig(remote, localFile) {
   return out;
 }
 
-function createFileSync({ source, configPath, manualPath, log = console }) {
+function createFileSync({ source, configPath, log = console }) {
   return async function syncFiles() {
     const config = writeJsonIfChanged(configPath, mergeConfig(await source.config(), configPath));
-    const manual = writeJsonIfChanged(manualPath, await source.manual());
     if (config) log.log('[FILES] config.json actualizado desde planta');
-    if (manual) log.log('[FILES] manual.json actualizado desde planta');
-    return { config, manual };
+    return { config };
   };
 }
 

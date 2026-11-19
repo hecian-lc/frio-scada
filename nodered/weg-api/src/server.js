@@ -25,7 +25,6 @@ const { createAgentClient } = require('./services/agentClient');
 const { createMqttProxy } = require('./services/mqttProxy');
 const { createMqttValidator } = require('./services/mqttAuth');
 const influxRaw = require('./services/influxRaw');
-const manualService = require('./services/manual');
 const alertasCamaras = require('./services/alertasCamaras');
 const dailyReportService = require('./services/dailyReport');
 const configService = require('./services/config');
@@ -68,7 +67,6 @@ app.use('/api/replica', createReplicaRouter({
   queryCsv: influxRaw.queryAnnotatedCsv,
   bucket: influxRaw.bucket,
   getConfig: configService.get,
-  getManual: manualService.readAll,
 }));
 
 // Middleware de auth (aplica a todo /api/* excepto login/logout/health)
