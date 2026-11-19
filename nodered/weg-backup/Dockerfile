@@ -2,8 +2,10 @@
 FROM alpine:3.20
 
 ARG INFLUX_CLI_VERSION=2.7.5
+# amd64 (PC) o arm64 (Raspberry Pi): lo pone buildx según la plataforma
+ARG TARGETARCH=amd64
 RUN apk add --no-cache bash curl tar coreutils findutils tzdata jq rclone \
-    && curl -sL "https://dl.influxdata.com/influxdb/releases/influxdb2-client-${INFLUX_CLI_VERSION}-linux-amd64.tar.gz" -o /tmp/influx.tgz \
+    && curl -fsSL "https://dl.influxdata.com/influxdb/releases/influxdb2-client-${INFLUX_CLI_VERSION}-linux-${TARGETARCH}.tar.gz" -o /tmp/influx.tgz \
     && tar xzf /tmp/influx.tgz -C /tmp \
     && find /tmp -name influx -type f -exec mv {} /usr/local/bin/influx \; \
     && chmod +x /usr/local/bin/influx \
