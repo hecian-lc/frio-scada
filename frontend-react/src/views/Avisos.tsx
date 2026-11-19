@@ -34,7 +34,12 @@ function Canal({ canal, titulo, boton, admin }: { canal: 'telegram' | 'mail'; ti
 export default function Avisos() {
   const admin = useAuthStore(s => s.isAdmin())
   const [replica, setReplica] = useState(false)
+  const [rep, setRep] = useState<{ minutos: number; veces: number } | null>(null)
   useEffect(() => { apiJson<{ replica?: boolean }>('/sistema/resumen').then(r => setReplica(!!r.replica)).catch(() => {}) }, [])
+  useEffect(() => { if (admin) apiJson<{ minutos: number; veces: number }>('/settings/repeticion').then(setRep).catch(() => {}) }, [admin])
+  const repite = !rep ? 'Mientras siga y nadie toque «Visto», el aviso se repite (se configura en Configuración avanzada)'
+    : rep.veces === 0 ? 'El aviso no se repite'
+    : `Mientras siga y nadie toque «Visto», el aviso se repite cada ${rep.minutos} min, hasta ${rep.veces} ${rep.veces === 1 ? 'vez' : 'veces'}`
   return (
     <div className="space-y-3 max-w-md">
       {replica ? <p className="text-sm text-texto-2">En la réplica de oficina no se envían avisos</p> : <>
@@ -43,7 +48,7 @@ export default function Avisos() {
       </>}
       {admin && <Link to="/config?tab=telegram" className="text-sm underline text-primary">Configurar</Link>}
       <Panel titulo="¿Qué avisa?">
-        <p className="text-sm text-texto-2">Alarmas del PLC · PLC sin comunicación más de 2 min · reloj del PLC desviado. Repite cada 1 hora si sigue, y avisa cuando se resuelve.</p>
+        <p className="text-sm text-texto-2">Alarmas del PLC · PLC sin comunicación más de 2 min · reloj del PLC desviado. {repite}. Cuando se resuelve, también avisa.</p>
       </Panel>
     </div>
   )
