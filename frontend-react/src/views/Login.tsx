@@ -10,6 +10,7 @@ export default function Login() {
   const logoUrl = useBrandingStore(s => s.logoUrl)
   const brandFooter = useBrandingStore(s => s.footer)
   const brandName = useBrandingStore(s => s.name)
+  const subtitulo = useBrandingStore(s => s.subtitle)
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -41,7 +42,7 @@ export default function Login() {
         <div className="flex flex-col items-center gap-2 mb-6 text-center">
           <img src={logoUrl} alt="" className="h-[80px] w-auto max-w-[320px] object-contain" />
           <h1 className="text-xl font-bold">{brandName}</h1>
-          <p className="text-base text-texto-2">Cámaras de frío</p>
+          {subtitulo && <p className="text-base text-texto-2">{subtitulo}</p>}
         </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
