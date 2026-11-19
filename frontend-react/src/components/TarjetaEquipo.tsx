@@ -27,7 +27,7 @@ export default function TarjetaEquipo({ estado, cam, g, hayDatos, atenuado, perm
           {eq ? <div className="text-sm font-semibold text-texto-2">{eq.texto}{desc && falta != null && ` · faltan ${falta} min`}</div> : <div className="mt-1 h-[16px] w-20 animate-pulse rounded-[6px] bg-fila-total" />}
         </div>
       </div>
-      <div className="mt-3 flex gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-1.5">
         {SALIDAS.map(([k, l, n]) => {
           if (!hayDatos) return <span key={k} aria-label={`${n}: sin datos`} className="h-[24px] w-[52px] animate-pulse rounded-[6px] bg-fila-total" />
           const on = num(estado, `${cam}.G${g}.${k}`) === 1
