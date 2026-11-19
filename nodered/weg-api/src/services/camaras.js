@@ -55,16 +55,23 @@ function fluxCompresores({ desde, hasta, camara, bucket }) {
   return `previo = ${base(rango(previo, desde))}\n  |> last()\nactual = ${base(rango(desde, hasta))}\nunion(tables: [previo, actual])\n  |> group()`;
 }
 
-// Latidos del poller: foto (cada ~60 s mientras lee) y comunicacion.conectado (false en cada ciclo fallido), más el último previo a desde.
+// comunicacion se escribe casi en cada ciclo (~1-2 s): cruda son cientos de miles de filas por semana y la API
+// (256 MiB) se quedaba sin memoria armando el CSV (OOM 2026-11-19). Influx devuelve solo las filas que cambian.
+const soloCambiosConectado = `
+  |> map(fn: (r) => ({r with _c: if r._value then 1 else 0}))
+  |> difference(columns: ["_c"], keepFirst: true)
+  |> filter(fn: (r) => not exists r._c or r._c != 0)`;
+
+// Latidos del poller: foto (cada ~60 s mientras lee) y los cambios de comunicacion.conectado, más el último previo a desde.
 function fluxLatidos({ desde, hasta, bucket }) {
   const previo = new Date(new Date(desde).getTime() - MAX_DIAS * DIA_MS).toISOString();
-  const una = (m, campo, r) => `${fuente(bucket, r)}
-  |> filter(fn: (r) => r._measurement == "${m}" and r._field == "${campo}")
+  const una = (m, campo, r, cambios = '') => `${fuente(bucket, r)}
+  |> filter(fn: (r) => r._measurement == "${m}" and r._field == "${campo}")${cambios}
   |> group()
   |> map(fn: (r) => ({_time: r._time, _measurement: r._measurement, _value: string(v: r._value)}))`;
   const par = (n, m, campo) => `${n}p = ${una(m, campo, rango(previo, desde))}
   |> last()
-${n}a = ${una(m, campo, rango(desde, hasta))}
+${n}a = ${una(m, campo, rango(desde, hasta), m === 'comunicacion' ? soloCambiosConectado : '')}
 `;
   return `${par('f', 'foto', 'hora_plc')}${par('c', 'comunicacion', 'conectado')}union(tables: [fp, fa, cp, ca])
   |> group()`;
@@ -77,8 +84,17 @@ function fluxTramos({ desde, hasta, camara, bucket }) {
   return `previo = ${base(rango(previo, desde))}\n  |> last()\nactual = ${base(rango(desde, hasta))}\nunion(tables: [previo, actual])\n  |> group()`;
 }
 
+// Mismo criterio que parseComunicacion (todo menos desvio_reloj_s) pero en Influx: una fila solo si cambió algún campo.
+const CAMPOS_COM = ['conectado', 'descartadas', 'eventos_perdidos', 'lineas_descartadas', 'mapa_incompatible'];
 function fluxComunicacion({ desde, hasta, bucket }) {
-  return `${fuente(bucket, rango(desde, hasta))}\n  |> filter(fn: (r) => r._measurement == "comunicacion")${pivot}`;
+  const aux = CAMPOS_COM.map((c) => `_${c}`);
+  return `${fuente(bucket, rango(desde, hasta))}\n  |> filter(fn: (r) => r._measurement == "comunicacion")
+  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+  |> map(fn: (r) => ({r with ${CAMPOS_COM.map((c) => `_${c}: if exists r.${c} then int(v: r.${c}) else 0`).join(', ')}}))
+  |> difference(columns: ${JSON.stringify(aux)}, keepFirst: true)
+  |> filter(fn: (r) => not exists r._conectado or ${aux.map((c) => `r.${c} != 0`).join(' or ')})
+  |> drop(columns: ${JSON.stringify(aux)})
+  |> group()`;
 }
 
 const NO_CAMPO = new Set(['', 'result', 'table', '_start', '_stop', '_time', '_measurement']);

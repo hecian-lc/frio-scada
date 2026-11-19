@@ -42,6 +42,21 @@ test('fluxLatidos: cada rama se pasa a texto antes del union (bool y string choc
   assert.equal(q.split('string(v: r._value)').length - 1, 4);
 });
 
+// comunicacion cruda son ~360 mil filas por semana: parsearla en la API pedía ~650 MB de heap (OOM 2026-11-19).
+test('comunicacion: Influx devuelve solo los cambios, con todos los campos que escribe el poller (menos el desvío)', () => {
+  const lat = s.fluxLatidos({ desde: D, hasta: H, bucket: 'camaras' });
+  const ca = lat.slice(lat.indexOf('ca = '));
+  assert.match(ca, /difference\(columns: \["_c"\], keepFirst: true\)[\s\S]*filter\(fn: \(r\) => not exists r\._c or r\._c != 0\)/);
+  assert.ok(!lat.slice(0, lat.indexOf('ca = ')).includes('difference('), 'el previo (last) no necesita dedup');
+
+  const q = s.fluxComunicacion({ desde: D, hasta: H, bucket: 'camaras' });
+  assert.ok(q.indexOf('pivot(') < q.indexOf('difference(') && q.indexOf('difference(') < q.indexOf('drop('));
+  const linea = require('../../weg-modbus-poller/src/salidaInflux').lineaComunicacion(
+    { conectado: true, descartadas: 1, desvioRelojS: 5, eventosPerdidos: 2, lineasDescartadas: 3, mapaIncompatible: true }, 0);
+  const campos = linea.split(' ')[1].split(',').map((kv) => kv.split('=')[0]).filter((c) => c !== 'desvio_reloj_s');
+  for (const c of campos) assert.ok(q.includes(`exists r.${c} then int(v: r.${c})`) && q.includes(`r._${c} != 0`), `falta ${c} en el dedup`);
+});
+
 test('parseTramos: CSV de latidos con filas de foto (texto) y comunicacion (bool) mezcladas', () => {
   const lat = LAT + foto('2026-09-30T20:00:00Z', '2026-10-01T04:00:00Z') + ',,0,2026-10-01T04:00:00Z,comunicacion,true\n' + foto('2026-10-01T04:01:00Z', '2026-10-05T00:00:00Z');
   const csv = CAB + est('2026-09-30T20:00:00Z', 'FRIO');
