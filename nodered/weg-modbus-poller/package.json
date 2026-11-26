@@ -1,6 +1,9 @@
 {
   "name": "frio-poller",
   "version": "1.0.0",
+  "private": true,
+  "author": "HECIAN LC",
+  "license": "UNLICENSED",
   "description": "Poller Modbus TCP de las cámaras frías (stub)",
   "main": "src/index.js",
   "scripts": {

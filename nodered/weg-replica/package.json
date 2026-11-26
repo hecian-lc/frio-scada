@@ -1,6 +1,9 @@
 {
   "name": "frio-replica",
   "version": "1.0.0",
+  "private": true,
+  "author": "HECIAN LC",
+  "license": "UNLICENSED",
   "description": "Replica de oficina: trae historico, config y telemetria en vivo desde planta",
   "main": "src/index.js",
   "scripts": {
