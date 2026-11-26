@@ -23,7 +23,7 @@ export const DEFAULT_BRANDING: Branding = {
   footer: 'Tecno Electric S.A.',
   logoUrl: '/logo-te.png',
   customLogo: false,
-  faviconUrl: '/icon-192.png',
+  faviconUrl: '/favicon.svg',     // isotipo HECIAN LC (marca v0.2.0)
   customFavicon: false,
   colorPortal: null,
   colorInforme: '#E87722',

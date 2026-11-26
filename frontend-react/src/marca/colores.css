@@ -1,7 +1,7 @@
-/* HECIAN LC marca v0.1.0 — copia sin cambios del repo de marca (tokens/colores.css), 2026-11-26.
+/* HECIAN LC marca v0.2.0 — copia sin cambios del repo de marca (tokens/colores.css), 2026-11-26.
    No editar acá: si la marca cambia, se cambia en el repo de marca y se vuelve a copiar.
    En frio-scada, src/hmi/tokens.css conecta las variables --hlc-* con los tokens del portal. */
-/* HECIAN LC · tokens de color y tipografía · v0.1.0
+/* HECIAN LC · tokens de color y tipografía · v0.2.0
    Fuente: manual de uso del logotipo v1.0 (manual/HECIAN-LC_guia-de-uso.pdf, pág. 8 y 10).
    Se importa UNA vez, antes que cualquier otro estilo. Las pantallas usan solo estos nombres, nunca un color suelto.
    Regla de proporción: la marca vive en carbón, blanco y negro. Los acentos (azul, burdeos, cian) no pasan del 10 %

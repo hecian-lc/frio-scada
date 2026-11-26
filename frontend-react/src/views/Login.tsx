@@ -4,6 +4,7 @@ import { useBrandingStore } from '../store/branding'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
 import { Button } from '../components/ui/button'
+import { FirmaIngreso } from '../components/FirmaHecian'
 import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function Login() {
@@ -97,6 +98,7 @@ export default function Login() {
         {brandFooter && <p className="text-xs text-texto-2">
           Powered by <strong>{brandFooter}</strong>
         </p>}
+        <FirmaIngreso />
       <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }

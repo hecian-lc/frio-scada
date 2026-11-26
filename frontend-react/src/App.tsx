@@ -8,6 +8,7 @@ import BarraEstado from './components/marco/BarraEstado'
 import AvisoAlarmaCelular from './components/marco/AvisoAlarmaCelular'
 import AvisoConexion from './components/marco/AvisoConexion'
 import { Button } from './components/ui/button'
+import { FirmaPie } from './components/FirmaHecian'
 import { useAlarmasActivas } from './lib/useAlarmasActivas'
 import { pantallaDe } from './lib/pantallas'
 import { useLiveStore } from './store/live'
@@ -130,10 +131,23 @@ function Marco() {
           {/* En el celular el encabezado no lleva el título de la pantalla: va acá, arriba del contenido */}
           <h1 className="mb-3 font-titulo text-xl font-semibold md:hidden">{ruta[ruta.length - 1]}</h1>
           {contenido}
+          {/* En el celular no hay barra de estado: la firma va al pie del contenido (marca v0.2.0) */}
+          <PieCelular />
         </main>
         <BarraEstado />
         <NavegadorCelular sinVer={alarmas.sinVer.length} />
       </div>
+    </div>
+  )
+}
+
+// Pie del celular, al final de cada pantalla: Powered by del cliente · Desarrollado por HECIAN LC
+function PieCelular() {
+  const footer = useBrandingStore(s => s.footer)
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-center gap-x-1 pb-1 text-xs text-texto-2 md:hidden">
+      {footer && <span>Powered by <b className="font-medium text-texto">{footer}</b> ·</span>}
+      <FirmaPie />
     </div>
   )
 }
