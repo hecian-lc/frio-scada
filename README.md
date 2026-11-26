@@ -11,7 +11,7 @@
 ![stack](https://img.shields.io/badge/stack-React%20%C2%B7%20Node%20%C2%B7%20Modbus-23272B?style=flat-square&labelColor=121417)
 ![PLC](https://img.shields.io/badge/PLC-Modicon%20M241-23272B?style=flat-square&labelColor=121417)
 ![licencia](https://img.shields.io/badge/licencia-propietaria-6B7177?style=flat-square&labelColor=121417)
-![versión](https://img.shields.io/github/v/tag/walc72/frio-scada?sort=semver&style=flat-square&label=versi%C3%B3n&labelColor=121417&color=1F3A68)
+![versión](https://img.shields.io/github/v/tag/hecian-lc/frio-scada?sort=semver&style=flat-square&label=versi%C3%B3n&labelColor=121417&color=1F3A68)
 
 Monitoreo remoto de las cámaras frías C4/C5 de Unifrisa: PLC Schneider M241,
 lectura Modbus TCP de solo lectura -> MQTT/InfluxDB, con panel web.
