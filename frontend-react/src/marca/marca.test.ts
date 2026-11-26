@@ -25,7 +25,7 @@ describe('marca HECIAN LC v0.2.0', () => {
     const html = leer('../../index.html')
     expect(html).toContain('href="/favicon.svg"')
     expect(html).toContain('href="/favicon.ico"')
-    for (const f of ['favicon.ico', 'favicon.svg', 'favicon-16.png', 'favicon-32.png', 'favicon-48.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png']) {
+    for (const f of ['favicon.ico', 'favicon.svg', 'favicon-16.png', 'favicon-32.png', 'favicon-48.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png']) {
       expect(existsSync(new URL(`../../public/${f}`, import.meta.url)), f).toBe(true)
     }
   })
