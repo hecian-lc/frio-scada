@@ -5,7 +5,7 @@ Cómo se instala y actualiza Frío SCADA en un servidor sin compilar nada.
 ## Para instalar
 
 ```bash
-curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo bash
+curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo bash
 ```
 
 Ver la sección *Instalación rápida* del [README principal](../README.md).
@@ -15,7 +15,7 @@ Ver la sección *Instalación rápida* del [README principal](../README.md).
 Pendiente de correr en la aceptación en planta (VM Ubuntu limpia). Todas las preguntas tienen una variable; las de alertas pueden quedar vacías y cargarse después en Configuración. `FRIO_PLC_IP` debe ser IPv4 y `FRIO_PLC_UNIT` 0..255: un valor inválido corta la instalación.
 
 ```bash
-curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo   FRIO_MODE=planta FRIO_TZ=America/Asuncion FRIO_TAILSCALE=si   FRIO_PLC_IP=192.168.3.71 FRIO_PLC_UNIT=255   FRIO_SUPERADMIN_USER=superadmin FRIO_SUPERADMIN_PASSWORD='...'   FRIO_ADMIN_USER=admin FRIO_ADMIN_PASSWORD='...'   FRIO_TELEGRAM_TOKEN='' FRIO_TELEGRAM_CHAT=''   FRIO_SMTP_HOST='' FRIO_SMTP_PORT=587 FRIO_SMTP_USER='' FRIO_SMTP_PASS='' FRIO_SMTP_TO=''   bash
+curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo   FRIO_MODE=planta FRIO_TZ=America/Asuncion FRIO_TAILSCALE=si   FRIO_PLC_IP=192.168.3.71 FRIO_PLC_UNIT=255   FRIO_SUPERADMIN_USER=superadmin FRIO_SUPERADMIN_PASSWORD='...'   FRIO_ADMIN_USER=admin FRIO_ADMIN_PASSWORD='...'   FRIO_TELEGRAM_TOKEN='' FRIO_TELEGRAM_CHAT=''   FRIO_SMTP_HOST='' FRIO_SMTP_PORT=587 FRIO_SMTP_USER='' FRIO_SMTP_PASS='' FRIO_SMTP_TO=''   bash
 sudo frio-scada status    # todos los servicios healthy
 ```
 
@@ -28,7 +28,7 @@ El token de Telegram y la clave SMTP se guardan en `/opt/frio-scada/.env` (modo 
    git tag -a v1.2.1 -m "v1.2.1 — ..." && git push origin v1.2.1
    ```
 2. El workflow [`release.yml`](../.github/workflows/release.yml):
-   - construye y publica las imágenes en `ghcr.io/walc72/frio-scada-<servicio>:<versión>` (y `:latest` si es estable): `api`, `poller`, `agent`, `backup`, `replica` y `frontend`, este último con el build de Vite adentro;
+   - construye y publica las imágenes en `ghcr.io/hecian-lc/frio-scada-<servicio>:<versión>` (y `:latest` si es estable): `api`, `poller`, `agent`, `backup`, `replica` y `frontend`, este último con el build de Vite adentro;
    - arma el paquete con `make-release.sh`;
    - sube al release `frio-scada-<versión>.tar.gz` e `install.sh`. Si el release no existe, lo crea con notas automáticas, que después se pueden editar.
 3. Un tag con sufijo (`v1.3.0-rc.1`) se publica como *pre-release* y no mueve `:latest`.
@@ -81,7 +81,7 @@ Grafana no tiene puerto publicado: se ve solo dentro del portal (`/grafana/`, ng
 ```bash
 bash packaging/make-release.sh prueba out/
 # imágenes locales con el mismo nombre, p.ej.:
-docker build -t ghcr.io/walc72/frio-scada-api:prueba nodered/weg-api   # (y el resto)
+docker build -t ghcr.io/hecian-lc/frio-scada-api:prueba nodered/weg-api   # (y el resto)
 sudo FRIO_VERSION=prueba FRIO_PACKAGE=out/frio-scada-prueba.tar.gz bash out/install.sh
 ```
 

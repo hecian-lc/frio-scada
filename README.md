@@ -32,7 +32,7 @@ Instalación en servidor: ver [`packaging/README.md`](packaging/README.md).
 En un servidor **Ubuntu o Debian** con internet, o en un **Raspberry Pi 4/5 con Raspberry Pi OS de 64 bits** (desde v0.4.1):
 
 ```bash
-curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo bash
+curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo bash
 ```
 
 El instalador:
@@ -83,13 +83,13 @@ sudo apt update && sudo apt upgrade -y
 **2. Correr el instalador** (instala la última versión)
 
 ```bash
-curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo bash
+curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo bash
 ```
 
 Para instalar una versión puntual (por ejemplo `v0.2.12`):
 
 ```bash
-curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo FRIO_VERSION=v0.2.12 bash
+curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo FRIO_VERSION=v0.2.12 bash
 ```
 
 **3. Responder las preguntas**
@@ -137,7 +137,7 @@ sudo frio-scada status            # ver si todo está andando
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/walc72/frio-scada.git
+git clone https://github.com/hecian-lc/frio-scada.git
 cd frio-scada
 ```
 
@@ -199,7 +199,7 @@ Se requiere una configuracion especial para que el config.json sea escribible.
 ### 1. Clonar el repositorio
 
 ```powershell
-git clone https://github.com/walc72/frio-scada.git
+git clone https://github.com/hecian-lc/frio-scada.git
 cd frio-scada
 ```
 

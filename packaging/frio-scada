@@ -12,7 +12,7 @@
 # =============================================================================
 set -euo pipefail
 
-REPO="walc72/frio-scada"
+REPO="hecian-lc/frio-scada"
 DIR="${FRIO_DIR:-/opt/frio-scada}"
 
 die() { echo "✘ $*" >&2; exit 1; }

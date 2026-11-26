@@ -2,7 +2,7 @@
 # =============================================================================
 # Frío SCADA — instalador (Ubuntu / Debian)
 #
-#   curl -fsSL https://github.com/walc72/frio-scada/releases/latest/download/install.sh | sudo bash
+#   curl -fsSL https://github.com/hecian-lc/frio-scada/releases/latest/download/install.sh | sudo bash
 #
 # Instala Docker si falta, baja el release, genera las claves internas, crea
 # los usuarios y levanta todo en /opt/frio-scada. Para actualizar después:
@@ -20,7 +20,7 @@
 # =============================================================================
 set -euo pipefail
 
-REPO="walc72/frio-scada"
+REPO="hecian-lc/frio-scada"
 DIR="${FRIO_DIR:-/opt/frio-scada}"
 
 c_ok=$'\e[32m'; c_warn=$'\e[33m'; c_err=$'\e[31m'; c_b=$'\e[1m'; c_0=$'\e[0m'
