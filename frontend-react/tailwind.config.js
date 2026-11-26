@@ -20,6 +20,8 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         cond: ['Inter', 'system-ui', 'sans-serif'],
+        // títulos, barra de la app y bandas de panel (marca HECIAN LC v0.1.0)
+        titulo: ['"Barlow Condensed"', '"Arial Narrow"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
       },
       boxShadow: { tarjeta: 'var(--sombra-tarjeta)' },
@@ -46,6 +48,9 @@ export default {
         'accion': 'var(--accion)',
         'accion-texto': 'var(--accion-texto)',
         'accion-hover': 'var(--accion-hover)',
+        'accion-activo': 'var(--accion-activo)',
+        'barra-activo': 'var(--barra-activo)',
+        'barra-activo-texto': 'var(--barra-activo-texto)',
         'seleccion': 'var(--seleccion)',
         'rango': 'var(--rango)',
         'rango-fondo': 'var(--rango-fondo)',

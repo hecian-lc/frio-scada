@@ -25,7 +25,7 @@ const Contador = ({ n, className }: { n: number; className?: string }) => (
     aria-label={`${n} ${n === 1 ? 'alarma activa sin ver' : 'alarmas activas sin ver'}`}>{n}</span>
 )
 
-// Menú azul a la izquierda desde 768 px, a todo el alto: 232 px (64 con ☰). Marca arriba, usuario abajo.
+// Menú en negro mate a la izquierda desde 768 px, a todo el alto: 232 px (64 con ☰). Marca arriba, usuario abajo.
 export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: number }) {
   const { codigo } = pantallaDe(useLocation().pathname)
   const logoUrl = useBrandingStore(s => s.logoUrl)
@@ -40,7 +40,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
           <img src={logoUrl} alt={brandName} className="max-h-full max-w-full object-contain" />
         </span>
         {!compacto && <span className="min-w-0 leading-tight">
-          <b className="line-clamp-2 text-base font-semibold leading-tight text-white">{brandName}</b>
+          <b className="line-clamp-2 font-titulo text-lg font-semibold leading-tight text-white">{brandName}</b>
           {subtitulo && <span className="block truncate text-xs" title={subtitulo}>{subtitulo}</span>}
         </span>}
       </div>
@@ -49,7 +49,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
         return (
           <Link key={i.to} to={i.to} data-tour={`nav-${i.icono}`} title={compacto ? i.label : undefined} aria-current={on ? 'page' : undefined}
             className={cn('relative flex h-[42px] shrink-0 items-center gap-2.5 rounded-md px-3 text-base',
-              compacto && 'justify-center px-0', on ? 'bg-accion font-semibold text-accion-texto' : 'hover:bg-white/10 hover:text-white')}>
+              compacto && 'justify-center px-0', on ? 'bg-barra-activo font-semibold text-barra-activo-texto' : 'hover:bg-marco-2 hover:text-white')}>
             <IconoNav nombre={i.icono} size={18} />
             <span className={compacto ? 'sr-only' : 'flex-1'}>{i.label}</span>
             {i.codigo === 'A1' && sinVer > 0 && <Contador n={sinVer} className={compacto ? 'absolute right-0.5 top-0.5' : ''} />}
@@ -57,7 +57,7 @@ export function NavegadorPc({ compacto, sinVer }: { compacto: boolean; sinVer: n
         )
       })}
       <div className={cn('mt-auto flex items-center gap-2.5 pt-4', compacto && 'justify-center')} title={compacto ? `${user} · ${ROLE_LABEL[role] || 'Operador'}` : undefined}>
-        <span aria-hidden="true" className="grid h-[36px] w-[36px] shrink-0 place-items-center rounded-full bg-accion text-sm font-semibold text-accion-texto">{iniciales(user)}</span>
+        <span aria-hidden="true" className="grid h-[36px] w-[36px] shrink-0 place-items-center rounded-full border border-marco-linea bg-marco-2 text-sm font-semibold text-white">{iniciales(user)}</span>
         <span className={compacto ? 'sr-only' : 'min-w-0 leading-tight'}>
           <b className="block truncate text-sm font-semibold text-white">{user}</b>
           <span className="block truncate text-xs">{ROLE_LABEL[role] || 'Operador'}</span>

@@ -14,7 +14,7 @@ export function Panel({ titulo, accion, grande, className, children, ...rest }: 
   return (
     <section className={cn('rounded-lg border border-linea bg-panel p-[18px] shadow-tarjeta', className)} data-tour={rest['data-tour']}>
       <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className={cn('max-w-full truncate font-bold', grande ? 'text-lg' : 'text-base')}>{titulo}</h2>
+        <h2 className={cn('max-w-full truncate font-titulo font-semibold', grande ? 'text-xl' : 'text-lg')}>{titulo}</h2>
         {accion && <div className="flex items-center gap-1">{accion}</div>}
       </header>
       <div>{children}</div>

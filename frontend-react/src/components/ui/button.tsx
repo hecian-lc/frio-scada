@@ -3,23 +3,34 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
+// Botones de la marca HECIAN LC v0.1.0 (src/marca/hecian-botones.css). Los colores salen de los tokens del portal
+// (src/hmi/tokens.css → «Puente con la marca»), así siguen al tema y al color del portal.
+// - primario (default): uno por pantalla o diálogo; secundario (secondary/outline): neutro con borde gris;
+//   terciario (ghost/link): solo texto; destructivo: texto y borde burdeos, nunca relleno y SIEMPRE con confirmación.
+// - Nunca colores de estado (rojo, naranja, amarillo, violeta) en un botón: son de las alarmas (guía hmi-industrial).
+// - Altos: 32 px en la computadora (24 con «compacto», 44 con «tactil»); en el celular siempre 44 (blanco táctil).
+// - barra / barra-primario: sobre el negro mate del menú y del encabezado del celular.
 const buttonVariants = cva(
-  'toque inline-flex items-center rounded-md justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+  'hlc-btn max-md:[--alto:44px]',
   {
     variants: {
       variant: {
-        default: 'bg-accion text-accion-texto hover:bg-accion-hover',
-        destructive: 'bg-estado-alta text-estado-alta-sobre hover:opacity-90',
-        outline: 'border border-linea-boton bg-panel font-semibold text-accion hover:bg-seleccion',
-        secondary: 'border border-linea-boton bg-panel font-semibold text-accion hover:bg-seleccion',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline'
+        default: 'hlc-btn--primario',
+        secondary: 'hlc-btn--secundario',
+        outline: 'hlc-btn--secundario',
+        ghost: 'hlc-btn--terciario',
+        link: 'hlc-btn--terciario',
+        destructive: 'hlc-btn--destructivo',
+        barra: 'hlc-btn--barra',
+        'barra-primario': 'hlc-btn--barra-primario'
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 px-3',
-        lg: 'h-11 px-8',
-        icon: 'h-10 w-10'
+        default: '',
+        sm: '',
+        compacto: 'hlc-btn--compacto',
+        lg: 'hlc-btn--tactil',
+        tactil: 'hlc-btn--tactil',
+        icon: 'hlc-btn--icono'
       }
     },
     defaultVariants: { variant: 'default', size: 'default' }

@@ -7,6 +7,7 @@ import BarraApp from './components/marco/BarraApp'
 import BarraEstado from './components/marco/BarraEstado'
 import AvisoAlarmaCelular from './components/marco/AvisoAlarmaCelular'
 import AvisoConexion from './components/marco/AvisoConexion'
+import { Button } from './components/ui/button'
 import { useAlarmasActivas } from './lib/useAlarmasActivas'
 import { pantallaDe } from './lib/pantallas'
 import { useLiveStore } from './store/live'
@@ -34,7 +35,7 @@ class RouteErrorBoundary extends Component<{ children: ReactNode }, { error: Err
         <div className="flex flex-col items-center justify-center h-full gap-3 text-destructive py-16">
           <div className="text-lg font-bold">Error al cargar la vista</div>
           <pre className="text-xs bg-muted p-3 max-w-xl overflow-auto">{msg}</pre>
-          <button className="text-xs underline" onClick={() => this.setState({ error: null })}>Reintentar</button>
+          <Button variant="secondary" onClick={() => this.setState({ error: null })}>Reintentar</Button>
         </div>
       )
     }
@@ -127,7 +128,7 @@ function Marco() {
         <AvisoAlarmaCelular alarmas={alarmas} />
         <main className="min-w-0 flex-1 overflow-auto p-3 md:p-6 md:px-8">
           {/* En el celular el encabezado no lleva el título de la pantalla: va acá, arriba del contenido */}
-          <h1 className="mb-3 text-xl font-bold md:hidden">{ruta[ruta.length - 1]}</h1>
+          <h1 className="mb-3 font-titulo text-xl font-semibold md:hidden">{ruta[ruta.length - 1]}</h1>
           {contenido}
         </main>
         <BarraEstado />

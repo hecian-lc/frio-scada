@@ -10,11 +10,9 @@ import { useAuthStore } from '../../store/auth'
 import { useBrandingStore } from '../../store/branding'
 import { useCamarasStore } from '../../store/camaras'
 import { Pastilla } from '../ui/pastilla'
+import { Button } from '../ui/button'
 
-const botonCelular = 'inline-flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-md text-navegador-texto hover:bg-white/10 hover:text-white'
-const boton = 'inline-flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-md text-texto-2 hover:bg-seleccion hover:text-texto'
-
-// Encabezado: 72 px en la computadora, con el único título de la pantalla y el estado general; 60 px azul en el celular.
+// Encabezado: 72 px en la computadora, con el único título de la pantalla y el estado general; 60 px en negro mate en el celular.
 export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto: boolean; alternarMenu: () => void; alarmas: number }) {
   const { theme, toggle } = useTheme()
   const ahora = useNow(1000)
@@ -35,27 +33,27 @@ export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto
         <img src={logoUrl} alt={brandName} className="max-h-full max-w-full object-contain" />
       </span>
       <span className="min-w-0 flex-1 leading-tight">
-        <b className="block truncate text-base font-semibold text-white">{brandName}</b>
+        <b className="block truncate font-titulo text-lg font-semibold leading-tight text-white">{brandName}</b>
         <span className="block truncate text-xs">{enLinea ? `PLC en línea · ${hhmm(ts)}` : textoPlc}</span>
       </span>
       <span className="shrink-0 font-mono text-base text-white" title="Hora de planta">{hhmmss(ahora)}</span>
-      <div className="-mr-2 flex shrink-0 items-center">
-        <button type="button" className={botonCelular} onClick={toggle} title={tituloTema} aria-label={tituloTema}>
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
-        <button type="button" className={botonCelular} onClick={logout} title="Cerrar sesión" aria-label="Cerrar sesión">
-          <LogOut className="h-5 w-5" />
-        </button>
+      <div className="flex shrink-0 items-center gap-1.5">
+        <Button type="button" variant="barra" size="icon" onClick={toggle} title={tituloTema} aria-label={tituloTema}>
+          {theme === 'dark' ? <Sun /> : <Moon />}
+        </Button>
+        <Button type="button" variant="barra" size="icon" onClick={logout} title="Cerrar sesión" aria-label="Cerrar sesión">
+          <LogOut />
+        </Button>
       </div>
     </header>
 
     <header className="hidden h-[72px] shrink-0 items-center gap-4 border-b border-linea bg-panel px-8 md:flex">
-      <button type="button" className={`${boton} -ml-3`} onClick={alternarMenu}
+      <Button type="button" variant="ghost" size="icon" className="-ml-2" onClick={alternarMenu}
         title={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-label={compacto ? 'Mostrar el menú' : 'Achicar el menú'} aria-expanded={!compacto}>
-        <Menu className="h-5 w-5" />
-      </button>
+        <Menu />
+      </Button>
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-xl font-bold leading-tight">{ruta[ruta.length - 1]}</h1>
+        <h1 className="truncate font-titulo text-xl font-semibold leading-tight">{ruta[ruta.length - 1]}</h1>
         <div className="text-sm text-texto-2">{fechaDia(ahora)}</div>
       </div>
       <div className="flex shrink-0 items-center gap-3">
@@ -63,12 +61,12 @@ export default function BarraApp({ compacto, alternarMenu, alarmas }: { compacto
         {enLinea ? <Pastilla tono="ok">PLC en línea ·&nbsp;<span className="font-mono">{hhmmss(ts)}</span></Pastilla> : <Pastilla tono="neutro">{textoPlc}</Pastilla>}
         <span className="hidden font-mono text-lg lg:inline" title="Hora de planta">{hhmmss(ahora)}</span>
         <div className="flex items-center">
-          <button type="button" className={boton} onClick={toggle} title={tituloTema} aria-label={tituloTema}>
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-          <button type="button" className={boton} onClick={logout} title="Cerrar sesión" aria-label="Cerrar sesión">
-            <LogOut className="h-4 w-4" />
-          </button>
+          <Button type="button" variant="ghost" size="icon" onClick={toggle} title={tituloTema} aria-label={tituloTema}>
+            {theme === 'dark' ? <Sun /> : <Moon />}
+          </Button>
+          <Button type="button" variant="ghost" size="icon" onClick={logout} title="Cerrar sesión" aria-label="Cerrar sesión">
+            <LogOut />
+          </Button>
         </div>
       </div>
     </header>

@@ -143,14 +143,14 @@ export default function Usuarios() {
                 </TableCell>
                 <TableCell className="text-right whitespace-nowrap">
                   {canEdit(u) && (
-                    <Button variant="ghost" size="icon" title="Editar"
+                    <Button variant="ghost" size="icon" title="Editar" aria-label={`Editar ${u.user}`}
                       onClick={() => setForm({ original: u.user, user: u.user, role: u.role, pw: '', pw2: '' })}>
                       <Pencil className="h-4 w-4" />
                     </Button>
                   )}
                   {canDelete(u) && (
-                    <Button variant="ghost" size="icon" title="Eliminar" onClick={() => remove(u)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                    <Button variant="destructive" size="icon" className="ml-1" title="Eliminar" aria-label={`Eliminar ${u.user}`} onClick={() => remove(u)}>
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
                 </TableCell>

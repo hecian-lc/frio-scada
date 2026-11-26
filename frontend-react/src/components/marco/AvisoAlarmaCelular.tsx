@@ -26,7 +26,7 @@ export default function AvisoAlarmaCelular({ alarmas: { sinVer, vistas, marcar }
       </div>
       <QueHacer clave={g.claves[0]} soloTexto className="rounded-[8px] bg-fila-total p-2.5 text-sm" />
       <div className="flex flex-wrap items-center gap-2">
-        <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} texto={g.titulo} className="ml-0 min-h-[44px] rounded-md" />
+        <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} texto={g.titulo} className="ml-0 min-h-[44px]" />
         <ContactoGuardia compacto />
       </div>
     </div>

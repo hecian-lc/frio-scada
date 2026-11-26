@@ -69,7 +69,7 @@ export default function ReplicasTab() {
             <div className="text-xs text-muted-foreground">Última conexión: {fmt(r.lastSeenAt)}{r.lastIp ? ` · desde ${r.lastIp}` : ''}</div>
           </div>
           {!r.legacy && r.status !== 'revocada' && (
-            <Button size="sm" variant="outline" className="ml-auto" onClick={() => revoke(r)}><Ban className="h-3.5 w-3.5 mr-1" />Revocar</Button>
+            <Button size="sm" variant="destructive" className="ml-auto" onClick={() => revoke(r)}><Ban className="h-3.5 w-3.5 mr-1" />Revocar</Button>
           )}
         </div>
         </Panel>

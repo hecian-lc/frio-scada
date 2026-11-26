@@ -3,6 +3,7 @@ import { marcarTutorial } from '../lib/tutorial'
 import { useAuthStore } from '../store/auth'
 import { ChevronRight } from 'lucide-react'
 import { Panel } from '../components/Panel'
+import { Button } from '../components/ui/button'
 
 const ITEMS = [
   { to: '/reportes', label: 'Reportes (diario, semanal y mensual)', admin: false },
@@ -30,7 +31,7 @@ export default function Mas() {
           ))}
         </ul>
       </Panel>
-      <button className="toque border border-borde-campo bg-placa px-4 text-sm font-medium hover:bg-seleccion" onClick={() => { marcarTutorial('inicio', user, false); marcarTutorial('camara', user, false); navigate('/') }}>Ver el tutorial de nuevo</button>
+      <Button variant="secondary" onClick={() => { marcarTutorial('inicio', user, false); marcarTutorial('camara', user, false); navigate('/') }}>Ver el tutorial de nuevo</Button>
     </div>
   )
 }

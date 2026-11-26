@@ -15,6 +15,7 @@ import { downloadXlsx } from '../lib/xlsx'
 import { Segmentado } from '../components/ui/segmentado'
 import { Icono } from '../components/Icono'
 import { Panel } from '../components/Panel'
+import { Button } from '../components/ui/button'
 import MarcaAlarma from '../components/MarcaAlarma'
 import MarcaSinDatos from '../components/MarcaSinDatos'
 import { COLOR_TRAMO } from '../lib/paginaCamara'
@@ -179,8 +180,8 @@ export default function Historial({ fija }: { fija?: 'alarmas' | 'eventos' }) {
           </div>}
         </>}
       </Panel>
-      <button className="toque border border-borde-campo bg-placa px-4 text-sm font-medium hover:bg-seleccion disabled:opacity-50" disabled={!filas.length}
-        onClick={() => downloadXlsx(`${pestana}_${r.desde}_${r.hasta}`, filas)}>Descargar en Excel</button>
+      <Button variant="secondary" disabled={!filas.length}
+        onClick={() => downloadXlsx(`${pestana}_${r.desde}_${r.hasta}`, filas)}>Descargar en Excel</Button>
     </div>
   )
 }

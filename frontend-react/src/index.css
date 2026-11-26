@@ -50,11 +50,12 @@ body .driver-popover, body .driver-popover * { font-family: "Inter", system-ui, 
 .driver-popover-title { font-size: 16px; font-weight: 700; }
 .driver-popover-description { font-size: 14px; line-height: 20px; }
 .driver-popover-progress-text { font-size: 12px; color: var(--muted-foreground); }
-.driver-popover-footer button { font-family: inherit; font-size: 13px; text-shadow: none; padding: 8px 14px; border-radius: 10px; min-height: 36px; background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+/* Botones del tutorial con la forma de .hlc-btn (marca HECIAN LC v0.1.0): radio 3, 32 px, Inter 500, secundario con borde gris medio */
+.driver-popover-footer button { font-family: inherit; font-size: 14px; font-weight: 500; text-shadow: none; padding: 0 14px; border-radius: 3px; min-height: 32px; background: var(--hlc-sec-fondo); color: var(--hlc-sec-texto); border: 1px solid var(--hlc-sec-borde); }
 .driver-popover-footer .driver-popover-next-btn { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
 .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--card); }
 .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--card); }
 .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--card); }
 .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--card); }
-body .driver-popover-footer button:hover, body .driver-popover-footer button:focus { background: var(--accent); color: var(--foreground); }
+body .driver-popover-footer button:hover, body .driver-popover-footer button:focus { background: var(--hlc-sec-hover); color: var(--hlc-sec-texto); }
 body .driver-popover-footer .driver-popover-next-btn:hover, body .driver-popover-footer .driver-popover-next-btn:focus { background: var(--accion-hover); color: var(--primary-foreground); }

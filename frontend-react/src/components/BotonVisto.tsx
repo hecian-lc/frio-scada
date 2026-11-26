@@ -24,9 +24,8 @@ export default function BotonVisto({ claves, vistas, marcar, texto, className }:
     try { await marcar(pendientes, nota.trim() || undefined); toast.success('Alarma marcada como vista'); setAbierto(false) } catch (err: any) { toast.error(err.message || 'No se pudo marcar') } finally { setEnviando(false) }
   }
   return <>
-    <button type="button" title="Marcar como vista: deja de repetirse el aviso"
-      className={cn('toque ml-1 inline-flex shrink-0 items-center border border-accion bg-accion px-3 text-xs font-semibold text-accion-texto hover:bg-accion-hover disabled:opacity-50', className)}
-      onClick={() => { setNota(''); setAbierto(true) }}>Visto</button>
+    <Button type="button" title="Marcar como vista: deja de repetirse el aviso" className={cn('ml-1 shrink-0', className)}
+      onClick={() => { setNota(''); setAbierto(true) }}>Visto</Button>
     <Dialog open={abierto} onOpenChange={o => { if (!enviando) setAbierto(o) }}>
       <DialogContent className="w-[calc(100vw-1.5rem)]" aria-describedby={undefined}>
         <DialogHeader><DialogTitle>Marcar como vista</DialogTitle></DialogHeader>

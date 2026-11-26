@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Panel } from '../components/Panel'
+import { Button } from '../components/ui/button'
 import MarcaAlarma from '../components/MarcaAlarma'
 import MarcaSinDatos from '../components/MarcaSinDatos'
 import ReplicaBadge from '../components/ReplicaBadge'
@@ -101,7 +102,7 @@ export default function Sistema() {
         ))}
       </Panel>
       <p className="text-sm">{textoCortes(res?.cortes7d)}</p>
-      <button className="toque inline-flex items-center text-xs text-texto-2 underline" onClick={() => setDet(d => !d)}>{det ? 'Ocultar detalle técnico' : 'Ver detalle técnico'}</button>
+      <Button variant="ghost" size="compacto" onClick={() => setDet(d => !d)}>{det ? 'Ocultar detalle técnico' : 'Ver detalle técnico'}</Button>
       {det && <Detalle />}
     </div>
   )
