@@ -27,7 +27,7 @@ transform() {
     BEGIN {
       img["./weg-api"] = "api"; img["./weg-modbus-poller"] = "poller"; img["./weg-agent"] = "agent";
       img["./weg-backup"] = "backup"; img["./weg-replica"] = "replica";
-      ref = "${FRIO_REGISTRY:-ghcr.io/walc72}/frio-scada-%s:${FRIO_VERSION:?falta FRIO_VERSION en .env}"
+      ref = "${FRIO_REGISTRY:-ghcr.io/hecian-lc}/frio-scada-%s:${FRIO_VERSION:?falta FRIO_VERSION en .env}"
     }
     { sub(/\r$/, "") }                       # checkout con CRLF (Windows)
     /^  [a-z0-9-]+:/ { svc = $1 }
