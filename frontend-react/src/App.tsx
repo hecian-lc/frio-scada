@@ -7,6 +7,8 @@ import BarraApp from './components/marco/BarraApp'
 import BarraEstado from './components/marco/BarraEstado'
 import AvisoAlarmaCelular from './components/marco/AvisoAlarmaCelular'
 import AvisoConexion from './components/marco/AvisoConexion'
+import { Button } from './components/ui/button'
+import { FirmaPie } from './components/FirmaHecian'
 import { useAlarmasActivas } from './lib/useAlarmasActivas'
 import { pantallaDe } from './lib/pantallas'
 import { useLiveStore } from './store/live'
@@ -34,7 +36,7 @@ class RouteErrorBoundary extends Component<{ children: ReactNode }, { error: Err
         <div className="flex flex-col items-center justify-center h-full gap-3 text-destructive py-16">
           <div className="text-lg font-bold">Error al cargar la vista</div>
           <pre className="text-xs bg-muted p-3 max-w-xl overflow-auto">{msg}</pre>
-          <button className="text-xs underline" onClick={() => this.setState({ error: null })}>Reintentar</button>
+          <Button variant="secondary" onClick={() => this.setState({ error: null })}>Reintentar</Button>
         </div>
       )
     }
@@ -127,12 +129,25 @@ function Marco() {
         <AvisoAlarmaCelular alarmas={alarmas} />
         <main className="min-w-0 flex-1 overflow-auto p-3 md:p-6 md:px-8">
           {/* En el celular el encabezado no lleva el título de la pantalla: va acá, arriba del contenido */}
-          <h1 className="mb-3 text-xl font-bold md:hidden">{ruta[ruta.length - 1]}</h1>
+          <h1 className="mb-3 font-titulo text-xl font-semibold md:hidden">{ruta[ruta.length - 1]}</h1>
           {contenido}
+          {/* En el celular no hay barra de estado: la firma va al pie del contenido (marca v0.2.0) */}
+          <PieCelular />
         </main>
         <BarraEstado />
         <NavegadorCelular sinVer={alarmas.sinVer.length} />
       </div>
+    </div>
+  )
+}
+
+// Pie del celular, al final de cada pantalla: Powered by del cliente · Desarrollado por HECIAN LC
+function PieCelular() {
+  const footer = useBrandingStore(s => s.footer)
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-center gap-x-1 pb-1 text-xs text-texto-2 md:hidden">
+      {footer && <span>Powered by <b className="font-medium text-texto">{footer}</b> ·</span>}
+      <FirmaPie />
     </div>
   )
 }

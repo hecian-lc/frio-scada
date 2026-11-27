@@ -27,7 +27,7 @@ export default function TarjetaAlarma() {
       </div>
       <QueHacer clave={g.claves[0]} soloTexto className="mt-3 rounded-[8px] bg-panel p-2.5 text-sm" />
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} texto={g.titulo} className="ml-0 min-h-[44px] rounded-md" />
+        <BotonVisto claves={g.claves} vistas={vistas} marcar={marcar} texto={g.titulo} className="ml-0 min-h-[44px]" />
         <ContactoGuardia compacto />
       </div>
     </section>

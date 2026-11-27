@@ -110,7 +110,7 @@ function TailscaleCard({ replica }: { replica: boolean }) {
       )}
       {st?.state === 'Unavailable' && <p className="text-sm text-muted-foreground">Tailscale no está instalado en este servidor.</p>}
       {st?.state === 'Running' && (
-        <div className="flex justify-end"><Button size="sm" variant="outline" disabled={busy} onClick={disconnect}><Unlink className="h-3.5 w-3.5 mr-1" />Desconectar</Button></div>
+        <div className="flex justify-end"><Button size="sm" variant="destructive" disabled={busy} onClick={disconnect}><Unlink className="h-3.5 w-3.5 mr-1" />Desconectar</Button></div>
       )}
     </div>
     </Panel>
@@ -195,7 +195,7 @@ function PlantLinkCard() {
           : <div className="text-sm text-destructive">{test.error}</div>)}
         <div className="flex justify-between">
           {link?.configured && !link.fromEnv
-            ? <Button size="sm" variant="outline" onClick={unlink}><Unlink className="h-3.5 w-3.5 mr-1" />Desvincular</Button>
+            ? <Button size="sm" variant="destructive" onClick={unlink}><Unlink className="h-3.5 w-3.5 mr-1" />Desvincular</Button>
             : <span />}
           <div className="flex gap-2">
             <Button size="sm" variant="outline" disabled={busy || !code.trim()} onClick={doTest}>Probar conexión</Button>

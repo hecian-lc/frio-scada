@@ -2,6 +2,9 @@
    Se importa UNA vez, al principio.
    Las pantallas usan SOLO estos nombres: ningún color suelto. Lo normal no lleva color; los colores de estado
    (--estado-*) significan una sola cosa cada uno y no se usan para botones, gráficos ni marca.
+   Marca HECIAN LC v0.1.0 (2026-11-26, piloto): marco y menú en negro mate, acción en azul profundo (claro) y cian
+   (oscuro), foco cian oscuro. Las variables --hlc-* de src/marca/ se conectan acá abajo («Puente con la marca»).
+   Los colores de estado y de los equipos no cambian.
    Nivel de color 2 (decisión del 2026-11-09): el tono de marca va en el marco, la interacción y las series
    de los gráficos; suelo y paneles con un tinte apenas de ese tono. Estos valores son los del monitor de energía
    (azul de Tecno Electric, marco #12305A y acción #1F5FAF): en otro proyecto se cambia el tono y se mantienen
@@ -15,11 +18,11 @@
      trazo de media reconocida 4,7 / 6,1 · trazo de baja reconocida 4,4 / 8,8 (los rellenos llevan contorno oscuro) */
 :root {
   /* marco de la aplicación (barra de arriba y barra de estado) */
-  --marco: #12305A;            /* azul de marca */
-  --marco-2: #1C4275;          /* módulo activo, botones de la barra */
+  --marco: #121417;            /* negro mate HECIAN LC (marca v0.1.0) */
+  --marco-2: #23272B;          /* carbón: botones de la barra */
   --marco-texto: #EEF3FA;
   --marco-texto-2: #AFC3DD;
-  --marco-linea: #33557F;
+  --marco-linea: #6B7177;      /* gris medio: borde de los botones de la barra */
   --marco-foco: #5FA8F0;       /* foco y subrayado del módulo activo sobre la barra */
   --marco-invalido: #C7AEF5;   /* dato no válido sobre la barra (el violeta del panel no llega a 3:1 ahí) */
 
@@ -30,7 +33,7 @@
   --panel-titulo: #E2E9F3;     /* banda de título de panel (28 px) */
   --panel-titulo-texto: #1E3A61;
   --barra-pantalla: #F3F6FA;
-  --navegador: #0F2A4D;
+  --navegador: #121417;        /* negro mate: menú lateral y encabezado del celular (marca v0.1.0) */
   --fila-total: #EDF2F8;       /* fila de total y hover de filas */
 
   /* líneas */
@@ -42,12 +45,16 @@
   --texto: #101828;
   --texto-2: #5A6578;
 
-  /* interacción: botón primario, enlaces, selección, foco */
-  --accion: #1F5FAF;
-  --accion-texto: #FFFFFF;
-  --accion-hover: #184C8C;
+  /* interacción: botón primario, enlaces, selección, foco (HECIAN LC marca v0.1.0: azul profundo y foco cian oscuro) */
+  --accion: #1F3A68;
+  --accion-texto: #F4F7FA;
+  --accion-hover: #172D52;
+  --accion-activo: #11223F;
   --seleccion: #D2E2F5;
-  --foco: var(--accion);
+  --foco: #0B7480;
+  /* ítem activo sobre el menú negro mate (igual en los dos temas): cian, como --barra-primario de la marca */
+  --barra-activo: #13A3B4;
+  --barra-activo-texto: #121417;
 
   /* indicador analógico y gráficos */
   --rango: #BFD6EE;            /* banda normal del indicador (dentro de un borde de 3:1) */
@@ -79,6 +86,7 @@
   /* tipografía */
   --fuente: 'Inter', system-ui, sans-serif;
   --fuente-condensada: var(--fuente);
+  --fuente-titulos: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif; /* títulos, barra, bandas de panel */
   --fuente-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   /* medidas del marco */
@@ -110,12 +118,13 @@
    objeto gráfico y a 4,5:1 como texto sobre el panel oscuro; el «1» va oscuro sobre el rojo claro. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --marco: #0A1A31; --marco-2: #15315A; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #26436A; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
+    --marco: #121417; --marco-2: #23272B; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #6B7177; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
     --suelo: #0E1622; --panel: #172231; --placa: #1E2A3B; --panel-titulo: #223144; --panel-titulo-texto: #C3D3E7;
-    --barra-pantalla: #17202B; --navegador: #091425; --fila-total: #22303F;
+    --barra-pantalla: #17202B; --navegador: #121417; --fila-total: #22303F;
     --linea: #263449; --linea-fila: #2A3848; --borde-campo: #5C6E86;
     --texto: #E6EDF6; --texto-2: #9AA8BA;
-    --accion: #5B95DD; --accion-texto: #0A1A31; --accion-hover: #8DB8EE; --seleccion: #21406A;
+    --accion: #13A3B4; --accion-texto: #121417; --accion-hover: #3BB9C8; --accion-activo: #0E8C9A; --seleccion: #21406A; --foco: #5CC6D3;
+    --barra-activo: #13A3B4; --barra-activo-texto: #121417;
     --rango: #3D5677; --rango-fondo: #1E3138;
     --serie-1: #6FA8EE; --serie-2: #3DBDB5; --serie-3: #A3B4CA; --serie-4: #C9DCF3;
     --relleno-1: #5B95DD; --relleno-2: #2E8D87; --relleno-3: #2D5A8E; --relleno-4: #34475E;
@@ -128,12 +137,13 @@
   }
 }
 :root[data-theme="dark"], :root.dark {
-  --marco: #0A1A31; --marco-2: #15315A; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #26436A; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
+  --marco: #121417; --marco-2: #23272B; --marco-texto: #E6EDF6; --marco-texto-2: #9FB4CF; --marco-linea: #6B7177; --marco-foco: #6FB2F5; --marco-invalido: #C7AEF5;
   --suelo: #0E1622; --panel: #172231; --placa: #1E2A3B; --panel-titulo: #223144; --panel-titulo-texto: #C3D3E7;
-  --barra-pantalla: #17202B; --navegador: #091425; --fila-total: #22303F;
+  --barra-pantalla: #17202B; --navegador: #121417; --fila-total: #22303F;
   --linea: #263449; --linea-fila: #2A3848; --borde-campo: #5C6E86;
   --texto: #E6EDF6; --texto-2: #9AA8BA;
-  --accion: #5B95DD; --accion-texto: #0A1A31; --accion-hover: #8DB8EE; --seleccion: #21406A;
+  --accion: #13A3B4; --accion-texto: #121417; --accion-hover: #3BB9C8; --accion-activo: #0E8C9A; --seleccion: #21406A; --foco: #5CC6D3;
+    --barra-activo: #13A3B4; --barra-activo-texto: #121417;
   --rango: #3D5677; --rango-fondo: #1E3138;
   --serie-1: #6FA8EE; --serie-2: #3DBDB5; --serie-3: #A3B4CA; --serie-4: #C9DCF3;
   --relleno-1: #5B95DD; --relleno-2: #2E8D87; --relleno-3: #2D5A8E; --relleno-4: #34475E;
@@ -154,11 +164,19 @@ body {
   color: var(--texto);
 }
 
+/* Puente con la marca: los botones .hlc-btn (src/marca/hecian-botones.css) toman la acción, el foco y el fondo del
+   secundario de estos tokens, así el tema y el color del portal (Configuración → Marca) siguen mandando. Misma
+   especificidad que los selectores de la marca y cargado después, para que gane. */
+:root:not([data-theme]), :root[data-theme] {
+  --hlc-accion: var(--accion); --hlc-accion-hover: var(--accion-hover); --hlc-accion-activo: var(--accion-activo);
+  --hlc-accion-texto: var(--accion-texto); --hlc-foco: var(--foco); --hlc-sec-fondo: var(--panel);
+}
+
 /* Foco visible en todo lo que se puede enfocar (WCAG 2.4.7). El !important pisa los «outline: none» viejos
    (marco.css: buscador de la biblioteca y nombre de la tendencia), que nunca deben quedar sin reemplazo. */
 :focus-visible {
   outline: 2px solid var(--foco) !important;
-  outline-offset: 1px;
+  outline-offset: 2px;                  /* marca v0.1.0: anillo de 2 px separado 2 px */
 }
 
 /* Texto solo para lectores de pantalla */
@@ -172,7 +190,7 @@ body {
   :root, :root.dark, :root[data-theme="dark"], :root[data-theme="light"] {
     --suelo: #F3F5F8; --panel: #FFFFFF; --placa: #FFFFFF; --panel-titulo: #EDF2F8; --panel-titulo-texto: #1E3A61;
     --linea: #E4E8EE; --linea-fila: #DCE3EC; --borde-campo: #8A94A6; --texto: #101828; --texto-2: #5A6578;
-    --accion: #1F5FAF; --rango: #BFD6EE; --rango-fondo: #E6F1F0;
+    --accion: #1F3A68; --rango: #BFD6EE; --rango-fondo: #E6F1F0;
     --serie-1: #1F5FAF; --serie-2: #138A8A; --serie-3: #5C7591; --serie-4: #0B3B6E;
     --relleno-1: #1F5FAF; --relleno-2: #6FB3AE; --relleno-3: #9CC3EB; --relleno-4: #CFDCEA;
     --estado-alta: #E5484D; --estado-alta-sobre: #FFFFFF; --estado-media: #D96A00; --estado-media-trazo: #B35600;

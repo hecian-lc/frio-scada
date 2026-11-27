@@ -1,6 +1,9 @@
 {
   "name": "frio-api",
   "version": "2.0.0",
+  "private": true,
+  "author": "HECIAN LC",
+  "license": "UNLICENSED",
   "description": "Frío SCADA API - Config, setpoints, alerts, reports",
   "main": "src/server.js",
   "scripts": {
